@@ -1,0 +1,330 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import ReviewNotice from '@/components/ui/ReviewNotice.astro';
+import SimulationNotice from '@/components/layout/SimulationNotice.astro';
+import { vessels } from '@/data/vessels';
+import { getServiceById } from '@/data/services';
+import { getPortById } from '@/data/ports';
+import { url } from '@/lib/site';
+import { formatMetres, formatNumber, TO_BE_CONFIRMED, VESSEL_TYPE_LABELS } from '@/lib/labels';
+
+/** One page per vessel. */
+export function getStaticPaths() {
+  return vessels.map((vessel) => ({
+    params: { slug: vessel.slug },
+    props: { vessel },
+  }));
+}
+
+const { vessel } = Astro.props;
+const service = vessel.serviceId ? getServiceById(vessel.serviceId) : null;
+
+/**
+ * Technical particulars.
+ *
+ * Rendered from the model rather than written out, so that a particular the
+ * product owner has not supplied shows as "To be confirmed" instead of silently
+ * disappearing. A learner filling in an exercise needs to know the difference
+ * between a value that is zero and a value nobody has recorded.
+ */
+const particulars = [
+  { label: 'Length overall', value: formatMetres(vessel.particulars.lengthOverallM) },
+  { label: 'Beam', value: formatMetres(vessel.particulars.beamM) },
+  { label: 'Draught', value: formatMetres(vessel.particulars.draughtM) },
+  { label: 'Deadweight', value: formatNumber(vessel.particulars.deadweightT, 't') },
+  { label: 'Container capacity', value: formatNumber(vessel.particulars.teuCapacity, 'TEU') },
+  { label: 'Lane metres', value: formatNumber(vessel.particulars.laneMetres, 'm') },
+  { label: 'Service speed', value: formatNumber(vessel.particulars.serviceSpeedKn, 'kn') },
+  { label: 'Reefer plugs', value: formatNumber(vessel.particulars.reeferPlugs) },
+];
+
+const unconfirmedCount = particulars.filter((p) => p.value === TO_BE_CONFIRMED).length;
+
+const fleetIndex = vessels.findIndex((v) => v.id === vessel.id);
+const previousVessel = vessels[fleetIndex - 1];
+const nextVessel = vessels[fleetIndex + 1];
+---
+
+<BaseLayout
+  title={vessel.name}
+  description={`${vessel.name}, ${VESSEL_TYPE_LABELS[vessel.vesselType]} of the SDG Lines fleet, IMO ${vessel.imo}. Named after ${vessel.namesake.fullName}, ${vessel.namesake.field.toLowerCase()}.`}
+>
+  <PageHeader
+    eyebrow={VESSEL_TYPE_LABELS[vessel.vesselType]}
+    title={vessel.name}
+    intro={`Named after ${vessel.namesake.fullName}, ${vessel.namesake.lifespan}.`}
+    tone="dark"
+    breadcrumbs={[{ label: 'Fleet', href: '/fleet' }, { label: vessel.name }]}
+  >
+    <dl class="mt-8 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-navy-700 bg-navy-700 sm:grid-cols-4">
+      <div class="bg-navy-800 px-4 py-3.5">
+        <dt class="text-xs uppercase tracking-wide text-navy-300">IMO</dt>
+        <dd class="mt-1 font-mono text-lg font-semibold text-white">{vessel.imo}</dd>
+      </div>
+      <div class="bg-navy-800 px-4 py-3.5">
+        <dt class="text-xs uppercase tracking-wide text-navy-300">Call sign</dt>
+        <dd class="mt-1 font-mono text-lg font-semibold text-white">{vessel.callSign}</dd>
+      </div>
+      <div class="bg-navy-800 px-4 py-3.5">
+        <dt class="text-xs uppercase tracking-wide text-navy-300">Launched</dt>
+        <dd class="mt-1 font-display text-lg font-semibold text-white">{vessel.yearLaunched}</dd>
+      </div>
+      <div class="bg-navy-800 px-4 py-3.5">
+        <dt class="text-xs uppercase tracking-wide text-navy-300">Service</dt>
+        <dd class="mt-1 font-display text-lg font-semibold text-white">
+          {service ? service.name : 'Pilot'}
+        </dd>
+      </div>
+    </dl>
+  </PageHeader>
+
+  <div class="shell py-12 lg:py-16">
+    <div class="grid gap-12 lg:grid-cols-[1.6fr_1fr] lg:gap-14">
+      <div class="min-w-0">
+        <!-- Namesake -->
+        <section aria-labelledby="namesake-heading">
+          <h2 id="namesake-heading" class="text-2xl">{vessel.namesake.fullName}</h2>
+          <p class="mt-1 font-mono text-sm text-navy-500">
+            {vessel.namesake.field} &middot; {vessel.namesake.lifespan}
+          </p>
+          <p class="mt-4 text-[1.0625rem] leading-relaxed text-navy-700">
+            {vessel.namesake.biography}
+          </p>
+          <a
+            href={url('/fleet/spirit')}
+            class="mt-4 inline-flex text-sm font-semibold text-sea-700 hover:underline underline-offset-4"
+          >
+            Why the fleet carries these names &rarr;
+          </a>
+        </section>
+
+        <!-- Identification -->
+        <section aria-labelledby="identification-heading" class="mt-12">
+          <h2 id="identification-heading" class="text-2xl">Identification</h2>
+          <dl class="mt-5 grid gap-px overflow-hidden rounded-xl border border-navy-100 bg-navy-100 sm:grid-cols-2">
+            <div class="bg-white px-5 py-4">
+              <dt class="text-xs uppercase tracking-wide text-navy-500">Vessel type</dt>
+              <dd class="mt-1 font-medium text-navy-900">
+                {VESSEL_TYPE_LABELS[vessel.vesselType]}
+              </dd>
+            </div>
+            <div class="bg-white px-5 py-4">
+              <dt class="text-xs uppercase tracking-wide text-navy-500">Class</dt>
+              <dd class="mt-1 font-medium text-navy-900">{vessel.className}</dd>
+            </div>
+            <div class="bg-white px-5 py-4">
+              <dt class="text-xs uppercase tracking-wide text-navy-500">IMO number</dt>
+              <dd class="mt-1 font-mono font-medium text-navy-900">{vessel.imo}</dd>
+            </div>
+            <div class="bg-white px-5 py-4">
+              <dt class="text-xs uppercase tracking-wide text-navy-500">MMSI</dt>
+              <dd class="mt-1 font-mono font-medium text-navy-900">{vessel.mmsi}</dd>
+            </div>
+          </dl>
+        </section>
+
+        <!-- Technical particulars -->
+        <section aria-labelledby="particulars-heading" class="mt-12">
+          <h2 id="particulars-heading" class="text-2xl">Technical particulars</h2>
+
+          {
+            unconfirmedCount === particulars.length ? (
+              <div class="mt-4 rounded-xl border border-dashed border-navy-200 bg-navy-50/60 p-6">
+                <p class="leading-relaxed text-navy-700">
+                  No technical particulars have been published for this vessel. Dimensions, capacity
+                  and service speed are recorded in the content model as optional fields and are
+                  left empty rather than estimated, so that nothing on this page can be mistaken for
+                  a confirmed figure.
+                </p>
+                <p class="mt-3 text-sm text-navy-600">
+                  Trainers who need these values for an exercise should request them from the
+                  product owner. They will appear here as soon as they are supplied.
+                </p>
+              </div>
+            ) : (
+              <div class="mt-5 overflow-x-auto rounded-xl border border-navy-100">
+                <table class="w-full text-left text-sm">
+                  <caption class="sr-only">Technical particulars of {vessel.name}</caption>
+                  <tbody class="divide-y divide-navy-100">
+                    {particulars.map((item) => (
+                      <tr>
+                        <th scope="row" class="w-1/2 px-4 py-3 font-medium text-navy-700">
+                          {item.label}
+                        </th>
+                        <td
+                          class={`px-4 py-3 font-mono ${item.value === TO_BE_CONFIRMED ? 'text-navy-400' : 'text-navy-900'}`}
+                        >
+                          {item.value}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )
+          }
+
+          <ReviewNotice meta={vessel.meta} subject="This vessel record" class="mt-4" />
+        </section>
+
+        <!-- Deployment -->
+        <section aria-labelledby="deployment-heading" class="mt-12">
+          <h2 id="deployment-heading" class="text-2xl">Deployment</h2>
+
+          {
+            service ? (
+              <div class="mt-5 rounded-xl border border-navy-100 bg-white p-6">
+                <div class="flex items-center gap-3">
+                  <span
+                    class="h-2.5 w-10 rounded-full"
+                    style={`background-color:${service.mapColor}`}
+                    aria-hidden="true"
+                  />
+                  <h3 class="font-display text-lg font-semibold text-navy-900">
+                    <a
+                      href={url(`/routes/${service.slug}`)}
+                      class="hover:text-sea-700 hover:underline underline-offset-4"
+                    >
+                      {service.name}
+                    </a>
+                  </h3>
+                </div>
+                <p class="mt-3 leading-relaxed text-navy-700">{service.summary}</p>
+
+                <h4 class="mt-5 text-xs font-semibold uppercase tracking-wide text-navy-500">
+                  Ports of call
+                </h4>
+                <ol class="mt-2 flex flex-wrap gap-1.5">
+                  {service.rotation.map((call) => {
+                    const port = getPortById(call.portId);
+                    if (!port) return null;
+                    return (
+                      <li>
+                        <a
+                          href={url(`/ports/${port.slug}`)}
+                          class="inline-flex rounded-md bg-navy-50 px-2.5 py-1 text-sm text-navy-800 hover:bg-sea-50 hover:text-sea-800"
+                        >
+                          {port.name}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </div>
+            ) : (
+              <div class="mt-5 rounded-xl border border-dashed border-navy-200 bg-navy-50/60 p-6">
+                <p class="leading-relaxed text-navy-700">
+                  {vessel.name} is recorded as a pilot vessel and is not assigned to a published
+                  rotation. As the fleet&rsquo;s autonomous electric unit, it exists in the
+                  simulation to support exercises about future propulsion and crewless operation
+                  rather than to carry a scheduled service.
+                </p>
+              </div>
+            )
+          }
+        </section>
+
+        <!-- Previous and next -->
+        <nav class="mt-14 flex flex-wrap justify-between gap-4 border-t border-navy-100 pt-6" aria-label="Fleet">
+          {
+            previousVessel ? (
+              <a
+                href={url(`/fleet/${previousVessel.slug}`)}
+                class="tap-target inline-flex items-center gap-2 text-sm font-medium text-navy-700 hover:text-sea-700"
+              >
+                <span aria-hidden="true">&larr;</span>
+                {previousVessel.name}
+              </a>
+            ) : (
+              <span />
+            )
+          }
+          {
+            nextVessel && (
+              <a
+                href={url(`/fleet/${nextVessel.slug}`)}
+                class="tap-target inline-flex items-center gap-2 text-sm font-medium text-navy-700 hover:text-sea-700"
+              >
+                {nextVessel.name}
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+            )
+          }
+        </nav>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="space-y-6 lg:sticky lg:top-28 lg:self-start">
+        <div class="rounded-2xl border border-navy-100 bg-navy-50/60 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">At a glance</h2>
+          <dl class="mt-4 space-y-2.5 text-sm">
+            <div class="flex justify-between gap-3">
+              <dt class="text-navy-600">Type</dt>
+              <dd class="text-right font-medium text-navy-900">{vessel.vesselType}</dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-navy-600">Class</dt>
+              <dd class="text-right font-medium text-navy-900">{vessel.className}</dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-navy-600">IMO</dt>
+              <dd class="text-right font-mono text-navy-900">{vessel.imo}</dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-navy-600">MMSI</dt>
+              <dd class="text-right font-mono text-navy-900">{vessel.mmsi}</dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-navy-600">Call sign</dt>
+              <dd class="text-right font-mono text-navy-900">{vessel.callSign}</dd>
+            </div>
+            <div class="flex justify-between gap-3">
+              <dt class="text-navy-600">Launched</dt>
+              <dd class="text-right font-medium text-navy-900">{vessel.yearLaunched}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="rounded-2xl border border-navy-100 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">Related</h2>
+          <ul class="mt-3 space-y-1">
+            <li>
+              <a
+                href={url('/fleet')}
+                class="flex min-h-9 items-center text-sm text-navy-700 hover:text-sea-700 hover:underline underline-offset-4"
+              >
+                Full fleet register
+              </a>
+            </li>
+            {
+              service && (
+                <li>
+                  <a
+                    href={url(`/routes/${service.slug}`)}
+                    class="flex min-h-9 items-center text-sm text-navy-700 hover:text-sea-700 hover:underline underline-offset-4"
+                  >
+                    {service.name} service
+                  </a>
+                </li>
+              )
+            }
+            <li>
+              <a
+                href={url('/equipment')}
+                class="flex min-h-9 items-center text-sm text-navy-700 hover:text-sea-700 hover:underline underline-offset-4"
+              >
+                Equipment catalogue
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <SimulationNotice
+          variant="inline"
+          detail="Vessel identifiers on this page belong to the simulation. They are not registered with the IMO or any flag state."
+        />
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

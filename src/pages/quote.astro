@@ -1,0 +1,737 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import SimulationNotice from '@/components/layout/SimulationNotice.astro';
+import { ports } from '@/data/ports';
+import { services } from '@/data/services';
+import { equipment } from '@/data/equipment';
+import { url } from '@/lib/site';
+import { CAPABILITY_LABELS } from '@/lib/labels';
+
+/**
+ * Simulated quotation request.
+ *
+ * GitHub Pages serves static files and has no backend, and the brief forbids
+ * sending personal data to an unapproved service. So this form does not submit
+ * anywhere at all: it validates in the browser, produces a quotation reference
+ * from the shipment details, and shows the result on the page.
+ *
+ * That is not a compromise for the teaching purpose. What a learner needs to
+ * practise is deciding what a shipment needs and reading back what they asked
+ * for. Where a real submission is needed later, `docs/forms.md` documents the
+ * one function that has to be replaced.
+ *
+ * No field asks for anything that is not needed for the exercise. There is no
+ * company name, no telephone number and no address, because the simulation does
+ * not use them and collecting them would be collecting personal data for
+ * nothing.
+ */
+const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
+const cargoTypes = [
+  'containers',
+  'roro',
+  'reefer',
+  'dangerous-goods',
+  'project-cargo',
+] as const;
+---
+
+<BaseLayout
+  title="Request a simulated quotation"
+  description="Build a simulated quotation for a shipment on the SDG Lines network. Choose the route, the equipment and the cargo, and receive a quotation reference for your training exercise."
+>
+  <PageHeader
+    eyebrow="Operations"
+    title="Request a simulated quotation"
+    intro="Tell us what you are shipping and where. You will receive a quotation reference to use in the rest of your exercise."
+    breadcrumbs={[{ label: 'Request a quote' }]}
+  />
+
+  <div class="shell py-12 lg:py-16">
+    <div class="grid gap-12 lg:grid-cols-[1.6fr_1fr] lg:gap-14">
+      <div class="min-w-0">
+        <SimulationNotice
+          variant="inline"
+          detail="This form does not send your details anywhere. It produces a quotation reference in your browser for use inside Port Virtual Lab, and nothing is stored or transmitted."
+          class="mb-8"
+        />
+
+        <form novalidate data-quote-form>
+          <!-- Error summary. Focused after a failed submission so that a screen
+               reader user hears what went wrong before anything else. -->
+          <div
+            class="mb-6 hidden rounded-xl border border-signal-300 bg-signal-50 p-5"
+            data-error-summary
+            tabindex="-1"
+            role="alert"
+          >
+            <h2 class="font-display text-base font-semibold text-signal-800">
+              There is a problem with this form
+            </h2>
+            <ul class="mt-2 space-y-1 text-sm" data-error-list></ul>
+          </div>
+
+          <!-- Route -->
+          <fieldset class="rounded-2xl border border-navy-100 p-6">
+            <legend class="px-2 font-display text-lg font-semibold text-navy-900">Route</legend>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label for="origin" class="block text-sm font-medium text-navy-900">
+                  Port of loading <span class="text-signal-600" aria-hidden="true">*</span>
+                </label>
+                <select
+                  id="origin"
+                  name="origin"
+                  required
+                  aria-describedby="origin-error"
+                  class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+                >
+                  <option value="">Select a port</option>
+                  {
+                    sortedPorts.map((port) => (
+                      <option value={port.slug}>
+                        {port.displayName}, {port.country}
+                      </option>
+                    ))
+                  }
+                </select>
+                <p class="mt-1 hidden text-sm text-signal-700" id="origin-error" data-error-for="origin"></p>
+              </div>
+
+              <div>
+                <label for="destination" class="block text-sm font-medium text-navy-900">
+                  Port of discharge <span class="text-signal-600" aria-hidden="true">*</span>
+                </label>
+                <select
+                  id="destination"
+                  name="destination"
+                  required
+                  aria-describedby="destination-error"
+                  class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+                >
+                  <option value="">Select a port</option>
+                  {
+                    sortedPorts.map((port) => (
+                      <option value={port.slug}>
+                        {port.displayName}, {port.country}
+                      </option>
+                    ))
+                  }
+                </select>
+                <p
+                  class="mt-1 hidden text-sm text-signal-700"
+                  id="destination-error"
+                  data-error-for="destination"
+                >
+                </p>
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="service" class="block text-sm font-medium text-navy-900">
+                  Preferred service
+                </label>
+                <select
+                  id="service"
+                  name="service"
+                  aria-describedby="service-hint"
+                  class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+                >
+                  <option value="">No preference</option>
+                  {
+                    services.map((service) => (
+                      <option value={service.slug}>
+                        {service.name} &mdash; {service.coverage}
+                      </option>
+                    ))
+                  }
+                </select>
+                <p id="service-hint" class="mt-1 text-sm text-navy-500">
+                  Leave this at no preference to let the routing be worked out from the ports you
+                  chose.
+                </p>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Cargo -->
+          <fieldset class="mt-6 rounded-2xl border border-navy-100 p-6">
+            <legend class="px-2 font-display text-lg font-semibold text-navy-900">Cargo</legend>
+
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="sm:col-span-2">
+                <label for="cargo-type" class="block text-sm font-medium text-navy-900">
+                  Cargo type <span class="text-signal-600" aria-hidden="true">*</span>
+                </label>
+                <select
+                  id="cargo-type"
+                  name="cargoType"
+                  required
+                  aria-describedby="cargo-type-error"
+                  class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+                >
+                  <option value="">Select a cargo type</option>
+                  {cargoTypes.map((type) => <option value={type}>{CAPABILITY_LABELS[type]}</option>)}
+                </select>
+                <p
+                  class="mt-1 hidden text-sm text-signal-700"
+                  id="cargo-type-error"
+                  data-error-for="cargoType"
+                >
+                </p>
+              </div>
+
+              <div>
+                <label for="equipment" class="block text-sm font-medium text-navy-900">
+                  Equipment <span class="text-signal-600" aria-hidden="true">*</span>
+                </label>
+                <select
+                  id="equipment"
+                  name="equipment"
+                  required
+                  aria-describedby="equipment-error"
+                  class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+                >
+                  <option value="">Select a unit</option>
+                  {equipment.map((item) => <option value={item.slug}>{item.name}</option>)}
+                </select>
+                <p
+                  class="mt-1 hidden text-sm text-signal-700"
+                  id="equipment-error"
+                  data-error-for="equipment"
+                >
+                </p>
+              </div>
+
+              <div>
+                <label for="units" class="block text-sm font-medium text-navy-900">
+                  Number of units <span class="text-signal-600" aria-hidden="true">*</span>
+                </label>
+                <input
+                  id="units"
+                  name="units"
+                  type="number"
+                  inputmode="numeric"
+                  min="1"
+                  max="500"
+                  value="1"
+                  required
+                  aria-describedby="units-error"
+                  class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+                />
+                <p class="mt-1 hidden text-sm text-signal-700" id="units-error" data-error-for="units"></p>
+              </div>
+
+              <div>
+                <label for="weight" class="block text-sm font-medium text-navy-900">
+                  Total gross weight in kilograms
+                </label>
+                <input
+                  id="weight"
+                  name="weight"
+                  type="number"
+                  inputmode="numeric"
+                  min="1"
+                  aria-describedby="weight-hint weight-error"
+                  class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+                />
+                <p id="weight-hint" class="mt-1 text-sm text-navy-500">
+                  Cargo plus the tare of the units.
+                </p>
+                <p class="mt-1 hidden text-sm text-signal-700" id="weight-error" data-error-for="weight"></p>
+              </div>
+
+              <div>
+                <label for="ready-date" class="block text-sm font-medium text-navy-900">
+                  Cargo ready date
+                </label>
+                <input
+                  id="ready-date"
+                  name="readyDate"
+                  type="date"
+                  class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+                />
+              </div>
+
+              <div class="sm:col-span-2">
+                <label for="commodity" class="block text-sm font-medium text-navy-900">
+                  Commodity description
+                </label>
+                <textarea
+                  id="commodity"
+                  name="commodity"
+                  rows="3"
+                  maxlength="500"
+                  aria-describedby="commodity-hint"
+                  class="mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 py-2 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+                ></textarea>
+                <p id="commodity-hint" class="mt-1 text-sm text-navy-500">
+                  What the cargo actually is. For dangerous goods, include the UN number and class.
+                </p>
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Exercise reference -->
+          <fieldset class="mt-6 rounded-2xl border border-navy-100 p-6">
+            <legend class="px-2 font-display text-lg font-semibold text-navy-900">
+              Your exercise
+            </legend>
+
+            <div>
+              <label for="reference" class="block text-sm font-medium text-navy-900">
+                Exercise or group reference
+              </label>
+              <input
+                id="reference"
+                name="reference"
+                type="text"
+                maxlength="60"
+                autocomplete="off"
+                aria-describedby="reference-hint"
+                class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+              />
+              <p id="reference-hint" class="mt-1 text-sm text-navy-500">
+                Optional. Whatever your trainer asked you to use, so the quotation can be matched to
+                your group. Do not enter personal details.
+              </p>
+            </div>
+          </fieldset>
+
+          <div class="mt-8 flex flex-wrap items-center gap-4">
+            <button
+              type="submit"
+              class="tap-target inline-flex items-center gap-2 rounded-lg bg-signal-600 px-6 text-base font-semibold text-white transition-colors duration-(--duration-fast) hover:bg-signal-700 disabled:cursor-not-allowed disabled:opacity-70"
+              data-submit
+            >
+              <span data-submit-label>Request quotation</span>
+              <svg
+                class="hidden h-4 w-4 animate-spin"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+                data-spinner
+              >
+                <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="2" opacity="0.3"
+                ></circle>
+                <path
+                  d="M14.5 8A6.5 6.5 0 0 0 8 1.5"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"></path>
+              </svg>
+            </button>
+
+            <button
+              type="reset"
+              class="tap-target inline-flex items-center rounded-lg border border-navy-200 px-5 text-sm font-medium text-navy-800 hover:bg-navy-50"
+            >
+              Clear the form
+            </button>
+          </div>
+        </form>
+
+        <!-- Result. Rendered by the script after a successful submission. -->
+        <section
+          class="mt-10 hidden scroll-mt-28"
+          id="quotation-result"
+          aria-labelledby="result-heading"
+          tabindex="-1"
+          data-result
+        >
+          <div class="overflow-hidden rounded-2xl border border-eco-300 bg-white">
+            <div class="border-b border-eco-200 bg-eco-50 px-6 py-5">
+              <h2 id="result-heading" class="font-display text-xl font-semibold text-eco-900">
+                Simulated quotation created
+              </h2>
+              <p class="mt-1 text-sm text-eco-800">
+                Quote your reference in the rest of the exercise.
+              </p>
+            </div>
+            <div class="px-6 py-6">
+              <p class="text-xs uppercase tracking-wide text-navy-500">Quotation reference</p>
+              <p class="mt-1 font-mono text-2xl font-semibold text-navy-900" data-result-reference></p>
+
+              <dl
+                class="mt-6 grid gap-px overflow-hidden rounded-xl border border-navy-100 bg-navy-100 sm:grid-cols-2"
+                data-result-summary
+              >
+              </dl>
+
+              <div class="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  class="tap-target inline-flex items-center rounded-lg border border-navy-200 px-5 text-sm font-semibold text-navy-800 hover:bg-navy-50"
+                  data-copy-reference
+                >
+                  Copy the reference
+                </button>
+                <a
+                  href={url('/resources/arrival-charges')}
+                  class="tap-target inline-flex items-center rounded-lg border border-navy-200 px-5 text-sm font-semibold text-navy-800 hover:bg-navy-50"
+                >
+                  Check arrival charges
+                </a>
+                <button
+                  type="button"
+                  class="tap-target inline-flex items-center rounded-lg border border-navy-200 px-5 text-sm font-semibold text-navy-800 hover:bg-navy-50"
+                  data-new-quote
+                >
+                  Start another quotation
+                </button>
+              </div>
+
+              <p class="mt-5 border-t border-navy-100 pt-4 text-xs leading-relaxed text-navy-500">
+                This reference was generated in your browser. It has not been sent anywhere and no
+                price has been calculated: rates in the simulation are set by your trainer, not by
+                this website.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="space-y-6 lg:sticky lg:top-28 lg:self-start">
+        <div class="rounded-2xl border border-navy-100 bg-navy-50/60 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">Before you start</h2>
+          <ul class="mt-4 space-y-3 text-sm leading-relaxed text-navy-700">
+            <li class="flex gap-2.5">
+              <span class="text-sea-600" aria-hidden="true">1.</span>
+              <span>
+                Check that both ports are on the same service, or that a transhipment point connects
+                them. The <a href={url('/routes')} class="text-sea-700 underline underline-offset-4">route pages</a> show every rotation.
+              </span>
+            </li>
+            <li class="flex gap-2.5">
+              <span class="text-sea-600" aria-hidden="true">2.</span>
+              <span>
+                Work out which unit the cargo needs from the <a
+                  href={url('/equipment')}
+                  class="text-sea-700 underline underline-offset-4">equipment tables</a
+                >, using internal dimensions rather than nominal size.
+              </span>
+            </li>
+            <li class="flex gap-2.5">
+              <span class="text-sea-600" aria-hidden="true">3.</span>
+              <span>
+                Remember that the freight rate is not the landed cost. Arrival charges are added at
+                the port of discharge.
+              </span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="rounded-2xl border border-navy-100 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">Privacy</h2>
+          <p class="mt-3 text-sm leading-relaxed text-navy-600">
+            This form asks only for shipment details. It does not ask for your name, your e-mail
+            address or your company, because the simulation does not need them. Nothing you type
+            leaves your browser.
+          </p>
+          <a
+            href={url('/privacy')}
+            class="mt-3 inline-flex text-sm font-semibold text-sea-700 hover:underline underline-offset-4"
+          >
+            How this site handles data &rarr;
+          </a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  /**
+   * Quotation form behaviour.
+   *
+   * Validation is written by hand rather than left to the browser so that the
+   * error messages say what to do ("Choose a different port of discharge")
+   * rather than what is wrong ("Please select an item in the list"), and so
+   * that all errors are collected into one summary that can be announced.
+   */
+  interface QuoteField {
+    name: string;
+    label: string;
+    validate: (value: string, form: HTMLFormElement) => string | null;
+  }
+
+  const FIELDS: QuoteField[] = [
+    {
+      name: 'origin',
+      label: 'Port of loading',
+      validate: (value) => (value ? null : 'Choose the port where the cargo will be loaded.'),
+    },
+    {
+      name: 'destination',
+      label: 'Port of discharge',
+      validate: (value, form) => {
+        if (!value) return 'Choose the port where the cargo will be discharged.';
+        const origin = (form.elements.namedItem('origin') as HTMLSelectElement)?.value;
+        if (value === origin) {
+          return 'The port of discharge has to be different from the port of loading.';
+        }
+        return null;
+      },
+    },
+    {
+      name: 'cargoType',
+      label: 'Cargo type',
+      validate: (value) => (value ? null : 'Choose the type of cargo you are shipping.'),
+    },
+    {
+      name: 'equipment',
+      label: 'Equipment',
+      validate: (value) => (value ? null : 'Choose the unit the cargo will travel in.'),
+    },
+    {
+      name: 'units',
+      label: 'Number of units',
+      validate: (value) => {
+        if (!value) return 'Enter how many units you need.';
+        const count = Number(value);
+        if (!Number.isInteger(count) || count < 1) return 'Enter a whole number of units, at least 1.';
+        if (count > 500) return 'Enter 500 units or fewer. For larger shipments, ask your trainer.';
+        return null;
+      },
+    },
+    {
+      name: 'weight',
+      label: 'Total gross weight',
+      validate: (value) => {
+        if (!value) return null; // Optional.
+        const weight = Number(value);
+        if (Number.isNaN(weight) || weight <= 0) return 'Enter the gross weight in kilograms, or leave it empty.';
+        return null;
+      },
+    },
+  ];
+
+  /**
+   * Build a quotation reference.
+   *
+   * Format: SDG-<year><day of year>-<four characters derived from the shipment>.
+   * Deriving the suffix from the shipment rather than at random means the same
+   * shipment produces the same reference, which is helpful when a learner
+   * resubmits after correcting a detail.
+   */
+  function buildReference(values: Record<string, string>): string {
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / 86_400_000);
+
+    const seed = `${values.origin}|${values.destination}|${values.equipment}|${values.units}|${values.cargoType}`;
+    let hash = 0;
+    for (let i = 0; i < seed.length; i += 1) {
+      hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+    }
+    const suffix = hash.toString(36).toUpperCase().padStart(4, '0').slice(-4);
+
+    return `SDG-${String(now.getFullYear()).slice(-2)}${String(dayOfYear).padStart(3, '0')}-${suffix}`;
+  }
+
+  function initQuoteForm(): void {
+    const form = document.querySelector<HTMLFormElement>('[data-quote-form]');
+    if (!form) return;
+
+    const summary = document.querySelector<HTMLElement>('[data-error-summary]');
+    const summaryList = document.querySelector<HTMLElement>('[data-error-list]');
+    const result = document.querySelector<HTMLElement>('[data-result]');
+    const referenceEl = document.querySelector<HTMLElement>('[data-result-reference]');
+    const resultSummary = document.querySelector<HTMLElement>('[data-result-summary]');
+    const submitButton = form.querySelector<HTMLButtonElement>('[data-submit]');
+    const submitLabel = form.querySelector<HTMLElement>('[data-submit-label]');
+    const spinner = form.querySelector<SVGElement>('[data-spinner]');
+
+    function showFieldError(name: string, message: string | null): void {
+      const field = form!.elements.namedItem(name) as HTMLElement | null;
+      const errorEl = form!.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+      if (!field || !errorEl) return;
+
+      if (message) {
+        errorEl.textContent = message;
+        errorEl.classList.remove('hidden');
+        field.setAttribute('aria-invalid', 'true');
+        field.classList.add('border-signal-500');
+      } else {
+        errorEl.textContent = '';
+        errorEl.classList.add('hidden');
+        field.removeAttribute('aria-invalid');
+        field.classList.remove('border-signal-500');
+      }
+    }
+
+    function collect(): Record<string, string> {
+      const data = new FormData(form!);
+      const values: Record<string, string> = {};
+      for (const [key, value] of data.entries()) {
+        values[key] = typeof value === 'string' ? value.trim() : '';
+      }
+      return values;
+    }
+
+    function validate(): { name: string; label: string; message: string }[] {
+      const values = collect();
+      const errors: { name: string; label: string; message: string }[] = [];
+
+      for (const field of FIELDS) {
+        const message = field.validate(values[field.name] ?? '', form!);
+        showFieldError(field.name, message);
+        if (message) errors.push({ name: field.name, label: field.label, message });
+      }
+
+      return errors;
+    }
+
+    // Re-validate a field once it has been corrected, so the error clears as
+    // soon as the problem is fixed rather than only on the next submission.
+    for (const field of FIELDS) {
+      const element = form.elements.namedItem(field.name) as HTMLElement | null;
+      element?.addEventListener('change', () => {
+        if (element.getAttribute('aria-invalid') !== 'true') return;
+        validate();
+      });
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const errors = validate();
+
+      if (errors.length > 0) {
+        if (summary && summaryList) {
+          summaryList.innerHTML = '';
+          for (const error of errors) {
+            const item = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = `#${error.name === 'cargoType' ? 'cargo-type' : error.name}`;
+            link.className = 'text-signal-800 underline underline-offset-4 hover:text-signal-900';
+            link.textContent = `${error.label}: ${error.message}`;
+            link.addEventListener('click', (clickEvent) => {
+              clickEvent.preventDefault();
+              (form.elements.namedItem(error.name) as HTMLElement | null)?.focus();
+            });
+            item.append(link);
+            summaryList.append(item);
+          }
+          summary.classList.remove('hidden');
+          summary.focus();
+        }
+        return;
+      }
+
+      summary?.classList.add('hidden');
+
+      // A short delay so that the submitting state is perceptible. Without it
+      // the button flickers and the learner cannot tell anything happened.
+      if (submitButton && submitLabel && spinner) {
+        submitButton.disabled = true;
+        submitLabel.textContent = 'Creating quotation';
+        spinner.classList.remove('hidden');
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 600));
+
+      if (submitButton && submitLabel && spinner) {
+        submitButton.disabled = false;
+        submitLabel.textContent = 'Request quotation';
+        spinner.classList.add('hidden');
+      }
+
+      const values = collect();
+      const reference = buildReference(values);
+
+      if (referenceEl) referenceEl.textContent = reference;
+
+      if (resultSummary) {
+        const label = (name: string): string => {
+          const element = form.elements.namedItem(name) as HTMLSelectElement | HTMLInputElement;
+          if (element instanceof HTMLSelectElement) {
+            return element.options[element.selectedIndex]?.text ?? '';
+          }
+          return element?.value ?? '';
+        };
+
+        const rows: [string, string][] = [
+          ['Port of loading', label('origin')],
+          ['Port of discharge', label('destination')],
+          ['Service', values.service ? label('service') : 'To be routed'],
+          ['Cargo type', label('cargoType')],
+          ['Equipment', label('equipment')],
+          ['Units', values.units],
+          ['Gross weight', values.weight ? `${values.weight} kg` : 'Not stated'],
+          ['Cargo ready', values.readyDate || 'Not stated'],
+          ['Exercise reference', values.reference || 'Not stated'],
+        ];
+
+        resultSummary.innerHTML = '';
+        for (const [term, definition] of rows) {
+          const wrapper = document.createElement('div');
+          wrapper.className = 'bg-white px-5 py-3.5';
+          const dt = document.createElement('dt');
+          dt.className = 'text-xs uppercase tracking-wide text-navy-500';
+          dt.textContent = term;
+          const dd = document.createElement('dd');
+          dd.className = 'mt-0.5 font-medium text-navy-900';
+          dd.textContent = definition;
+          wrapper.append(dt, dd);
+          resultSummary.append(wrapper);
+        }
+      }
+
+      result?.classList.remove('hidden');
+      result?.focus();
+      result?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    form.addEventListener('reset', () => {
+      for (const field of FIELDS) showFieldError(field.name, null);
+      summary?.classList.add('hidden');
+      result?.classList.add('hidden');
+    });
+
+    document.querySelector('[data-new-quote]')?.addEventListener('click', () => {
+      form.reset();
+      result?.classList.add('hidden');
+      (form.elements.namedItem('origin') as HTMLElement | null)?.focus();
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    document.querySelector('[data-copy-reference]')?.addEventListener('click', async (event) => {
+      const button = event.currentTarget as HTMLButtonElement;
+      const reference = referenceEl?.textContent ?? '';
+      const original = button.textContent;
+      try {
+        await navigator.clipboard.writeText(reference);
+        button.textContent = 'Reference copied';
+      } catch {
+        // Clipboard access can be refused, and the reference is on screen
+        // anyway, so this is a convenience rather than a failure.
+        button.textContent = 'Copy it from above';
+      }
+      setTimeout(() => {
+        button.textContent = original;
+      }, 2400);
+    });
+
+    /**
+     * Pre-select the route when arriving from a service or port page, so that
+     * "Quote from Barcelona" does not drop the learner into an empty form.
+     */
+    const params = new URLSearchParams(window.location.search);
+    for (const [param, fieldName] of [
+      ['service', 'service'],
+      ['origin', 'origin'],
+      ['destination', 'destination'],
+    ] as const) {
+      const value = params.get(param);
+      if (!value) continue;
+      const field = form.elements.namedItem(fieldName) as HTMLSelectElement | null;
+      if (field && [...field.options].some((option) => option.value === value)) {
+        field.value = value;
+      }
+    }
+  }
+
+  initQuoteForm();
+</script>

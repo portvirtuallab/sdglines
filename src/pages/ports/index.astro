@@ -1,0 +1,290 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { ports, portCountries, portRegions } from '@/data/ports';
+import { services, getServiceById } from '@/data/services';
+import { url } from '@/lib/site';
+import { CAPABILITY_LABELS } from '@/lib/labels';
+
+/**
+ * Port directory.
+ *
+ * The legacy site listed all 36 ports directly in the navigation menu and had
+ * no way to narrow them down: finding the Tunisian call meant reading the whole
+ * list. Here every port is rendered server side and the filters work on the
+ * rendered list, so the page is complete before any script runs and a visitor
+ * without JavaScript still gets the full directory.
+ */
+const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<BaseLayout
+  title="Port directory"
+  description={`All ${ports.length} SDG Lines ports of call across Europe, the Mediterranean, Africa, the Middle East and Asia. Filter by country, region or service.`}
+>
+  <PageHeader
+    eyebrow="Network"
+    title="Port directory"
+    intro={`All ${ports.length} ports of call, with the services that reach them, the cargo they handle and their local agency.`}
+    breadcrumbs={[{ label: 'Ports' }]}
+  />
+
+  <div class="shell py-10 lg:py-14">
+    <!-- Filters -->
+    <section aria-labelledby="filters-heading" class="rounded-2xl border border-navy-100 bg-navy-50/60 p-5 sm:p-6">
+      <h2 id="filters-heading" class="font-display text-base font-semibold text-navy-900">
+        Find a port
+      </h2>
+
+      <div class="mt-4 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div class="lg:col-span-2">
+          <label for="port-search" class="block text-sm font-medium text-navy-800">
+            Search by port or country
+          </label>
+          <input
+            id="port-search"
+            type="search"
+            autocomplete="off"
+            placeholder="Barcelona, Tunisia, LOCODE..."
+            class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 placeholder:text-navy-400 focus:border-sea-600"
+            data-port-search
+          />
+        </div>
+
+        <div>
+          <label for="port-region" class="block text-sm font-medium text-navy-800">Region</label>
+          <select
+            id="port-region"
+            class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+            data-port-region
+          >
+            <option value="">All regions</option>
+            {portRegions.map((region) => <option value={region}>{region}</option>)}
+          </select>
+        </div>
+
+        <div>
+          <label for="port-service" class="block text-sm font-medium text-navy-800">Service</label>
+          <select
+            id="port-service"
+            class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+            data-port-service
+          >
+            <option value="">All services</option>
+            {services.map((service) => <option value={service.id}>{service.name}</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          class="tap-target inline-flex items-center rounded-lg border border-navy-200 bg-white px-4 text-sm font-medium text-navy-800 hover:bg-navy-50"
+          data-port-reset
+          hidden
+        >
+          Clear filters
+        </button>
+
+        <!-- Announced to screen readers whenever the count changes. -->
+        <p class="text-sm text-navy-600" role="status" aria-live="polite" data-port-count>
+          Showing all {ports.length} ports.
+        </p>
+      </div>
+    </section>
+
+    <!-- Directory -->
+    <section aria-labelledby="directory-heading" class="mt-8">
+      <h2 id="directory-heading" class="sr-only">Ports</h2>
+
+      <ul class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" data-port-list>
+        {
+          sortedPorts.map((port) => (
+            <li
+              data-port-card
+              data-name={port.name.toLowerCase()}
+              data-country={port.country.toLowerCase()}
+              data-locode={(port.locode ?? '').toLowerCase()}
+              data-region={port.region}
+              data-services={port.serviceIds.join(' ')}
+            >
+              <a
+                href={url(`/ports/${port.slug}`)}
+                class="group flex h-full flex-col rounded-xl border border-navy-100 bg-white p-5 transition-all duration-(--duration-base) hover:-translate-y-0.5 hover:border-sea-300 hover:shadow-md"
+              >
+                <div class="flex items-start justify-between gap-3">
+                  <h3 class="font-display text-base font-semibold text-navy-900 group-hover:text-sea-700">
+                    {port.displayName}
+                  </h3>
+                  {port.locode && (
+                    <span class="shrink-0 rounded bg-navy-50 px-1.5 py-0.5 font-mono text-[0.6875rem] text-navy-500">
+                      {port.locode}
+                    </span>
+                  )}
+                </div>
+
+                <p class="mt-0.5 text-sm text-navy-500">
+                  {port.country} &middot; {port.region}
+                </p>
+
+                <p class="mt-3 text-sm leading-relaxed text-navy-600">{port.summary}</p>
+
+                <div class="mt-auto pt-4">
+                  <ul class="flex flex-wrap gap-1.5">
+                    {port.serviceIds.map((serviceId) => {
+                      const service = getServiceById(serviceId);
+                      if (!service) return null;
+                      return (
+                        <li class="flex items-center gap-1.5 rounded-full bg-navy-50 px-2 py-0.5 text-xs font-medium text-navy-700">
+                          <span
+                            class="h-1.5 w-1.5 rounded-full"
+                            style={`background-color:${service.mapColor}`}
+                            aria-hidden="true"
+                          />
+                          {service.name}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <!-- Empty state. Hidden until the filters exclude everything. -->
+      <div
+        class="rounded-xl border border-dashed border-navy-200 bg-navy-50/60 p-8 text-center"
+        data-port-empty
+        hidden
+      >
+        <p class="font-display text-lg font-semibold text-navy-900">No ports match those filters</p>
+        <p class="mx-auto mt-2 max-w-md text-sm leading-relaxed text-navy-600">
+          Try a shorter search term, or clear one of the filters. If you are looking for a port that
+          SDG Lines does not call at, it will not appear here.
+        </p>
+        <button
+          type="button"
+          class="tap-target mt-5 inline-flex items-center rounded-lg bg-navy-900 px-5 text-sm font-semibold text-white hover:bg-navy-800"
+          data-port-reset
+        >
+          Clear all filters
+        </button>
+      </div>
+    </section>
+
+    <!-- Countries, as a second way in -->
+    <section aria-labelledby="countries-heading" class="mt-14 border-t border-navy-100 pt-10">
+      <h2 id="countries-heading" class="text-xl">Ports by country</h2>
+      <ul class="mt-4 flex flex-wrap gap-2">
+        {
+          portCountries.map((country) => {
+            const count = ports.filter((port) => port.country === country).length;
+            return (
+              <li>
+                <button
+                  type="button"
+                  class="tap-target inline-flex items-center gap-1.5 rounded-full border border-navy-200 px-3.5 text-sm text-navy-700 transition-colors duration-(--duration-fast) hover:border-sea-400 hover:bg-sea-50 hover:text-sea-800"
+                  data-country-filter={country}
+                >
+                  {country}
+                  <span class="font-mono text-xs text-navy-400">{count}</span>
+                </button>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  /**
+   * Directory filtering.
+   *
+   * Operates on the server rendered list rather than re-rendering it, which
+   * keeps the page usable if this script fails to load and keeps filtering
+   * instant for the 36 cards involved.
+   */
+  function initPortDirectory(): void {
+    const search = document.querySelector<HTMLInputElement>('[data-port-search]');
+    const regionSelect = document.querySelector<HTMLSelectElement>('[data-port-region]');
+    const serviceSelect = document.querySelector<HTMLSelectElement>('[data-port-service]');
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-port-card]'));
+    const countEl = document.querySelector<HTMLElement>('[data-port-count]');
+    const emptyEl = document.querySelector<HTMLElement>('[data-port-empty]');
+    const listEl = document.querySelector<HTMLElement>('[data-port-list]');
+    const resetButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-port-reset]'));
+
+    if (!search || !regionSelect || !serviceSelect || cards.length === 0) return;
+
+    function apply(): void {
+      const term = search!.value.trim().toLowerCase();
+      const region = regionSelect!.value;
+      const service = serviceSelect!.value;
+
+      let visible = 0;
+
+      for (const card of cards) {
+        const matchesTerm =
+          term === '' ||
+          (card.dataset.name ?? '').includes(term) ||
+          (card.dataset.country ?? '').includes(term) ||
+          (card.dataset.locode ?? '').includes(term);
+        const matchesRegion = region === '' || card.dataset.region === region;
+        const matchesService =
+          service === '' || (card.dataset.services ?? '').split(' ').includes(service);
+
+        const show = matchesTerm && matchesRegion && matchesService;
+        card.hidden = !show;
+        if (show) visible += 1;
+      }
+
+      const hasFilters = term !== '' || region !== '' || service !== '';
+
+      if (countEl) {
+        countEl.textContent = hasFilters
+          ? `Showing ${visible} of ${cards.length} ports.`
+          : `Showing all ${cards.length} ports.`;
+      }
+
+      if (emptyEl) emptyEl.hidden = visible > 0;
+      if (listEl) listEl.hidden = visible === 0;
+      for (const button of resetButtons) {
+        if (button.closest('[data-port-empty]')) continue;
+        button.hidden = !hasFilters;
+      }
+    }
+
+    function reset(): void {
+      search!.value = '';
+      regionSelect!.value = '';
+      serviceSelect!.value = '';
+      apply();
+      search!.focus();
+    }
+
+    search.addEventListener('input', apply);
+    regionSelect.addEventListener('change', apply);
+    serviceSelect.addEventListener('change', apply);
+    for (const button of resetButtons) button.addEventListener('click', reset);
+
+    // The country chips are a shortcut into the same search field, so that the
+    // filter state stays in one place and stays announceable.
+    for (const chip of document.querySelectorAll<HTMLButtonElement>('[data-country-filter]')) {
+      chip.addEventListener('click', () => {
+        search.value = chip.dataset.countryFilter ?? '';
+        regionSelect.value = '';
+        serviceSelect.value = '';
+        apply();
+        document.querySelector('[data-port-list]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+
+    apply();
+  }
+
+  initPortDirectory();
+</script>

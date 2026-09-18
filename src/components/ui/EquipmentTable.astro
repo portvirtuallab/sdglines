@@ -1,0 +1,70 @@
+---
+import type { Equipment } from '@/types/content';
+import { formatMetres, formatNumber, TO_BE_CONFIRMED } from '@/lib/labels';
+
+/**
+ * Specification table for a set of equipment.
+ *
+ * Internal dimensions come first, because that is the number a learner is
+ * actually looking for: whether the cargo fits. External dimensions matter to
+ * the terminal, not to the shipper.
+ */
+interface Props {
+  items: Equipment[];
+  caption: string;
+}
+
+const { items, caption } = Astro.props;
+---
+
+<div class="overflow-x-auto rounded-xl border border-navy-100">
+  <table class="w-full min-w-[52rem] text-left text-sm">
+    <caption class="sr-only">{caption}</caption>
+    <thead class="bg-navy-50 text-xs uppercase tracking-wide text-navy-600">
+      <tr>
+        <th scope="col" class="px-4 py-3 font-semibold">Unit</th>
+        <th scope="col" class="px-4 py-3 font-semibold">ISO code</th>
+        <th scope="col" class="px-4 py-3 font-semibold">Internal L &times; W &times; H</th>
+        <th scope="col" class="px-4 py-3 font-semibold">Tare</th>
+        <th scope="col" class="px-4 py-3 font-semibold">Max payload</th>
+        <th scope="col" class="px-4 py-3 font-semibold">Capacity</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-navy-100">
+      {
+        items.map((item) => {
+          const { internalLengthM, internalWidthM, internalHeightM } = item.dimensions;
+          const internal =
+            internalLengthM && internalWidthM && internalHeightM
+              ? `${formatMetres(internalLengthM)} × ${formatMetres(internalWidthM)} × ${formatMetres(internalHeightM)}`
+              : TO_BE_CONFIRMED;
+
+          return (
+            <tr class="transition-colors duration-(--duration-fast) hover:bg-navy-50/60">
+              <th scope="row" class="px-4 py-3 font-medium text-navy-900">
+                {item.name}
+              </th>
+              <td class="px-4 py-3 font-mono text-xs text-navy-700">
+                {item.isoCode ?? <span class="text-navy-400">Not standardised</span>}
+              </td>
+              <td
+                class={`px-4 py-3 font-mono text-xs ${internal === TO_BE_CONFIRMED ? 'text-navy-400' : 'text-navy-800'}`}
+              >
+                {internal}
+              </td>
+              <td class="px-4 py-3 font-mono text-xs text-navy-800">
+                {formatNumber(item.dimensions.tareKg, 'kg')}
+              </td>
+              <td class="px-4 py-3 font-mono text-xs text-navy-800">
+                {formatNumber(item.dimensions.maxPayloadKg, 'kg')}
+              </td>
+              <td class="px-4 py-3 font-mono text-xs text-navy-800">
+                {item.dimensions.capacityM3 ? `${item.dimensions.capacityM3} m³` : '—'}
+              </td>
+            </tr>
+          );
+        })
+      }
+    </tbody>
+  </table>
+</div>
