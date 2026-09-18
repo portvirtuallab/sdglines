@@ -63,7 +63,8 @@ export const prosePages: ProsePage[] = [
             items: [
               {
                 term: 'SDG Lines',
-                definition: 'The shipping line. Services, vessels, ports, equipment and quotations.',
+                definition:
+                  'The shipping line. Services, vessels, ports, equipment and quotations.',
               },
               {
                 term: 'SDG Airlines',
@@ -264,8 +265,7 @@ export const prosePages: ProsePage[] = [
             items: [
               {
                 term: 'Verified',
-                definition:
-                  'Checked against its source and approved. Published without a notice.',
+                definition: 'Checked against its source and approved. Published without a notice.',
               },
               {
                 term: 'Inherited',
@@ -295,8 +295,7 @@ export const prosePages: ProsePage[] = [
               },
               {
                 term: 'Legacy site',
-                definition:
-                  'Copied from sdglines.com during the audit of 18 September 2026.',
+                definition: 'Copied from sdglines.com during the audit of 18 September 2026.',
               },
               {
                 term: 'Simulation design',
@@ -351,8 +350,7 @@ export const prosePages: ProsePage[] = [
     group: 'root',
     title: 'Legal notice',
     eyebrow: 'Legal',
-    intro:
-      'Ownership, trademarks, licensing and the limits of what this website represents.',
+    intro: 'Ownership, trademarks, licensing and the limits of what this website represents.',
     description:
       'Legal notice for the SDG Lines website: ownership, trademarks, copyright, licensing and the educational simulation disclaimer.',
     sections: [
@@ -573,8 +571,7 @@ export const prosePages: ProsePage[] = [
     group: 'resources',
     title: 'Transport documentation',
     eyebrow: 'Resources',
-    intro:
-      'The documents a shipment travels with, what each one does and who issues it.',
+    intro: 'The documents a shipment travels with, what each one does and who issues it.',
     description:
       'The main transport documents used in maritime shipping: bill of lading, sea waybill, packing list, commercial invoice and dangerous goods declaration.',
     sections: [
@@ -865,12 +862,27 @@ export const prosePages: ProsePage[] = [
             items: [
               {
                 term: 'Gate in',
-                definition: 'The unit entered the terminal. The clock on free time usually starts here.',
+                definition:
+                  'The unit entered the terminal. The clock on free time usually starts here.',
               },
-              { term: 'Loaded', definition: 'The unit was lifted aboard a named vessel and voyage.' },
-              { term: 'Discharged', definition: 'The unit came off at a port, which may be a transhipment port rather than the destination.' },
-              { term: 'Gate out', definition: 'The unit left the destination terminal. Demurrage stops and detention starts.' },
-              { term: 'Empty returned', definition: 'The unit came back to the carrier. Detention stops.' },
+              {
+                term: 'Loaded',
+                definition: 'The unit was lifted aboard a named vessel and voyage.',
+              },
+              {
+                term: 'Discharged',
+                definition:
+                  'The unit came off at a port, which may be a transhipment port rather than the destination.',
+              },
+              {
+                term: 'Gate out',
+                definition:
+                  'The unit left the destination terminal. Demurrage stops and detention starts.',
+              },
+              {
+                term: 'Empty returned',
+                definition: 'The unit came back to the carrier. Detention stops.',
+              },
             ],
           },
           {

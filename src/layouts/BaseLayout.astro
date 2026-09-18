@@ -25,8 +25,14 @@ interface Props {
   structuredData?: string;
 }
 
-const { title, description, fullTitle, ogImage = '/images/og-default.png', noindex, structuredData } =
-  Astro.props;
+const {
+  title,
+  description,
+  fullTitle,
+  ogImage = '/images/og-default.png',
+  noindex,
+  structuredData,
+} = Astro.props;
 
 const pageTitle = fullTitle ?? `${title} | ${SITE.name}`;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://portvirtuallab.github.io');

@@ -1,0 +1,26 @@
+name: Enhancement
+description: Something that would make the site more useful during a training session
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: |
+        What is hard to do today. Please describe the situation rather than the solution: it is
+        usually easier to find a good answer from a clear problem than the other way round.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: What you would suggest
+  - type: dropdown
+    id: audience
+    attributes:
+      label: Who this affects
+      options:
+        - Learners during an exercise
+        - Trainers preparing an exercise
+        - Whoever maintains the site
+        - Someone evaluating Port Virtual Lab

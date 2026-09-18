@@ -191,12 +191,7 @@ export interface Vessel extends ContentRecord {
 /* Equipment                                                                  */
 /* -------------------------------------------------------------------------- */
 
-export type EquipmentCategory =
-  | 'container'
-  | 'reefer'
-  | 'flat-rack'
-  | 'roll-trailer'
-  | 'open-top';
+export type EquipmentCategory = 'container' | 'reefer' | 'flat-rack' | 'roll-trailer' | 'open-top';
 
 export interface EquipmentDimensions {
   /** Nominal length in feet, e.g. 20, 40, 45. */

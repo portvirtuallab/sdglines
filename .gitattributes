@@ -1,0 +1,13 @@
+# Normalise line endings so that a checkout on Windows and one on Linux produce
+# identical working trees, and CI never sees a diff that is only line endings.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary

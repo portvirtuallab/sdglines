@@ -1,0 +1,49 @@
+name: Content verification
+description: Confirm, correct or supply a value the site records as unverified
+labels: [content, needs-review]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The site records where every value came from and whether it has been confirmed. Anything
+        outstanding is listed in `docs/open-questions.md`. Use this to answer one of those items, or
+        to flag a value that is wrong.
+  - type: input
+    id: record
+    attributes:
+      label: Which record
+      placeholder: Eastmed service, or the vessel Sappho, or the Port of Valletta
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: What kind of change
+      options:
+        - Confirm a value that is currently marked as needing review
+        - Correct a value that is wrong
+        - Supply a value that is currently missing
+        - Flag a value presented as settled when it is not
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: The value
+      description: What the value should be. Include units and currency where relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Where it comes from
+      description: |
+        A published source for a real world fact, or a statement that the product owner has decided
+        it for the simulation. This is recorded in the data alongside the value.
+    validations:
+      required: true
+  - type: input
+    id: open-question
+    attributes:
+      label: Related open question
+      placeholder: docs/open-questions.md item 1

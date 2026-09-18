@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask about a Port Virtual Lab exercise
+    url: https://pvl.one
+    about: Questions about rates, free time or assessment are for your trainer, not for this repository.
+  - name: Contact Escola Europea
+    url: mailto:info@escolaeuropea.eu
+    about: For anything that does not belong in a public issue.

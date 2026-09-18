@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import { legacyRedirects } from './redirects.mjs';
 
 /**
  * Deployment targets
@@ -27,11 +28,28 @@ import tailwindcss from '@tailwindcss/vite';
 const SITE_URL = process.env.SITE_URL ?? 'https://portvirtuallab.github.io';
 const BASE_PATH = process.env.BASE_PATH ?? '/sdglines';
 
+/** Prefix a site-relative path with the deployment base path. */
+function withBase(path) {
+  const base = BASE_PATH.endsWith('/') ? BASE_PATH.slice(0, -1) : BASE_PATH;
+  return `${base}${path}`;
+}
+
 export default defineConfig({
   site: SITE_URL,
   base: BASE_PATH,
   trailingSlash: 'ignore',
   output: 'static',
+  // Every address the legacy site published maps to its new home. GitHub Pages
+  // cannot issue an HTTP 301, so these build to meta refresh pages; see
+  // redirects.mjs for what that costs and why it is still worth doing.
+  //
+  // Astro applies the base path to the SOURCE of a redirect but not to its
+  // DESTINATION, so the destinations are prefixed here. Without this, every
+  // legacy address on the GitHub Pages preview would redirect to a path outside
+  // the project site and 404.
+  redirects: Object.fromEntries(
+    Object.entries(legacyRedirects).map(([from, to]) => [from, withBase(to)]),
+  ),
   build: {
     // Emit `about/index.html` rather than `about.html` so that directory-style
     // URLs resolve correctly when GitHub Pages serves the files.

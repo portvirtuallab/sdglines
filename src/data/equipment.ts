@@ -48,7 +48,12 @@ export const equipment: Equipment[] = [
       maxPayloadKg: 28200,
       capacityM3: 33.2,
     },
-    meta: { source: 'real-world', status: 'verified', lastReviewed: REVIEW_DATE, reviewNote: ISO_NOTE },
+    meta: {
+      source: 'real-world',
+      status: 'verified',
+      lastReviewed: REVIEW_DATE,
+      reviewNote: ISO_NOTE,
+    },
   },
   {
     id: 'dry-40',
@@ -75,7 +80,12 @@ export const equipment: Equipment[] = [
       maxPayloadKg: 26740,
       capacityM3: 67.7,
     },
-    meta: { source: 'real-world', status: 'verified', lastReviewed: REVIEW_DATE, reviewNote: ISO_NOTE },
+    meta: {
+      source: 'real-world',
+      status: 'verified',
+      lastReviewed: REVIEW_DATE,
+      reviewNote: ISO_NOTE,
+    },
   },
   {
     id: 'high-cube-40',
@@ -102,7 +112,12 @@ export const equipment: Equipment[] = [
       maxPayloadKg: 26500,
       capacityM3: 76.3,
     },
-    meta: { source: 'real-world', status: 'verified', lastReviewed: REVIEW_DATE, reviewNote: ISO_NOTE },
+    meta: {
+      source: 'real-world',
+      status: 'verified',
+      lastReviewed: REVIEW_DATE,
+      reviewNote: ISO_NOTE,
+    },
   },
   {
     id: 'high-cube-45',
@@ -128,7 +143,12 @@ export const equipment: Equipment[] = [
       maxPayloadKg: 25600,
       capacityM3: 86.0,
     },
-    meta: { source: 'real-world', status: 'verified', lastReviewed: REVIEW_DATE, reviewNote: ISO_NOTE },
+    meta: {
+      source: 'real-world',
+      status: 'verified',
+      lastReviewed: REVIEW_DATE,
+      reviewNote: ISO_NOTE,
+    },
   },
   {
     id: 'reefer-20',
@@ -155,7 +175,12 @@ export const equipment: Equipment[] = [
       maxPayloadKg: 27400,
       capacityM3: 28.3,
     },
-    meta: { source: 'real-world', status: 'verified', lastReviewed: REVIEW_DATE, reviewNote: ISO_NOTE },
+    meta: {
+      source: 'real-world',
+      status: 'verified',
+      lastReviewed: REVIEW_DATE,
+      reviewNote: ISO_NOTE,
+    },
   },
   {
     id: 'reefer-40-hc',
@@ -182,7 +207,12 @@ export const equipment: Equipment[] = [
       maxPayloadKg: 29000,
       capacityM3: 67.3,
     },
-    meta: { source: 'real-world', status: 'verified', lastReviewed: REVIEW_DATE, reviewNote: ISO_NOTE },
+    meta: {
+      source: 'real-world',
+      status: 'verified',
+      lastReviewed: REVIEW_DATE,
+      reviewNote: ISO_NOTE,
+    },
   },
   {
     id: 'open-top-20',
@@ -209,7 +239,12 @@ export const equipment: Equipment[] = [
       maxPayloadKg: 28130,
       capacityM3: 32.0,
     },
-    meta: { source: 'real-world', status: 'verified', lastReviewed: REVIEW_DATE, reviewNote: ISO_NOTE },
+    meta: {
+      source: 'real-world',
+      status: 'verified',
+      lastReviewed: REVIEW_DATE,
+      reviewNote: ISO_NOTE,
+    },
   },
   {
     id: 'flat-rack-20',
@@ -235,7 +270,12 @@ export const equipment: Equipment[] = [
       tareKg: 2900,
       maxPayloadKg: 30100,
     },
-    meta: { source: 'real-world', status: 'verified', lastReviewed: REVIEW_DATE, reviewNote: ISO_NOTE },
+    meta: {
+      source: 'real-world',
+      status: 'verified',
+      lastReviewed: REVIEW_DATE,
+      reviewNote: ISO_NOTE,
+    },
   },
   {
     id: 'flat-rack-40',
@@ -261,7 +301,12 @@ export const equipment: Equipment[] = [
       tareKg: 5700,
       maxPayloadKg: 39300,
     },
-    meta: { source: 'real-world', status: 'verified', lastReviewed: REVIEW_DATE, reviewNote: ISO_NOTE },
+    meta: {
+      source: 'real-world',
+      status: 'verified',
+      lastReviewed: REVIEW_DATE,
+      reviewNote: ISO_NOTE,
+    },
   },
   {
     id: 'roll-trailer-40',

@@ -90,9 +90,17 @@ export const PRIMARY_NAV: NavSection[] = [
     label: 'Routes',
     href: '/routes',
     children: [
-      { label: 'Westmed', href: '/routes/westmed', description: 'Western Mediterranean and Maghreb' },
+      {
+        label: 'Westmed',
+        href: '/routes/westmed',
+        description: 'Western Mediterranean and Maghreb',
+      },
       { label: 'Eastmed', href: '/routes/eastmed', description: 'Aegean, Levant and Nile delta' },
-      { label: 'Optimed', href: '/routes/optimed', description: 'Central Mediterranean and Adriatic' },
+      {
+        label: 'Optimed',
+        href: '/routes/optimed',
+        description: 'Central Mediterranean and Adriatic',
+      },
       { label: 'EurAsia', href: '/routes/eurasia', description: 'North Europe to the Far East' },
       { label: 'Gimnesias', href: '/routes/gimnesias', description: 'Barcelona to the Balearics' },
     ],
@@ -101,7 +109,11 @@ export const PRIMARY_NAV: NavSection[] = [
     label: 'Fleet',
     href: '/fleet',
     children: [
-      { label: 'All vessels', href: '/fleet', description: 'Search and filter the fourteen vessels' },
+      {
+        label: 'All vessels',
+        href: '/fleet',
+        description: 'Search and filter the fourteen vessels',
+      },
       {
         label: 'The spirit of the vessels',
         href: '/fleet/spirit',
@@ -113,41 +125,105 @@ export const PRIMARY_NAV: NavSection[] = [
     label: 'Ports',
     href: '/ports',
     children: [
-      { label: 'Port directory', href: '/ports', description: 'All 36 ports, searchable and filterable' },
-      { label: 'Network map', href: '/ports/map', description: 'Interactive map of services and calls' },
-      { label: 'Agency network', href: '/ports/agencies', description: 'Local offices and representatives' },
+      {
+        label: 'Port directory',
+        href: '/ports',
+        description: 'All 36 ports, searchable and filterable',
+      },
+      {
+        label: 'Network map',
+        href: '/ports/map',
+        description: 'Interactive map of services and calls',
+      },
+      {
+        label: 'Agency network',
+        href: '/ports/agencies',
+        description: 'Local offices and representatives',
+      },
     ],
   },
   {
     label: 'Equipment',
     href: '/equipment',
     children: [
-      { label: 'Containers', href: '/equipment/containers', description: 'Dry, high cube and open top' },
+      {
+        label: 'Containers',
+        href: '/equipment/containers',
+        description: 'Dry, high cube and open top',
+      },
       { label: 'Reefers', href: '/equipment/reefers', description: 'Temperature controlled units' },
-      { label: 'Flat racks', href: '/equipment/flat-racks', description: 'Out of gauge and heavy cargo' },
-      { label: 'Roll trailers', href: '/equipment/roll-trailers', description: 'Ro-Ro cargo carriers' },
-      { label: 'Packing guidance', href: '/equipment/packing', description: 'How to pack and secure a unit' },
+      {
+        label: 'Flat racks',
+        href: '/equipment/flat-racks',
+        description: 'Out of gauge and heavy cargo',
+      },
+      {
+        label: 'Roll trailers',
+        href: '/equipment/roll-trailers',
+        description: 'Ro-Ro cargo carriers',
+      },
+      {
+        label: 'Packing guidance',
+        href: '/equipment/packing',
+        description: 'How to pack and secure a unit',
+      },
     ],
   },
   {
     label: 'Resources',
     href: '/resources',
     children: [
-      { label: 'Arrival charges', href: '/resources/arrival-charges', description: 'Local charges by port' },
-      { label: 'Documentation', href: '/resources/documentation', description: 'Transport documents explained' },
-      { label: 'Downloads', href: '/resources/downloads', description: 'Data sheets and reference files' },
-      { label: 'Track a shipment', href: '/resources/tracking', description: 'Simulated tracking for exercises' },
-      { label: 'News and updates', href: '/resources/news', description: 'What has changed in the simulation' },
+      {
+        label: 'Arrival charges',
+        href: '/resources/arrival-charges',
+        description: 'Local charges by port',
+      },
+      {
+        label: 'Documentation',
+        href: '/resources/documentation',
+        description: 'Transport documents explained',
+      },
+      {
+        label: 'Downloads',
+        href: '/resources/downloads',
+        description: 'Data sheets and reference files',
+      },
+      {
+        label: 'Track a shipment',
+        href: '/resources/tracking',
+        description: 'Simulated tracking for exercises',
+      },
+      {
+        label: 'News and updates',
+        href: '/resources/news',
+        description: 'What has changed in the simulation',
+      },
     ],
   },
   {
     label: 'About',
     href: '/about',
     children: [
-      { label: 'About SDG Lines', href: '/about', description: 'What the simulation is and how to use it' },
-      { label: 'Port Virtual Lab', href: '/about/port-virtual-lab', description: 'The wider learning environment' },
-      { label: 'Sustainability', href: '/about/sustainability', description: 'The SDGs in the simulation' },
-      { label: 'Digitalisation', href: '/about/digitalisation', description: 'Digital operations in the simulation' },
+      {
+        label: 'About SDG Lines',
+        href: '/about',
+        description: 'What the simulation is and how to use it',
+      },
+      {
+        label: 'Port Virtual Lab',
+        href: '/about/port-virtual-lab',
+        description: 'The wider learning environment',
+      },
+      {
+        label: 'Sustainability',
+        href: '/about/sustainability',
+        description: 'The SDGs in the simulation',
+      },
+      {
+        label: 'Digitalisation',
+        href: '/about/digitalisation',
+        description: 'Digital operations in the simulation',
+      },
       { label: 'Quality', href: '/about/quality', description: 'How the content is reviewed' },
       { label: 'Legal notice', href: '/legal', description: 'Copyright, trademarks and licence' },
     ],

@@ -1,0 +1,51 @@
+Copyright (c) Escola Europea de Short Sea Shipping AEIE
+Moll de Barcelona - Terminal Drassanes, 08039 Barcelona, Spain
+
+This work is licensed under the Creative Commons
+Attribution-NonCommercial-NoDerivatives 4.0 International License.
+
+To view a copy of this license, visit:
+https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+-------------------------------------------------------------------------------
+
+You are free to:
+
+  Share -- copy and redistribute the material in any medium or format.
+
+Under the following terms:
+
+  Attribution     -- You must give appropriate credit, provide a link to the
+                     license, and indicate if changes were made.
+  NonCommercial   -- You may not use the material for commercial purposes.
+  NoDerivatives   -- If you remix, transform, or build upon the material, you
+                     may not distribute the modified material.
+
+-------------------------------------------------------------------------------
+
+TRADEMARKS
+
+The Port Virtual Lab(R) name and mark, along with SDG Lines(R), SDG Airlines(R),
+MEDtrade(R) and Playforwarding(R), are owned by Escola Europea de Short Sea
+Shipping AEIE. This license does not grant permission to use these marks.
+
+-------------------------------------------------------------------------------
+
+THIRD PARTY COMPONENTS
+
+This project depends on open source software distributed under its own licenses,
+including Astro (MIT), React (MIT), Tailwind CSS (MIT), Leaflet (BSD-2-Clause),
+and the Inter, Space Grotesk and JetBrains Mono typefaces (SIL Open Font
+License 1.1). Their licenses apply to those components and are included with
+them in node_modules.
+
+Map tiles displayed on the network map are provided by OpenStreetMap
+contributors under the Open Database License.
+
+-------------------------------------------------------------------------------
+
+NOTICE
+
+SDG Lines is an educational simulation. It does not provide real transport
+services. Nothing in this repository constitutes a commercial offer, a contract
+of carriage, a quotation, a tariff, or professional advice of any kind.

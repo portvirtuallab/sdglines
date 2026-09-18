@@ -1,0 +1,48 @@
+name: Bug
+description: Something on the site does not work
+labels: [bug, needs-review]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting this. If the problem stopped you completing a training exercise,
+        please say so: that raises the priority.
+  - type: input
+    id: page
+    attributes:
+      label: Page address
+      placeholder: /ports/barcelona
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected to happen
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open /ports
+        2. Type "tunisia" into the search field
+        3. ...
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Chrome 140 on Android, or Safari on an iPad
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact
+      options:
+        - label: This stopped someone completing a training exercise
+        - label: This is an accessibility barrier

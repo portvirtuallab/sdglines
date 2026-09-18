@@ -40,12 +40,7 @@ const EQUIPMENT_FAMILY_SLUG: Record<string, string> = {
 };
 
 function normalise(...parts: (string | undefined)[]): string {
-  return parts
-    .filter(Boolean)
-    .join(' ')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '');
+  return parts.filter(Boolean).join(' ').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 }
 
 export const searchIndex: SearchEntry[] = [

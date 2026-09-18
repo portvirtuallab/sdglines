@@ -1,0 +1,10 @@
+# SDG Lines is an educational simulation operated by Escola Europea.
+# It does not provide real transport services.
+
+User-agent: *
+Allow: /
+
+# The search page produces no content of its own.
+Disallow: /search
+
+Sitemap: https://portvirtuallab.github.io/sdglines/sitemap-index.xml

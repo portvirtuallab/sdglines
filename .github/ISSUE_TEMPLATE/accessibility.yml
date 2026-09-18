@@ -1,0 +1,34 @@
+name: Accessibility barrier
+description: Something on the site cannot be used
+labels: [accessibility, needs-review]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A barrier that stops someone completing an exercise is treated as a defect, not as a feature
+        request. Thank you for telling us.
+  - type: input
+    id: page
+    attributes:
+      label: Page address
+    validations:
+      required: true
+  - type: textarea
+    id: barrier
+    attributes:
+      label: What you were trying to do, and what stopped you
+    validations:
+      required: true
+  - type: input
+    id: technology
+    attributes:
+      label: Browser and assistive technology
+      placeholder: Firefox with NVDA, or Safari with VoiceOver, or keyboard only
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Blocks the task entirely
+        - Makes the task much harder
+        - Noticeable but workable
