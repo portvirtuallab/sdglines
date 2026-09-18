@@ -116,10 +116,10 @@ const accessibleDescription =
     <defs>
       <!-- A soft glow so that route lines stay legible where they cross. -->
       <filter id={`${chartId}-glow`} x="-20%" y="-20%" width="140%" height="140%">
-        <feGaussianBlur stdDeviation="6" result="blur" />
+        <feGaussianBlur stdDeviation="6" result="blur"></feGaussianBlur>
         <feMerge>
-          <feMergeNode in="blur" />
-          <feMergeNode in="SourceGraphic" />
+          <feMergeNode in="blur"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
         </feMerge>
       </filter>
     </defs>
@@ -141,7 +141,12 @@ const accessibleDescription =
     </g>
 
     <!-- Graticule labels, in the degree notation used on charts -->
-    <g font-family="JetBrains Mono Variable, monospace" font-size="13" fill="currentColor" opacity="0.32">
+    <g
+      font-family="JetBrains Mono Variable, monospace"
+      font-size="13"
+      fill="currentColor"
+      opacity="0.32"
+    >
       {
         parallels.map((lat) => {
           const [, y] = project([lat, west]);

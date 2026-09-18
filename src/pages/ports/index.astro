@@ -30,7 +30,10 @@ const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
 
   <div class="shell py-10 lg:py-14">
     <!-- Filters -->
-    <section aria-labelledby="filters-heading" class="rounded-2xl border border-navy-100 bg-navy-50/60 p-5 sm:p-6">
+    <section
+      aria-labelledby="filters-heading"
+      class="rounded-2xl border border-navy-100 bg-navy-50/60 p-5 sm:p-6"
+    >
       <h2 id="filters-heading" class="font-display text-base font-semibold text-navy-900">
         Find a port
       </h2>
@@ -45,7 +48,7 @@ const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
             type="search"
             autocomplete="off"
             placeholder="Barcelona, Tunisia, LOCODE..."
-            class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 placeholder:text-navy-400 focus:border-sea-600"
+            class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 placeholder:text-navy-500 focus:border-sea-600"
             data-port-search
           />
         </div>
@@ -188,7 +191,7 @@ const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
                   data-country-filter={country}
                 >
                   {country}
-                  <span class="font-mono text-xs text-navy-400">{count}</span>
+                  <span class="font-mono text-xs text-navy-500">{count}</span>
                 </button>
               </li>
             );
@@ -215,7 +218,9 @@ const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
     const countEl = document.querySelector<HTMLElement>('[data-port-count]');
     const emptyEl = document.querySelector<HTMLElement>('[data-port-empty]');
     const listEl = document.querySelector<HTMLElement>('[data-port-list]');
-    const resetButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-port-reset]'));
+    const resetButtons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>('[data-port-reset]'),
+    );
 
     if (!search || !regionSelect || !serviceSelect || cards.length === 0) return;
 
@@ -278,7 +283,9 @@ const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
         regionSelect.value = '';
         serviceSelect.value = '';
         apply();
-        document.querySelector('[data-port-list]')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document
+          .querySelector('[data-port-list]')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     }
 

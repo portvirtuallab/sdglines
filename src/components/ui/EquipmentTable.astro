@@ -17,7 +17,14 @@ interface Props {
 const { items, caption } = Astro.props;
 ---
 
-<div class="overflow-x-auto rounded-xl border border-navy-100">
+<!-- tabindex makes the horizontally scrolling table reachable by keyboard,
+     which WCAG 2.2 requires of any scrollable region. -->
+<div
+  class="overflow-x-auto rounded-xl border border-navy-100"
+  tabindex="0"
+  role="region"
+  aria-label={caption}
+>
   <table class="w-full min-w-[52rem] text-left text-sm">
     <caption class="sr-only">{caption}</caption>
     <thead class="bg-navy-50 text-xs uppercase tracking-wide text-navy-600">
@@ -45,10 +52,10 @@ const { items, caption } = Astro.props;
                 {item.name}
               </th>
               <td class="px-4 py-3 font-mono text-xs text-navy-700">
-                {item.isoCode ?? <span class="text-navy-400">Not standardised</span>}
+                {item.isoCode ?? <span class="text-navy-500">Not standardised</span>}
               </td>
               <td
-                class={`px-4 py-3 font-mono text-xs ${internal === TO_BE_CONFIRMED ? 'text-navy-400' : 'text-navy-800'}`}
+                class={`px-4 py-3 font-mono text-xs ${internal === TO_BE_CONFIRMED ? 'text-navy-500' : 'text-navy-800'}`}
               >
                 {internal}
               </td>

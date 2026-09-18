@@ -24,8 +24,14 @@ interface Props {
   class?: string;
 }
 
-const { eyebrow, title, intro, breadcrumbs = [], tone = 'light', class: className = '' } =
-  Astro.props;
+const {
+  eyebrow,
+  title,
+  intro,
+  breadcrumbs = [],
+  tone = 'light',
+  class: className = '',
+} = Astro.props;
 
 const isDark = tone === 'dark';
 ---

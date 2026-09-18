@@ -27,13 +27,7 @@ import { CAPABILITY_LABELS } from '@/lib/labels';
  * nothing.
  */
 const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
-const cargoTypes = [
-  'containers',
-  'roro',
-  'reefer',
-  'dangerous-goods',
-  'project-cargo',
-] as const;
+const cargoTypes = ['containers', 'roro', 'reefer', 'dangerous-goods', 'project-cargo'] as const;
 ---
 
 <BaseLayout
@@ -96,7 +90,12 @@ const cargoTypes = [
                     ))
                   }
                 </select>
-                <p class="mt-1 hidden text-sm text-signal-700" id="origin-error" data-error-for="origin"></p>
+                <p
+                  class="mt-1 hidden text-sm text-signal-700"
+                  id="origin-error"
+                  data-error-for="origin"
+                >
+                </p>
               </div>
 
               <div>
@@ -171,7 +170,11 @@ const cargoTypes = [
                   class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
                 >
                   <option value="">Select a cargo type</option>
-                  {cargoTypes.map((type) => <option value={type}>{CAPABILITY_LABELS[type]}</option>)}
+                  {
+                    cargoTypes.map((type) => (
+                      <option value={type}>{CAPABILITY_LABELS[type]}</option>
+                    ))
+                  }
                 </select>
                 <p
                   class="mt-1 hidden text-sm text-signal-700"
@@ -219,7 +222,12 @@ const cargoTypes = [
                   aria-describedby="units-error"
                   class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
                 />
-                <p class="mt-1 hidden text-sm text-signal-700" id="units-error" data-error-for="units"></p>
+                <p
+                  class="mt-1 hidden text-sm text-signal-700"
+                  id="units-error"
+                  data-error-for="units"
+                >
+                </p>
               </div>
 
               <div>
@@ -238,7 +246,12 @@ const cargoTypes = [
                 <p id="weight-hint" class="mt-1 text-sm text-navy-500">
                   Cargo plus the tare of the units.
                 </p>
-                <p class="mt-1 hidden text-sm text-signal-700" id="weight-error" data-error-for="weight"></p>
+                <p
+                  class="mt-1 hidden text-sm text-signal-700"
+                  id="weight-error"
+                  data-error-for="weight"
+                >
+                </p>
               </div>
 
               <div>
@@ -350,7 +363,8 @@ const cargoTypes = [
             </div>
             <div class="px-6 py-6">
               <p class="text-xs uppercase tracking-wide text-navy-500">Quotation reference</p>
-              <p class="mt-1 font-mono text-2xl font-semibold text-navy-900" data-result-reference></p>
+              <p class="mt-1 font-mono text-2xl font-semibold text-navy-900" data-result-reference>
+              </p>
 
               <dl
                 class="mt-6 grid gap-px overflow-hidden rounded-xl border border-navy-100 bg-navy-100 sm:grid-cols-2"
@@ -400,7 +414,9 @@ const cargoTypes = [
               <span class="text-sea-600" aria-hidden="true">1.</span>
               <span>
                 Check that both ports are on the same service, or that a transhipment point connects
-                them. The <a href={url('/routes')} class="text-sea-700 underline underline-offset-4">route pages</a> show every rotation.
+                them. The <a href={url('/routes')} class="text-sea-700 underline underline-offset-4"
+                  >route pages</a
+                > show every rotation.
               </span>
             </li>
             <li class="flex gap-2.5">
@@ -490,7 +506,8 @@ const cargoTypes = [
       validate: (value) => {
         if (!value) return 'Enter how many units you need.';
         const count = Number(value);
-        if (!Number.isInteger(count) || count < 1) return 'Enter a whole number of units, at least 1.';
+        if (!Number.isInteger(count) || count < 1)
+          return 'Enter a whole number of units, at least 1.';
         if (count > 500) return 'Enter 500 units or fewer. For larger shipments, ask your trainer.';
         return null;
       },
@@ -501,7 +518,8 @@ const cargoTypes = [
       validate: (value) => {
         if (!value) return null; // Optional.
         const weight = Number(value);
-        if (Number.isNaN(weight) || weight <= 0) return 'Enter the gross weight in kilograms, or leave it empty.';
+        if (Number.isNaN(weight) || weight <= 0)
+          return 'Enter the gross weight in kilograms, or leave it empty.';
         return null;
       },
     },

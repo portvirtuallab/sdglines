@@ -57,7 +57,9 @@ const nextVessel = vessels[fleetIndex + 1];
     tone="dark"
     breadcrumbs={[{ label: 'Fleet', href: '/fleet' }, { label: vessel.name }]}
   >
-    <dl class="mt-8 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-navy-700 bg-navy-700 sm:grid-cols-4">
+    <dl
+      class="mt-8 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-navy-700 bg-navy-700 sm:grid-cols-4"
+    >
       <div class="bg-navy-800 px-4 py-3.5">
         <dt class="text-xs uppercase tracking-wide text-navy-300">IMO</dt>
         <dd class="mt-1 font-mono text-lg font-semibold text-white">{vessel.imo}</dd>
@@ -102,7 +104,9 @@ const nextVessel = vessels[fleetIndex + 1];
         <!-- Identification -->
         <section aria-labelledby="identification-heading" class="mt-12">
           <h2 id="identification-heading" class="text-2xl">Identification</h2>
-          <dl class="mt-5 grid gap-px overflow-hidden rounded-xl border border-navy-100 bg-navy-100 sm:grid-cols-2">
+          <dl
+            class="mt-5 grid gap-px overflow-hidden rounded-xl border border-navy-100 bg-navy-100 sm:grid-cols-2"
+          >
             <div class="bg-white px-5 py-4">
               <dt class="text-xs uppercase tracking-wide text-navy-500">Vessel type</dt>
               <dd class="mt-1 font-medium text-navy-900">
@@ -143,7 +147,12 @@ const nextVessel = vessels[fleetIndex + 1];
                 </p>
               </div>
             ) : (
-              <div class="mt-5 overflow-x-auto rounded-xl border border-navy-100">
+              <div
+                class="mt-5 overflow-x-auto rounded-xl border border-navy-100"
+                tabindex="0"
+                role="region"
+                aria-label={`Technical particulars of ${vessel.name}`}
+              >
                 <table class="w-full text-left text-sm">
                   <caption class="sr-only">Technical particulars of {vessel.name}</caption>
                   <tbody class="divide-y divide-navy-100">
@@ -226,7 +235,10 @@ const nextVessel = vessels[fleetIndex + 1];
         </section>
 
         <!-- Previous and next -->
-        <nav class="mt-14 flex flex-wrap justify-between gap-4 border-t border-navy-100 pt-6" aria-label="Fleet">
+        <nav
+          class="mt-14 flex flex-wrap justify-between gap-4 border-t border-navy-100 pt-6"
+          aria-label="Fleet"
+        >
           {
             previousVessel ? (
               <a

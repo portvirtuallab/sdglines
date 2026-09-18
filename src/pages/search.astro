@@ -42,7 +42,7 @@ const indexJson = JSON.stringify(searchIndex);
       </label>
       <div class="relative mt-1.5">
         <svg
-          class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-navy-400"
+          class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-navy-500"
           viewBox="0 0 20 20"
           fill="none"
           stroke="currentColor"
@@ -59,7 +59,7 @@ const indexJson = JSON.stringify(searchIndex);
           autofocus
           placeholder="Barcelona, Eastmed, reefer, THC, IMO 1999870..."
           aria-describedby="search-hint"
-          class="tap-target w-full rounded-xl border border-navy-200 bg-white py-3 pl-11 pr-4 text-base text-navy-900 placeholder:text-navy-400 focus:border-sea-600"
+          class="tap-target w-full rounded-xl border border-navy-200 bg-white py-3 pl-11 pr-4 text-base text-navy-900 placeholder:text-navy-500 focus:border-sea-600"
           data-search-input
         />
       </div>
@@ -110,7 +110,7 @@ const indexJson = JSON.stringify(searchIndex);
             <section aria-labelledby={`group-${type}`}>
               <h2 id={`group-${type}`} class="text-xl">
                 {type === 'Page' ? 'Pages' : `${type}s`}
-                <span class="ml-2 font-mono text-sm font-normal text-navy-400">
+                <span class="ml-2 font-mono text-sm font-normal text-navy-500">
                   {grouped[type].length}
                 </span>
               </h2>
@@ -161,11 +161,7 @@ const indexJson = JSON.stringify(searchIndex);
 
   /** Strip accents and case so that "Durres" finds "Durrës". */
   function fold(value: string): string {
-    return value
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[̀-ͯ]/g, '')
-      .trim();
+    return value.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
   }
 
   /**
@@ -237,7 +233,9 @@ const indexJson = JSON.stringify(searchIndex);
 
       if (statusEl) {
         statusEl.textContent =
-          matches.length === 1 ? `1 result for "${query}".` : `${matches.length} results for "${query}".`;
+          matches.length === 1
+            ? `1 result for "${query}".`
+            : `${matches.length} results for "${query}".`;
       }
 
       const list = document.createElement('ul');

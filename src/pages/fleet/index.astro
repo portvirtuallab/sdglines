@@ -133,7 +133,12 @@ const vesselTypes = [...new Set(vessels.map((v) => v.vesselType))];
         simulation.
       </p>
 
-      <div class="mt-5 overflow-x-auto rounded-xl border border-navy-100">
+      <div
+        class="mt-5 overflow-x-auto rounded-xl border border-navy-100"
+        tabindex="0"
+        role="region"
+        aria-label="Fleet register"
+      >
         <table class="w-full min-w-[46rem] text-left text-sm">
           <caption class="sr-only">
             SDG Lines fleet register: vessel, type, class, IMO number, MMSI, call sign, year

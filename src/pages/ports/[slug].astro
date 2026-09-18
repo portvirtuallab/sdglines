@@ -6,7 +6,12 @@ import SimulationNotice from '@/components/layout/SimulationNotice.astro';
 import { ports, getPortById } from '@/data/ports';
 import { getServiceById } from '@/data/services';
 import { url } from '@/lib/site';
-import { CAPABILITY_DESCRIPTIONS, CAPABILITY_LABELS, formatNumber, TO_BE_CONFIRMED } from '@/lib/labels';
+import {
+  CAPABILITY_DESCRIPTIONS,
+  CAPABILITY_LABELS,
+  formatNumber,
+  TO_BE_CONFIRMED,
+} from '@/lib/labels';
 
 /** One page per port of call. */
 export function getStaticPaths() {
@@ -65,7 +70,8 @@ const structuredData = JSON.stringify({
   additionalProperty: {
     '@type': 'PropertyValue',
     name: 'Educational simulation',
-    value: 'This port page is part of an educational simulation and does not describe a commercial service.',
+    value:
+      'This port page is part of an educational simulation and does not describe a commercial service.',
   },
 });
 ---
@@ -89,7 +95,9 @@ const structuredData = JSON.stringify({
         <section aria-labelledby="particulars-heading">
           <h2 id="particulars-heading" class="text-2xl">Port details</h2>
 
-          <dl class="mt-5 grid gap-px overflow-hidden rounded-xl border border-navy-100 bg-navy-100 sm:grid-cols-2">
+          <dl
+            class="mt-5 grid gap-px overflow-hidden rounded-xl border border-navy-100 bg-navy-100 sm:grid-cols-2"
+          >
             <div class="bg-white px-5 py-4">
               <dt class="text-xs uppercase tracking-wide text-navy-500">Country</dt>
               <dd class="mt-1 font-medium text-navy-900">{port.country}</dd>
@@ -107,7 +115,8 @@ const structuredData = JSON.stringify({
             <div class="bg-white px-5 py-4">
               <dt class="text-xs uppercase tracking-wide text-navy-500">Position</dt>
               <dd class="mt-1 font-mono text-sm font-medium text-navy-900">
-                {formatCoordinate(latitude, 'N', 'S')} {formatCoordinate(longitude, 'E', 'W')}
+                {formatCoordinate(latitude, 'N', 'S')}
+                {formatCoordinate(longitude, 'E', 'W')}
               </dd>
             </div>
             <div class="bg-white px-5 py-4 sm:col-span-2">
@@ -115,7 +124,11 @@ const structuredData = JSON.stringify({
                 Annual container throughput
               </dt>
               <dd class="mt-1 font-medium text-navy-900">
-                {port.annualThroughputTeu ? `${formatNumber(port.annualThroughputTeu)} TEU` : TO_BE_CONFIRMED}
+                {
+                  port.annualThroughputTeu
+                    ? `${formatNumber(port.annualThroughputTeu)} TEU`
+                    : TO_BE_CONFIRMED
+                }
               </dd>
             </div>
           </dl>
@@ -127,9 +140,11 @@ const structuredData = JSON.stringify({
         <section aria-labelledby="services-heading" class="mt-12">
           <h2 id="services-heading" class="text-2xl">Services calling here</h2>
           <p class="mt-2 text-navy-600">
-            {callingServices.length === 1
-              ? 'One service calls at this port.'
-              : `${callingServices.length} services call at this port.`}
+            {
+              callingServices.length === 1
+                ? 'One service calls at this port.'
+                : `${callingServices.length} services call at this port.`
+            }
           </p>
 
           <ul class="mt-5 space-y-3">
@@ -192,7 +207,9 @@ const structuredData = JSON.stringify({
         {
           connectedPorts.size > 0 && (
             <section aria-labelledby="connections-heading" class="mt-12">
-              <h2 id="connections-heading" class="text-2xl">Direct connections</h2>
+              <h2 id="connections-heading" class="text-2xl">
+                Direct connections
+              </h2>
               <p class="mt-2 text-navy-600">
                 Ports reached immediately before or after {port.name} on a rotation.
               </p>

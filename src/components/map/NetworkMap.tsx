@@ -47,10 +47,7 @@ export default function NetworkMap({ ports, services, base }: Props) {
   const [activeService, setActiveService] = useState<string | null>(null);
   const [status, setStatus] = useState<'loading' | 'ready' | 'failed'>('loading');
 
-  const portsById = useMemo(
-    () => new Map(ports.map((port) => [port.id, port])),
-    [ports],
-  );
+  const portsById = useMemo(() => new Map(ports.map((port) => [port.id, port])), [ports]);
 
   useEffect(() => {
     let cancelled = false;

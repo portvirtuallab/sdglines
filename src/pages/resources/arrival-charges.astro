@@ -93,8 +93,7 @@ const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
               <div class="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h3 class="font-display text-lg font-semibold text-navy-900">
-                    <span class="font-mono text-sm text-sea-700">{charge.code}</span>{' '}
-                    {charge.name}
+                    <span class="font-mono text-sm text-sea-700">{charge.code}</span> {charge.name}
                   </h3>
                 </div>
                 <dl class="flex flex-wrap gap-x-6 gap-y-1 text-sm">
@@ -184,9 +183,8 @@ const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
     <section aria-labelledby="ports-heading" class="mt-14 border-t border-navy-100 pt-10">
       <h2 id="ports-heading" class="text-2xl">Charges by port</h2>
       <p class="mt-2 max-w-2xl text-navy-600">
-        The charge types above apply across the network. Local variation, currency and the tariff
-        in force are recorded per port. Open a port to see its agency and the services calling
-        there.
+        The charge types above apply across the network. Local variation, currency and the tariff in
+        force are recorded per port. Open a port to see its agency and the services calling there.
       </p>
 
       <ul class="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -198,7 +196,7 @@ const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
                 class="tap-target flex items-center justify-between gap-3 rounded-lg border border-navy-100 px-4 transition-colors duration-(--duration-fast) hover:border-sea-300 hover:bg-sea-50/40"
               >
                 <span class="text-sm font-medium text-navy-900">{port.displayName}</span>
-                <span class="font-mono text-xs text-navy-400">{port.locode}</span>
+                <span class="font-mono text-xs text-navy-500">{port.locode}</span>
               </a>
             </li>
           ))

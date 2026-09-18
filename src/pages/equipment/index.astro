@@ -19,7 +19,9 @@ const groups = [
     heading: 'Containers',
     intro:
       'Closed steel boxes for general cargo. The choice between them comes down to whether the cargo runs out of weight or runs out of space first.',
-    items: equipment.filter((item) => item.category === 'container' || item.category === 'open-top'),
+    items: equipment.filter(
+      (item) => item.category === 'container' || item.category === 'open-top',
+    ),
   },
   {
     slug: 'reefers',
@@ -113,7 +115,7 @@ const groups = [
                   <ul class="mt-4 space-y-1 border-t border-navy-100 pt-3 text-xs text-navy-600">
                     {item.typicalUse.map((use) => (
                       <li class="flex gap-2">
-                        <span class="text-navy-300" aria-hidden="true">
+                        <span class="text-navy-400" aria-hidden="true">
                           &bull;
                         </span>
                         {use}

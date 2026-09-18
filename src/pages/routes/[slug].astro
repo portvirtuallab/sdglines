@@ -66,7 +66,9 @@ const countries = [...new Set(rotationPorts.map((entry) => entry.port.country))]
     breadcrumbs={[{ label: 'Routes', href: '/routes' }, { label: service.name }]}
     tone="dark"
   >
-    <dl class="mt-8 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-navy-700 bg-navy-700 sm:grid-cols-4">
+    <dl
+      class="mt-8 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-navy-700 bg-navy-700 sm:grid-cols-4"
+    >
       <div class="bg-navy-800 px-4 py-3.5">
         <dt class="text-xs uppercase tracking-wide text-navy-300">Ports of call</dt>
         <dd class="mt-1 font-display text-xl font-semibold text-white">
@@ -127,7 +129,12 @@ const countries = [...new Set(rotationPorts.map((entry) => entry.port.country))]
             Ports in rotation order. Transit times are not yet published for this service.
           </p>
 
-          <div class="mt-5 overflow-x-auto rounded-xl border border-navy-100">
+          <div
+            class="mt-5 overflow-x-auto rounded-xl border border-navy-100"
+            tabindex="0"
+            role="region"
+            aria-label={`${service.name} rotation`}
+          >
             <table class="w-full min-w-[34rem] text-left text-sm">
               <caption class="sr-only">
                 {service.name} rotation: port, country, region and transit time from the first port
@@ -199,8 +206,8 @@ const countries = [...new Set(rotationPorts.map((entry) => entry.port.country))]
                         {vessel.imo}
                       </p>
                       <p class="mt-3 text-sm text-navy-600">
-                        Named after {vessel.namesake.fullName}, {vessel.namesake.field.toLowerCase()}
-                        .
+                        Named after {vessel.namesake.fullName},{' '}
+                        {vessel.namesake.field.toLowerCase()}.
                       </p>
                     </a>
                   </li>

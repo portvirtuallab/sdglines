@@ -19,7 +19,11 @@ const showContents = page.sections.length > 2;
     <div class="min-w-0 max-w-3xl">
       {
         page.sections.map((section) => (
-          <section aria-labelledby={`${section.id}-heading`} class="mb-12 scroll-mt-28" id={section.id}>
+          <section
+            aria-labelledby={`${section.id}-heading`}
+            class="mb-12 scroll-mt-28"
+            id={section.id}
+          >
             <h2 id={`${section.id}-heading`} class="text-2xl">
               {section.heading}
             </h2>
@@ -35,7 +39,10 @@ const showContents = page.sections.length > 2;
 
     {
       showContents && (
-        <nav aria-labelledby="contents-heading" class="lg:sticky lg:top-28 lg:order-last lg:self-start">
+        <nav
+          aria-labelledby="contents-heading"
+          class="lg:sticky lg:top-28 lg:order-last lg:self-start"
+        >
           <h2
             id="contents-heading"
             class="font-display text-xs font-semibold uppercase tracking-[0.12em] text-navy-500"

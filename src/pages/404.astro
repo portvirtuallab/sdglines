@@ -17,8 +17,16 @@ const destinations = [
   { label: 'Routes', href: '/routes', description: 'The five services and their rotations' },
   { label: 'Port directory', href: '/ports', description: 'All 36 ports of call' },
   { label: 'The fleet', href: '/fleet', description: 'Fourteen vessels and their register' },
-  { label: 'Equipment', href: '/equipment', description: 'Containers, reefers, racks and trailers' },
-  { label: 'Arrival charges', href: '/resources/arrival-charges', description: 'Local charges explained' },
+  {
+    label: 'Equipment',
+    href: '/equipment',
+    description: 'Containers, reefers, racks and trailers',
+  },
+  {
+    label: 'Arrival charges',
+    href: '/resources/arrival-charges',
+    description: 'Local charges explained',
+  },
   { label: 'Request a quotation', href: '/quote', description: 'Build a simulated quotation' },
 ];
 ---
@@ -50,7 +58,7 @@ const destinations = [
             type="search"
             autocomplete="off"
             placeholder="Port, route, vessel, container type..."
-            class="tap-target w-full rounded-lg border border-navy-200 bg-white px-4 text-base text-navy-900 placeholder:text-navy-400 focus:border-sea-600"
+            class="tap-target w-full rounded-lg border border-navy-200 bg-white px-4 text-base text-navy-900 placeholder:text-navy-500 focus:border-sea-600"
           />
           <button
             type="submit"

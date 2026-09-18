@@ -74,11 +74,7 @@ function isActiveSection(href: string): boolean {
                 )}
               </button>
 
-              <div
-                class="absolute left-0 top-full hidden w-80 pt-2"
-                data-nav-panel
-                hidden
-              >
+              <div class="absolute left-0 top-full hidden w-80 pt-2" data-nav-panel hidden>
                 <div class="rounded-xl border border-navy-700 bg-navy-800 p-2 shadow-2xl shadow-navy-950/50">
                   <a
                     href={url(section.href)}
@@ -292,6 +288,9 @@ function isActiveSection(href: string): boolean {
         const trigger = item.querySelector<HTMLButtonElement>('[data-nav-trigger]');
         const panel = item.querySelector<HTMLElement>('[data-nav-panel]');
         if (!trigger || !panel) continue;
+        // Clearing the marker matters: a panel left flagged as click-opened
+        // would refuse to open on hover afterwards.
+        delete item.dataset.openedBy;
         trigger.setAttribute('aria-expanded', 'false');
         panel.hidden = true;
         panel.classList.add('hidden');
@@ -303,31 +302,55 @@ function isActiveSection(href: string): boolean {
       const panel = item.querySelector<HTMLElement>('[data-nav-panel]');
       if (!trigger || !panel) continue;
 
-      trigger.addEventListener('click', () => {
-        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+      function open(reason: 'hover' | 'click'): void {
         closeAllPanels(item);
-        trigger.setAttribute('aria-expanded', String(!isOpen));
-        panel.hidden = isOpen;
-        panel.classList.toggle('hidden', isOpen);
+        item.dataset.openedBy = reason;
+        trigger!.setAttribute('aria-expanded', 'true');
+        panel!.hidden = false;
+        panel!.classList.remove('hidden');
+      }
+
+      function close(): void {
+        delete item.dataset.openedBy;
+        trigger!.setAttribute('aria-expanded', 'false');
+        panel!.hidden = true;
+        panel!.classList.add('hidden');
+      }
+
+      trigger.addEventListener('click', () => {
+        // A pointer user reaches the trigger by moving over it, which has
+        // already opened the panel on hover. Treating that as "open" and
+        // toggling it shut would mean the panel closes the instant it is
+        // clicked. So a click on a hover-opened panel pins it instead, and only
+        // a click on a panel the user opened deliberately closes it.
+        if (item.dataset.openedBy === 'hover') {
+          item.dataset.openedBy = 'click';
+          return;
+        }
+
+        if (item.dataset.openedBy === 'click') {
+          close();
+          return;
+        }
+
+        open('click');
       });
 
       // Opening on hover is a convenience for pointer users. It never replaces
       // the click behaviour, so keyboard and touch are unaffected.
       item.addEventListener('mouseenter', () => {
         if (!window.matchMedia('(hover: hover) and (min-width: 1024px)').matches) return;
-        closeAllPanels(item);
-        trigger.setAttribute('aria-expanded', 'true');
-        panel.hidden = false;
-        panel.classList.remove('hidden');
+        if (item.dataset.openedBy === 'click') return;
+        open('hover');
       });
 
       item.addEventListener('mouseleave', () => {
         if (!window.matchMedia('(hover: hover) and (min-width: 1024px)').matches) return;
+        // A panel the user clicked open stays open until they close it.
+        if (item.dataset.openedBy === 'click') return;
         // Leave the panel open while focus is still inside it.
         if (item.contains(document.activeElement)) return;
-        trigger.setAttribute('aria-expanded', 'false');
-        panel.hidden = true;
-        panel.classList.add('hidden');
+        close();
       });
 
       // Moving focus out of the section closes it, so tabbing through the

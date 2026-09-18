@@ -56,7 +56,7 @@ const totalCalls = services.reduce((sum, service) => sum + service.rotation.leng
           }
         </ul>
 
-        <p class="mt-4 text-xs leading-relaxed text-navy-300">
+        <p class="mt-4 text-xs leading-relaxed text-navy-200">
           The chart covers Europe, the Mediterranean and North Africa. The EurAsia service continues
           beyond these bounds to the Red Sea, the Arabian Gulf, India and Korea; those calls are
           listed in full on the EurAsia page.
@@ -122,13 +122,13 @@ const totalCalls = services.reduce((sum, service) => sum + service.rotation.leng
                             href={url(`/ports/${port.slug}`)}
                             class="rounded-md bg-navy-50 px-2.5 py-1 text-sm font-medium text-navy-800 transition-colors duration-(--duration-fast) hover:bg-sea-50 hover:text-sea-800"
                           >
-                            <span class="font-mono text-[0.6875rem] text-navy-400">
+                            <span class="font-mono text-[0.6875rem] text-navy-500">
                               {String(index + 1).padStart(2, '0')}
                             </span>{' '}
                             {port.name}
                           </a>
                           {index < service.rotation.length - 1 && (
-                            <span class="text-navy-300" aria-hidden="true">
+                            <span class="text-navy-400" aria-hidden="true">
                               &rarr;
                             </span>
                           )}
