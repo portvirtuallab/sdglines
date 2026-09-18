@@ -1,0 +1,252 @@
+---
+import { getPortById, ports as allPorts } from '@/data/ports';
+import { services as allServices } from '@/data/services';
+import type { Port, Service } from '@/types/content';
+
+/**
+ * A chart of the SDG Lines network, drawn as inline SVG.
+ *
+ * Why not a slippy map here: this component appears above the fold on the home
+ * page and on every route page. A tile map would pull in a mapping library plus
+ * a stream of tile requests before the visitor has read the first sentence, and
+ * it would put the network behind a third party service. This draws the real
+ * coordinates of the real ports and costs one request: the page itself. The
+ * full interactive map lives at /ports/map, loaded only when asked for.
+ *
+ * Projection: equirectangular. Over the Mediterranean the distortion is small
+ * enough that the shape of the network reads correctly, and the maths stays
+ * simple enough to verify by hand.
+ *
+ * Accessibility: this is a supporting illustration, never the only route to the
+ * information. Every page that uses it also renders the same rotation as an
+ * ordered list or a table, and the SVG itself is marked up as an image with a
+ * text description rather than as a set of interactive nodes.
+ */
+interface Props {
+  /** Ids of the services to draw. Defaults to all five. */
+  serviceIds?: string[];
+  /** Geographic bounds as [west, south, east, north] in degrees. */
+  bounds?: [number, number, number, number];
+  /** Label each plotted port. Switched off on small decorative instances. */
+  showLabels?: boolean;
+  /** Animate the route lines drawing in. Respects prefers-reduced-motion. */
+  animate?: boolean;
+  /** Accessible description of what the chart shows. */
+  description?: string;
+  class?: string;
+}
+
+const {
+  serviceIds,
+  bounds = [-19, 26, 42, 57],
+  showLabels = true,
+  animate = false,
+  description,
+  class: className = '',
+} = Astro.props;
+
+const services: Service[] = serviceIds
+  ? allServices.filter((service) => serviceIds.includes(service.id))
+  : allServices;
+
+const [west, south, east, north] = bounds;
+
+/** SVG canvas. The aspect ratio follows the geographic bounds. */
+const VIEW_W = 1000;
+const VIEW_H = Math.round((VIEW_W * (north - south)) / (east - west));
+
+/** Project [latitude, longitude] into SVG user units. */
+function project([lat, lon]: [number, number]): [number, number] {
+  const x = ((lon - west) / (east - west)) * VIEW_W;
+  // Latitude grows northwards, the SVG y axis grows downwards.
+  const y = ((north - lat) / (north - south)) * VIEW_H;
+  return [Number(x.toFixed(1)), Number(y.toFixed(1))];
+}
+
+/** True when a port falls inside the drawn bounds. */
+function isInBounds(port: Port): boolean {
+  const [lat, lon] = port.coordinates;
+  return lon >= west && lon <= east && lat >= south && lat <= north;
+}
+
+/** One polyline per service, clipped to the ports inside the bounds. */
+const routeLines = services.map((service) => {
+  const points = service.rotation
+    .map((call) => getPortById(call.portId))
+    .filter((port): port is Port => Boolean(port) && isInBounds(port!))
+    .map((port) => project(port.coordinates));
+
+  return {
+    id: service.id,
+    name: service.name,
+    color: service.mapColor,
+    /** Total path length is unknown ahead of time; 4000 comfortably exceeds it
+        and makes the dash animation start fully hidden. */
+    d: points.map(([x, y], i) => `${i === 0 ? 'M' : 'L'}${x} ${y}`).join(' '),
+    pointCount: points.length,
+  };
+});
+
+/** Every port touched by the drawn services, de-duplicated. */
+const drawnPortIds = new Set(services.flatMap((s) => s.rotation.map((c) => c.portId)));
+const drawnPorts = allPorts.filter((port) => drawnPortIds.has(port.id) && isInBounds(port));
+
+/** Graticule every 10 degrees, the spacing used on small scale charts. */
+const meridians: number[] = [];
+for (let lon = Math.ceil(west / 10) * 10; lon <= east; lon += 10) meridians.push(lon);
+const parallels: number[] = [];
+for (let lat = Math.ceil(south / 10) * 10; lat <= north; lat += 10) parallels.push(lat);
+
+const chartId = `network-chart-${Math.random().toString(36).slice(2, 8)}`;
+const accessibleDescription =
+  description ??
+  `Chart of the SDG Lines network showing ${drawnPorts.length} ports of call connected by ${services.length} ${services.length === 1 ? 'service' : 'services'}. The same information is available as a list below.`;
+---
+
+<figure class={className}>
+  <svg
+    viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+    class="h-auto w-full"
+    role="img"
+    aria-labelledby={`${chartId}-title`}
+    data-animate={animate ? 'true' : undefined}
+  >
+    <title id={`${chartId}-title`}>{accessibleDescription}</title>
+
+    <defs>
+      <!-- A soft glow so that route lines stay legible where they cross. -->
+      <filter id={`${chartId}-glow`} x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="6" result="blur" />
+        <feMerge>
+          <feMergeNode in="blur" />
+          <feMergeNode in="SourceGraphic" />
+        </feMerge>
+      </filter>
+    </defs>
+
+    <!-- Graticule -->
+    <g stroke="currentColor" stroke-width="1" opacity="0.14">
+      {
+        meridians.map((lon) => {
+          const [x] = project([north, lon]);
+          return <line x1={x} y1={0} x2={x} y2={VIEW_H} />;
+        })
+      }
+      {
+        parallels.map((lat) => {
+          const [, y] = project([lat, west]);
+          return <line x1={0} y1={y} x2={VIEW_W} y2={y} />;
+        })
+      }
+    </g>
+
+    <!-- Graticule labels, in the degree notation used on charts -->
+    <g font-family="JetBrains Mono Variable, monospace" font-size="13" fill="currentColor" opacity="0.32">
+      {
+        parallels.map((lat) => {
+          const [, y] = project([lat, west]);
+          return (
+            <text x="8" y={y - 6}>
+              {Math.abs(lat)}&#176;{lat >= 0 ? 'N' : 'S'}
+            </text>
+          );
+        })
+      }
+    </g>
+
+    <!-- Route lines -->
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round" filter={`url(#${chartId}-glow)`}>
+      {
+        routeLines.map(
+          (line, index) =>
+            line.pointCount > 1 && (
+              <path
+                d={line.d}
+                stroke={line.color}
+                stroke-width="3.5"
+                opacity="0.95"
+                data-route={line.id}
+                style={animate ? `--draw-delay:${index * 220}ms` : undefined}
+              >
+                <title>{line.name} service</title>
+              </path>
+            ),
+        )
+      }
+    </g>
+
+    <!-- Ports -->
+    <g>
+      {
+        drawnPorts.map((port) => {
+          const [x, y] = project(port.coordinates);
+          const isHub = port.serviceIds.length > 1;
+          return (
+            <g data-port={port.id}>
+              <circle
+                cx={x}
+                cy={y}
+                r={isHub ? 7 : 5}
+                fill="currentColor"
+                stroke="var(--color-navy-900)"
+                stroke-width="2"
+              />
+              {isHub && (
+                <circle
+                  cx={x}
+                  cy={y}
+                  r="12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  opacity="0.45"
+                />
+              )}
+              {showLabels && (
+                <text
+                  x={x + (isHub ? 16 : 12)}
+                  y={y + 5}
+                  font-family="Inter Variable, sans-serif"
+                  font-size="15"
+                  font-weight={isHub ? 600 : 500}
+                  fill="currentColor"
+                  opacity={isHub ? 0.95 : 0.7}
+                >
+                  {port.name}
+                </text>
+              )}
+            </g>
+          );
+        })
+      }
+    </g>
+  </svg>
+
+  <figcaption class="sr-only">{accessibleDescription}</figcaption>
+</figure>
+
+<style>
+  /* The lines draw themselves in once, as a route being plotted on a chart.
+     `pathLength` is not set, so a generous dash array covers any real length. */
+  svg[data-animate='true'] path[data-route] {
+    stroke-dasharray: 4000;
+    stroke-dashoffset: 4000;
+    animation: draw-route 2.4s var(--ease-out-soft) forwards;
+    animation-delay: var(--draw-delay, 0ms);
+  }
+
+  @keyframes draw-route {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  /* With reduced motion requested, the routes are simply present. */
+  @media (prefers-reduced-motion: reduce) {
+    svg[data-animate='true'] path[data-route] {
+      stroke-dasharray: none;
+      stroke-dashoffset: 0;
+      animation: none;
+    }
+  }
+</style>

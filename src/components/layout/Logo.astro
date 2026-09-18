@@ -1,0 +1,60 @@
+---
+/**
+ * SDG Lines wordmark.
+ *
+ * Drawn inline as SVG rather than loaded as an image file: it is a handful of
+ * bytes, it never causes a layout shift, and it inherits the surrounding text
+ * colour so the same component works on the navy header and on a white page.
+ *
+ * The mark is a stylised bow wave over the wordmark, taken from the chart and
+ * horizon language of the rest of the site rather than from nautical clip art.
+ */
+interface Props {
+  /** Accessible name. Set to the empty string when the logo sits next to a
+      visible text link to the same destination, to avoid a duplicate label. */
+  title?: string;
+  class?: string;
+}
+
+const { title = 'SDG Lines, home', class: className = '' } = Astro.props;
+---
+
+<svg
+  class={className}
+  viewBox="0 0 208 40"
+  role="img"
+  aria-label={title || undefined}
+  aria-hidden={title ? undefined : 'true'}
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <!-- Bow wave: three chart contours rising to the right. -->
+  <g stroke="currentColor" stroke-linecap="round" stroke-width="2.6" opacity="0.9">
+    <path d="M4 29c6.5 0 8.5-6 15-6s8.5 6 15 6" />
+    <path d="M4 21c6.5 0 8.5-6 15-6s8.5 6 15 6" opacity="0.6" />
+    <path d="M4 13c6.5 0 8.5-6 15-6s8.5 6 15 6" opacity="0.32" />
+  </g>
+
+  <text
+    x="46"
+    y="27"
+    font-family="Space Grotesk Variable, sans-serif"
+    font-size="21"
+    font-weight="700"
+    letter-spacing="-0.02em"
+    fill="currentColor">SDG</text
+  >
+  <text
+    x="94"
+    y="27"
+    font-family="Space Grotesk Variable, sans-serif"
+    font-size="21"
+    font-weight="400"
+    letter-spacing="0.01em"
+    fill="currentColor">LINES</text
+  >
+  <!-- The registered mark is part of the brand and has to appear. -->
+  <text x="172" y="16" font-family="Inter Variable, sans-serif" font-size="9" fill="currentColor"
+    >&#174;</text
+  >
+</svg>

@@ -1,0 +1,67 @@
+---
+import type { VerificationMeta } from '@/types/content';
+
+/**
+ * Tells the reader that a record has not been confirmed by the product owner.
+ *
+ * The brief for this project says not to display unfinished placeholders
+ * prominently, and also not to present unverified values as fact. Those pull in
+ * opposite directions, so the resolution here is:
+ *
+ *   - `verified` records render nothing at all.
+ *   - Everything else renders a quiet, factual line at the FOOT of the section
+ *     it applies to, never above the content and never in an alarming colour.
+ *     The reader still gets the information; they simply also get to know how
+ *     much weight it carries.
+ *
+ * `reviewNote` is written for the product owner, so it is only shown where a
+ * trainer would look for it, not in the middle of a learner's reading flow.
+ */
+interface Props {
+  meta: VerificationMeta;
+  /** What the notice applies to, e.g. "This rotation". */
+  subject?: string;
+  class?: string;
+}
+
+const { meta, subject = 'This information', class: className = '' } = Astro.props;
+
+const messages: Record<string, string> = {
+  inherited: `${subject} is carried over from the previous SDG Lines website and is awaiting review by the product owner.`,
+  'needs-review': `${subject} is a proposal awaiting confirmation by the product owner. Do not treat it as settled in an assessed exercise without checking with your trainer.`,
+};
+
+const message = meta.status === 'verified' ? null : messages[meta.status];
+---
+
+{
+  message && (
+    <div
+      class={`rounded-lg border border-navy-200 bg-navy-50 px-4 py-3 text-sm leading-relaxed text-navy-700 ${className}`}
+    >
+      <p class="flex gap-2.5">
+        <svg
+          class="mt-0.5 h-4 w-4 shrink-0 text-navy-500"
+          viewBox="0 0 16 16"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M8 1a7 7 0 100 14A7 7 0 008 1zM7.4 4.6a.6.6 0 111.2 0v4a.6.6 0 01-1.2 0v-4zM8 11.8a.8.8 0 110-1.6.8.8 0 010 1.6z" />
+        </svg>
+        <span>
+          <span>{message}</span>{' '}
+          <span class="text-navy-500">Last reviewed {meta.lastReviewed}.</span>
+        </span>
+      </p>
+
+      {meta.reviewNote && (
+        <details class="mt-2 pl-6.5">
+          <summary class="cursor-pointer text-xs font-medium text-navy-600 hover:text-navy-900">
+            Note for trainers and content reviewers
+          </summary>
+          <p class="mt-1.5 text-xs leading-relaxed text-navy-600">{meta.reviewNote}</p>
+        </details>
+      )}
+    </div>
+  )
+}

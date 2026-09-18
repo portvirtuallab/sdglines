@@ -1,0 +1,107 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import SimulationNotice from '@/components/layout/SimulationNotice.astro';
+import { SITE, url } from '@/lib/site';
+
+/**
+ * The single page shell.
+ *
+ * Every page passes its own title and description. Neither has a default that
+ * would let a page ship with generic metadata by accident, which is how the
+ * legacy site ended up with the same title on most of its pages.
+ */
+interface Props {
+  title: string;
+  description: string;
+  /** Overrides the `<title>` suffix. Used only on the home page. */
+  fullTitle?: string;
+  /** Path to an Open Graph image, relative to the site root. */
+  ogImage?: string;
+  /** Set on pages that should not be indexed, such as the 404. */
+  noindex?: boolean;
+  /** Extra JSON-LD, already serialised. */
+  structuredData?: string;
+}
+
+const { title, description, fullTitle, ogImage = '/images/og-default.png', noindex, structuredData } =
+  Astro.props;
+
+const pageTitle = fullTitle ?? `${title} | ${SITE.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://portvirtuallab.github.io');
+const ogImageUrl = new URL(url(ogImage), Astro.site ?? 'https://portvirtuallab.github.io');
+
+/**
+ * Organisation data.
+ *
+ * Deliberately typed as `EducationalOrganization` rather than as a shipping
+ * company. Describing a simulation as a real carrier in structured data would
+ * put a false claim in front of search engines, which is exactly what the
+ * visible copy is careful not to do.
+ */
+const organisationJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: SITE.operator,
+  url: SITE.operatorUrl,
+  email: SITE.contactEmail,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: SITE.address.street,
+    postalCode: SITE.address.postalCode,
+    addressLocality: SITE.address.city,
+    addressCountry: SITE.address.country,
+  },
+  department: {
+    '@type': 'Organization',
+    name: SITE.name,
+    description: SITE.simulationNotice,
+  },
+});
+---
+
+<!doctype html>
+<html lang={SITE.locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical.href} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={url('/icons/apple-touch-icon.png')} />
+    <meta name="theme-color" content="#081831" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImageUrl.href} />
+    <meta property="og:locale" content="en" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Stated here as well as in the visible interface so that a preview card
+         shared in a chat or a learning platform carries the same warning. -->
+    <meta name="disclaimer" content={SITE.simulationNotice} />
+
+    <script type="application/ld+json" set:html={organisationJsonLd} />
+    {structuredData && <script type="application/ld+json" set:html={structuredData} />}
+  </head>
+
+  <body class="flex min-h-dvh flex-col bg-white">
+    <a href="#main" class="skip-link">Skip to main content</a>
+
+    <Header pathname={Astro.url.pathname} />
+    <SimulationNotice variant="bar" />
+
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+  </body>
+</html>

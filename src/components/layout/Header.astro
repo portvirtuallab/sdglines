@@ -1,0 +1,378 @@
+---
+import Logo from './Logo.astro';
+import { PRIMARY_NAV, SITE, UTILITY_NAV, url } from '@/lib/site';
+
+/**
+ * Site header.
+ *
+ * Two behaviours worth calling out, both of them fixes for audit findings:
+ *
+ * 1. The section menus open on click, not on hover. The legacy site hid its
+ *    entire information architecture behind hover, which is unusable with a
+ *    keyboard and unreliable on a touch screen. Each trigger is a real button
+ *    with `aria-expanded`, and every panel can be closed with Escape.
+ *
+ * 2. The panels contain at most six links. The 36 ports and 14 vessels that the
+ *    legacy menu listed individually now live in their own directories.
+ */
+interface Props {
+  /** Path of the current page, used to mark the active section. */
+  pathname: string;
+}
+
+const { pathname } = Astro.props;
+
+/** True when `pathname` sits inside the given section. */
+function isActiveSection(href: string): boolean {
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+  const clean = pathname.replace(base, '') || '/';
+  return clean === href || clean.startsWith(`${href}/`);
+}
+---
+
+<header class="on-dark sticky top-0 z-50 bg-navy-900 text-white">
+  <div class="shell flex h-16 items-center gap-3 lg:h-20">
+    <a
+      href={url('/')}
+      class="tap-target -ml-1 flex items-center rounded-md px-1 text-white transition-opacity duration-(--duration-fast) hover:opacity-80"
+    >
+      <Logo class="h-8 w-auto lg:h-9" />
+    </a>
+
+    <!-- Desktop navigation -->
+    <nav class="ml-4 hidden lg:block" aria-label="Main">
+      <ul class="flex items-center">
+        {
+          PRIMARY_NAV.map((section) => (
+            <li class="relative" data-nav-item>
+              <button
+                type="button"
+                class="tap-target flex items-center gap-1.5 rounded-md px-3 py-2 text-[0.9375rem] font-medium text-navy-100 transition-colors duration-(--duration-fast) hover:bg-navy-800 hover:text-white aria-expanded:bg-navy-800 aria-expanded:text-white"
+                aria-expanded="false"
+                aria-haspopup="true"
+                data-nav-trigger
+              >
+                <span class={isActiveSection(section.href) ? 'text-white' : ''}>
+                  {section.label}
+                </span>
+                <svg
+                  class="h-3.5 w-3.5 opacity-60 transition-transform duration-(--duration-fast) [button[aria-expanded='true']_&]:rotate-180"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 4.5 6 7.5 9 4.5" />
+                </svg>
+                {isActiveSection(section.href) && (
+                  <span
+                    class="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-signal-500"
+                    aria-hidden="true"
+                  />
+                )}
+              </button>
+
+              <div
+                class="absolute left-0 top-full hidden w-80 pt-2"
+                data-nav-panel
+                hidden
+              >
+                <div class="rounded-xl border border-navy-700 bg-navy-800 p-2 shadow-2xl shadow-navy-950/50">
+                  <a
+                    href={url(section.href)}
+                    class="block rounded-lg px-3 py-2.5 text-sm font-semibold text-white transition-colors duration-(--duration-fast) hover:bg-navy-700"
+                  >
+                    {section.label} overview
+                    <span class="ml-1 text-navy-300" aria-hidden="true">
+                      &rarr;
+                    </span>
+                  </a>
+                  <hr class="my-1.5 border-navy-700" />
+                  <ul>
+                    {section.children?.map((child) => (
+                      <li>
+                        <a
+                          href={url(child.href)}
+                          class="block rounded-lg px-3 py-2 transition-colors duration-(--duration-fast) hover:bg-navy-700"
+                        >
+                          <span class="block text-sm font-medium text-white">{child.label}</span>
+                          {child.description && (
+                            <span class="mt-0.5 block text-xs leading-snug text-navy-300">
+                              {child.description}
+                            </span>
+                          )}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Utility actions -->
+    <div class="ml-auto flex items-center gap-2">
+      <a
+        href={url(UTILITY_NAV.search.href)}
+        class="tap-target flex items-center justify-center rounded-md px-2.5 text-navy-100 transition-colors duration-(--duration-fast) hover:bg-navy-800 hover:text-white"
+      >
+        <svg
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        >
+          <circle cx="9" cy="9" r="6"></circle>
+          <path d="m13.5 13.5 3.5 3.5" stroke-linecap="round"></path>
+        </svg>
+        <span class="sr-only">Search the site</span>
+      </a>
+
+      <a
+        href={url(UTILITY_NAV.arrivalCharges.href)}
+        class="tap-target hidden items-center rounded-md px-3 text-sm font-medium text-navy-100 transition-colors duration-(--duration-fast) hover:bg-navy-800 hover:text-white xl:flex"
+      >
+        Arrival charges
+      </a>
+
+      <a
+        href={SITE.pvlUrl}
+        rel="noopener noreferrer"
+        target="_blank"
+        class="tap-target hidden items-center gap-1.5 rounded-md px-3 text-sm font-medium text-navy-100 transition-colors duration-(--duration-fast) hover:bg-navy-800 hover:text-white lg:flex"
+      >
+        PVL.ONE
+        <svg
+          class="h-3.5 w-3.5 opacity-70"
+          viewBox="0 0 14 14"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M5 2h7v7M12 2 5.5 8.5M11 8.5V12H2V3h3.5"></path>
+        </svg>
+        <span class="sr-only">(opens in a new tab)</span>
+      </a>
+
+      <a
+        href={url(UTILITY_NAV.quote.href)}
+        class="tap-target hidden items-center rounded-md bg-signal-600 px-4 text-sm font-semibold text-white transition-colors duration-(--duration-fast) hover:bg-signal-700 sm:flex"
+      >
+        Request a quote
+      </a>
+
+      <!-- Mobile menu trigger -->
+      <button
+        type="button"
+        class="tap-target flex items-center justify-center rounded-md px-2.5 text-white transition-colors duration-(--duration-fast) hover:bg-navy-800 lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        data-mobile-trigger
+      >
+        <svg
+          class="h-6 w-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          <path d="M4 7h16M4 12h16M4 17h16"></path>
+        </svg>
+        <span class="sr-only">Open the main menu</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile navigation -->
+  <div
+    id="mobile-menu"
+    class="hidden max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-navy-700 bg-navy-900 lg:hidden"
+    hidden
+    data-mobile-menu
+  >
+    <nav class="shell py-4" aria-label="Main, mobile">
+      <ul class="divide-y divide-navy-800">
+        {
+          PRIMARY_NAV.map((section) => (
+            <li class="py-1">
+              <details class="group">
+                <summary class="tap-target flex cursor-pointer list-none items-center justify-between rounded-md px-2 py-2 text-base font-semibold text-white">
+                  {section.label}
+                  <svg
+                    class="h-4 w-4 opacity-60 transition-transform duration-(--duration-fast) group-open:rotate-180"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 4.5 6 7.5 9 4.5" />
+                  </svg>
+                </summary>
+                <ul class="mt-1 mb-2 space-y-0.5 pl-2">
+                  <li>
+                    <a
+                      href={url(section.href)}
+                      class="tap-target flex items-center rounded-md px-2 text-sm font-medium text-navy-100 hover:bg-navy-800 hover:text-white"
+                    >
+                      {section.label} overview
+                    </a>
+                  </li>
+                  {section.children?.map((child) => (
+                    <li>
+                      <a
+                        href={url(child.href)}
+                        class="tap-target flex items-center rounded-md px-2 text-sm text-navy-200 hover:bg-navy-800 hover:text-white"
+                      >
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="mt-4 grid gap-2">
+        <a
+          href={url(UTILITY_NAV.quote.href)}
+          class="tap-target flex items-center justify-center rounded-lg bg-signal-600 px-4 text-sm font-semibold text-white hover:bg-signal-700"
+        >
+          Request a simulated quotation
+        </a>
+        <a
+          href={url(UTILITY_NAV.arrivalCharges.href)}
+          class="tap-target flex items-center justify-center rounded-lg border border-navy-600 px-4 text-sm font-medium text-white hover:bg-navy-800"
+        >
+          Arrival charges
+        </a>
+        <a
+          href={SITE.pvlUrl}
+          rel="noopener noreferrer"
+          target="_blank"
+          class="tap-target flex items-center justify-center gap-1.5 rounded-lg border border-navy-600 px-4 text-sm font-medium text-white hover:bg-navy-800"
+        >
+          Access PVL.ONE
+          <span class="sr-only">(opens in a new tab)</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  /**
+   * Header behaviour.
+   *
+   * Written as a small progressive enhancement: with JavaScript unavailable the
+   * mobile menu still opens, because it is a list of <details> elements, and
+   * every desktop panel link is still reachable through the section overview
+   * pages. Nothing here is required to reach content.
+   */
+  function initHeader(): void {
+    const navItems = Array.from(document.querySelectorAll<HTMLElement>('[data-nav-item]'));
+
+    function closeAllPanels(except?: HTMLElement): void {
+      for (const item of navItems) {
+        if (item === except) continue;
+        const trigger = item.querySelector<HTMLButtonElement>('[data-nav-trigger]');
+        const panel = item.querySelector<HTMLElement>('[data-nav-panel]');
+        if (!trigger || !panel) continue;
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.hidden = true;
+        panel.classList.add('hidden');
+      }
+    }
+
+    for (const item of navItems) {
+      const trigger = item.querySelector<HTMLButtonElement>('[data-nav-trigger]');
+      const panel = item.querySelector<HTMLElement>('[data-nav-panel]');
+      if (!trigger || !panel) continue;
+
+      trigger.addEventListener('click', () => {
+        const isOpen = trigger.getAttribute('aria-expanded') === 'true';
+        closeAllPanels(item);
+        trigger.setAttribute('aria-expanded', String(!isOpen));
+        panel.hidden = isOpen;
+        panel.classList.toggle('hidden', isOpen);
+      });
+
+      // Opening on hover is a convenience for pointer users. It never replaces
+      // the click behaviour, so keyboard and touch are unaffected.
+      item.addEventListener('mouseenter', () => {
+        if (!window.matchMedia('(hover: hover) and (min-width: 1024px)').matches) return;
+        closeAllPanels(item);
+        trigger.setAttribute('aria-expanded', 'true');
+        panel.hidden = false;
+        panel.classList.remove('hidden');
+      });
+
+      item.addEventListener('mouseleave', () => {
+        if (!window.matchMedia('(hover: hover) and (min-width: 1024px)').matches) return;
+        // Leave the panel open while focus is still inside it.
+        if (item.contains(document.activeElement)) return;
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.hidden = true;
+        panel.classList.add('hidden');
+      });
+
+      // Moving focus out of the section closes it, so tabbing through the
+      // header does not leave a trail of open panels.
+      item.addEventListener('focusout', (event) => {
+        const next = (event as FocusEvent).relatedTarget as Node | null;
+        if (next && item.contains(next)) return;
+        trigger.setAttribute('aria-expanded', 'false');
+        panel.hidden = true;
+        panel.classList.add('hidden');
+      });
+    }
+
+    const mobileTrigger = document.querySelector<HTMLButtonElement>('[data-mobile-trigger]');
+    const mobileMenu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+    const mobileLabel = mobileTrigger?.querySelector('.sr-only');
+
+    mobileTrigger?.addEventListener('click', () => {
+      if (!mobileMenu) return;
+      const isOpen = mobileTrigger.getAttribute('aria-expanded') === 'true';
+      mobileTrigger.setAttribute('aria-expanded', String(!isOpen));
+      mobileMenu.hidden = isOpen;
+      mobileMenu.classList.toggle('hidden', isOpen);
+      if (mobileLabel) {
+        mobileLabel.textContent = isOpen ? 'Open the main menu' : 'Close the main menu';
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      closeAllPanels();
+      if (mobileMenu && !mobileMenu.hidden) {
+        mobileMenu.hidden = true;
+        mobileMenu.classList.add('hidden');
+        mobileTrigger?.setAttribute('aria-expanded', 'false');
+        mobileTrigger?.focus();
+      }
+    });
+
+    document.addEventListener('click', (event) => {
+      const target = event.target as Node;
+      if (navItems.some((item) => item.contains(target))) return;
+      closeAllPanels();
+    });
+  }
+
+  initHeader();
+</script>

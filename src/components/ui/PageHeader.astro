@@ -1,0 +1,112 @@
+---
+import { url } from '@/lib/site';
+
+/**
+ * The heading block at the top of an interior page.
+ *
+ * Every page gets exactly one `h1` from this component, which is the fix for
+ * the audit finding that most legacy pages had no top level heading at all.
+ */
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  /** Small label above the heading, e.g. the section name. */
+  eyebrow?: string;
+  title: string;
+  /** One or two sentences under the heading. */
+  intro?: string;
+  breadcrumbs?: Crumb[];
+  /** Renders the block on the dark navy surface. */
+  tone?: 'light' | 'dark';
+  class?: string;
+}
+
+const { eyebrow, title, intro, breadcrumbs = [], tone = 'light', class: className = '' } =
+  Astro.props;
+
+const isDark = tone === 'dark';
+---
+
+<div
+  class={`${isDark ? 'on-dark bg-navy-900 text-white' : 'border-b border-navy-100 bg-navy-50/50'} ${className}`}
+>
+  <div class={isDark ? 'chart-grid' : 'chart-grid-light'}>
+    <div class="shell py-9 lg:py-12">
+      {
+        breadcrumbs.length > 0 && (
+          <nav aria-label="Breadcrumb" class="mb-5">
+            <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+              <li>
+                <a
+                  href={url('/')}
+                  class={
+                    isDark
+                      ? 'text-navy-300 hover:text-white hover:underline underline-offset-4'
+                      : 'text-navy-500 hover:text-navy-900 hover:underline underline-offset-4'
+                  }
+                >
+                  Home
+                </a>
+              </li>
+              {breadcrumbs.map((crumb, index) => (
+                <li class="flex items-center gap-2">
+                  <span class={isDark ? 'text-navy-500' : 'text-navy-300'} aria-hidden="true">
+                    /
+                  </span>
+                  {crumb.href && index < breadcrumbs.length - 1 ? (
+                    <a
+                      href={url(crumb.href)}
+                      class={
+                        isDark
+                          ? 'text-navy-300 hover:text-white hover:underline underline-offset-4'
+                          : 'text-navy-500 hover:text-navy-900 hover:underline underline-offset-4'
+                      }
+                    >
+                      {crumb.label}
+                    </a>
+                  ) : (
+                    <span
+                      class={isDark ? 'font-medium text-white' : 'font-medium text-navy-900'}
+                      aria-current="page"
+                    >
+                      {crumb.label}
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
+
+      {
+        eyebrow && (
+          <p
+            class={`font-mono text-xs font-medium uppercase tracking-[0.16em] ${isDark ? 'text-sea-300' : 'text-sea-700'}`}
+          >
+            {eyebrow}
+          </p>
+        )
+      }
+
+      <h1 class={`mt-3 max-w-4xl text-3xl sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]`}>
+        {title}
+      </h1>
+
+      {
+        intro && (
+          <p
+            class={`mt-4 max-w-2xl text-lg leading-relaxed ${isDark ? 'text-navy-100' : 'text-navy-600'}`}
+          >
+            {intro}
+          </p>
+        )
+      }
+
+      <slot />
+    </div>
+  </div>
+</div>

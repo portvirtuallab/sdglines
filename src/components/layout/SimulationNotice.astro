@@ -1,0 +1,81 @@
+---
+import { SITE } from '@/lib/site';
+
+/**
+ * The statement that SDG Lines is not a real carrier.
+ *
+ * This is the single most important piece of copy on the site. Someone who
+ * lands on a vessel page from a search engine has to be able to tell, without
+ * reading further, that they are not looking at a shipping line they can book.
+ *
+ * Three variants, all carrying the same sentence:
+ *   - `bar`      a strip below the header, shown on every page
+ *   - `inline`   a panel inside page content, where the surrounding copy could
+ *                otherwise read as a commercial offer
+ *   - `compact`  a single line for cards and footers
+ */
+interface Props {
+  variant?: 'bar' | 'inline' | 'compact';
+  /** Extra sentence shown after the standard notice in the inline variant. */
+  detail?: string;
+  class?: string;
+}
+
+const { variant = 'bar', detail, class: className = '' } = Astro.props;
+---
+
+{
+  variant === 'bar' && (
+    <div class={`border-b border-navy-700 bg-navy-800 text-navy-100 ${className}`}>
+      <p class="shell flex items-center gap-2.5 py-2 text-[0.8125rem] leading-snug">
+        <svg
+          class="h-4 w-4 shrink-0 text-signal-300"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 1.5a8.5 8.5 0 100 17 8.5 8.5 0 000-17zM9.25 6a.75.75 0 011.5 0v4.5a.75.75 0 01-1.5 0V6zM10 14.5a1 1 0 100-2 1 1 0 000 2z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span>{SITE.simulationNotice}</span>
+      </p>
+    </div>
+  )
+}
+
+{
+  variant === 'inline' && (
+    <aside
+      class={`rounded-xl border border-signal-200 bg-signal-50 p-4 sm:p-5 ${className}`}
+      aria-label="Educational simulation notice"
+    >
+      <div class="flex gap-3">
+        <svg
+          class="mt-0.5 h-5 w-5 shrink-0 text-signal-600"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 1.5a8.5 8.5 0 100 17 8.5 8.5 0 000-17zM9.25 6a.75.75 0 011.5 0v4.5a.75.75 0 01-1.5 0V6zM10 14.5a1 1 0 100-2 1 1 0 000 2z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <div class="text-sm leading-relaxed text-navy-800">
+          <p class="font-semibold text-signal-800">{SITE.simulationNotice}</p>
+          {detail && <p class="mt-1">{detail}</p>}
+        </div>
+      </div>
+    </aside>
+  )
+}
+
+{
+  variant === 'compact' && (
+    <p class={`text-xs leading-snug text-navy-500 ${className}`}>{SITE.simulationNotice}</p>
+  )
+}

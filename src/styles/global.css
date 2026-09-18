@@ -1,0 +1,253 @@
+@import 'tailwindcss';
+
+/* Tailwind's automatic source detection does not resolve reliably when the
+   project sits under a path containing spaces and parentheses, which is how
+   this repository is checked out on the maintainer's machine. Declaring the
+   source tree explicitly removes that dependency: the scan is the same on every
+   machine and in CI. */
+@source '../**/*.{astro,html,js,jsx,ts,tsx,md,mdx}';
+
+/* Self-hosted variable fonts. No request leaves the visitor's browser, which
+   keeps the site usable behind restrictive networks and avoids sending visitor
+   IP addresses to a third party font host. */
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/jetbrains-mono';
+
+/* ==========================================================================
+   SDG Lines design tokens
+   --------------------------------------------------------------------------
+   The palette is built around the navy and red of the existing SDG Lines logo.
+   Every pairing used for text in the interface is listed in
+   docs/design-system.md together with its measured contrast ratio against
+   WCAG 2.2 AA (4.5:1 for body text, 3:1 for large text and UI boundaries).
+
+   Naming follows the role the colour plays, not the colour itself, so that a
+   future rebrand changes these values and nothing else.
+   ========================================================================== */
+@theme {
+  /* Brand navy - the primary surface and the colour of the deep sea. */
+  --color-navy-50: #eef3f9;
+  --color-navy-100: #d6e2f0;
+  --color-navy-200: #adc3de;
+  --color-navy-300: #7b9cc6;
+  --color-navy-400: #4a72a8;
+  --color-navy-500: #2b5286;
+  --color-navy-600: #1b3d68;
+  --color-navy-700: #132f51;
+  --color-navy-800: #0d2340;
+  --color-navy-900: #081831;
+  --color-navy-950: #050f20;
+
+  /* SDG Lines red - reserved for primary actions and nothing else. */
+  --color-signal-50: #fdf2f4;
+  --color-signal-100: #fbe0e5;
+  --color-signal-200: #f6c2cc;
+  --color-signal-300: #ee92a5;
+  --color-signal-400: #e25576;
+  --color-signal-500: #d12a4f;
+  --color-signal-600: #c8102e;
+  --color-signal-700: #a50d26;
+  --color-signal-800: #870e22;
+  --color-signal-900: #731021;
+
+  /* Mediterranean blue - secondary emphasis, links, the sea on maps. */
+  --color-sea-50: #eff7fd;
+  --color-sea-100: #dceffb;
+  --color-sea-200: #b9dff6;
+  --color-sea-300: #85c7ef;
+  --color-sea-400: #4aa8e3;
+  --color-sea-500: #2489cd;
+  --color-sea-600: #0b5fa5;
+  --color-sea-700: #0a4f87;
+  --color-sea-800: #0c4270;
+  --color-sea-900: #0f385e;
+
+  /* Teal - sustainability and environmental content only. */
+  --color-eco-50: #eefbf7;
+  --color-eco-100: #d3f5eb;
+  --color-eco-200: #abe9da;
+  --color-eco-300: #75d6c3;
+  --color-eco-400: #3fbca7;
+  --color-eco-500: #1fa18d;
+  --color-eco-600: #0f8a7e;
+  --color-eco-700: #0b6f66;
+  --color-eco-800: #0c5852;
+  --color-eco-900: #0d4945;
+
+  /* Neutral greys for technical panels, tables and rules. */
+  --color-slate-25: #fbfcfd;
+
+  /* Typography.
+     Space Grotesk carries headings: geometric, contemporary, slightly technical.
+     Inter carries operational text: it was drawn for screen UI and stays legible
+     at the small sizes that schedule tables need.
+     JetBrains Mono carries codes, IMO numbers, LOCODEs and measurements, where
+     distinguishing 0 from O and 1 from l actually matters. */
+  --font-display: 'Space Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', monospace;
+
+  /* Motion. Kept short: these animations sit in the path of a training
+     exercise, and a slow interface costs class time. */
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration-base: 220ms;
+  --duration-slow: 420ms;
+}
+
+/* ==========================================================================
+   Base layer
+   ========================================================================== */
+@layer base {
+  :root {
+    color-scheme: light;
+    /* Anchors the sticky header offset used by in-page links. */
+    scroll-padding-top: 6rem;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-white);
+    color: var(--color-navy-900);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Numbers in tables line up only when they share a width. Schedule and
+     charge tables are read by scanning a column, so this is load-bearing. */
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* A focus ring that is visible on both the white body and the navy header.
+     Two rings rather than one: the white outer ring keeps the indicator
+     readable when the element sits on a dark surface. */
+  :focus-visible {
+    outline: 3px solid var(--color-sea-600);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .on-dark :focus-visible,
+  .on-dark:focus-visible {
+    outline-color: var(--color-white);
+  }
+
+  /* Anything that would move on its own stops moving when the visitor has
+     asked their system for reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   Components
+   ========================================================================== */
+@layer components {
+  /* The page gutter. 16px on a phone, growing to a centred measure on desktop. */
+  .shell {
+    width: 100%;
+    max-width: 80rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .shell {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Skip link: present for keyboard users, out of the way for everyone else. */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    border-radius: 0.5rem;
+    background-color: var(--color-white);
+    padding: 0.75rem 1.25rem;
+    font-weight: 600;
+    color: var(--color-navy-900);
+    box-shadow: 0 10px 30px rgb(5 15 32 / 0.35);
+    transition: top var(--duration-base) var(--ease-out-soft);
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+  }
+
+  /* Minimum touch target. WCAG 2.2 AA asks for 24x24 CSS pixels; 44px is the
+     size a thumb actually hits on a phone in a classroom. */
+  .tap-target {
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+  }
+
+  /* Nautical chart background: faint latitude and longitude rules. Drawn with
+     gradients rather than an image so it costs no request and no bytes. */
+  .chart-grid {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  .chart-grid-light {
+    background-image:
+      linear-gradient(to right, rgb(8 24 49 / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(8 24 49 / 0.045) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+@layer utilities {
+  /* Visible to screen readers, invisible on screen. Used for the labels that
+     give context to icon-only controls and for live region announcements. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+}
