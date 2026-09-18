@@ -1,0 +1,143 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import NetworkMap from '@/components/map/NetworkMap';
+import type { MapPort, MapService } from '@/components/map/NetworkMap';
+import { ports } from '@/data/ports';
+import { services } from '@/data/services';
+import { url } from '@/lib/site';
+
+/**
+ * Interactive network map.
+ *
+ * The map is loaded with `client:visible`, so Leaflet and its tiles are only
+ * requested once a visitor has scrolled it into view. No other page on the site
+ * pays for it.
+ *
+ * Below the map, the same information is published as a table per service. That
+ * is not a fallback: it is the primary form for anyone using a keyboard or a
+ * screen reader, and it is faster to read for anyone who already knows which
+ * port they are looking for.
+ */
+const mapPorts: MapPort[] = ports.map((port) => ({
+  id: port.id,
+  name: port.name,
+  displayName: port.displayName,
+  country: port.country,
+  region: port.region,
+  slug: port.slug,
+  coordinates: port.coordinates,
+  serviceIds: port.serviceIds,
+}));
+
+const mapServices: MapService[] = services.map((service) => ({
+  id: service.id,
+  name: service.name,
+  color: service.mapColor,
+  portIds: service.rotation.map((call) => call.portId),
+}));
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout
+  title="Network map"
+  description="Interactive map of the SDG Lines network: five services and 36 ports of call across Europe, the Mediterranean, Africa, the Middle East and Asia."
+>
+  <PageHeader
+    eyebrow="Network"
+    title="Network map"
+    intro="All five services and every port of call. Filter by service, or read the same rotations as tables below the map."
+    breadcrumbs={[{ label: 'Ports', href: '/ports' }, { label: 'Network map' }]}
+  />
+
+  <div class="shell py-10 lg:py-14">
+    <NetworkMap client:visible ports={mapPorts} services={mapServices} base={base} />
+
+    <p class="mt-3 text-xs leading-relaxed text-navy-500">
+      Map tiles are loaded from OpenStreetMap when this page is opened. Scroll wheel zoom is
+      disabled so that scrolling the page scrolls the page; use the zoom controls or pinch to zoom.
+    </p>
+
+    <!-- The accessible equivalent. Not a fallback: the primary form for anyone
+         navigating by keyboard or screen reader. -->
+    <section aria-labelledby="rotations-heading" class="mt-14">
+      <h2 id="rotations-heading" class="text-2xl">Rotations as text</h2>
+      <p class="mt-2 max-w-2xl text-navy-600">
+        Everything the map shows, in order, with a link to each port.
+      </p>
+
+      <div class="mt-8 space-y-10">
+        {
+          services.map((service) => (
+            <section aria-labelledby={`rotation-${service.slug}`}>
+              <h3 id={`rotation-${service.slug}`} class="flex items-center gap-3">
+                <span
+                  class="h-2.5 w-10 rounded-full"
+                  style={`background-color:${service.mapColor}`}
+                  aria-hidden="true"
+                />
+                <span class="font-display text-lg font-semibold text-navy-900">
+                  <a
+                    href={url(`/routes/${service.slug}`)}
+                    class="hover:text-sea-700 hover:underline underline-offset-4"
+                  >
+                    {service.name}
+                  </a>
+                </span>
+                <span class="font-mono text-xs text-navy-400">{service.code}</span>
+              </h3>
+
+              <div class="mt-3 overflow-x-auto rounded-xl border border-navy-100">
+                <table class="w-full min-w-[32rem] text-left text-sm">
+                  <caption class="sr-only">
+                    {service.name} rotation with port, country, region and position
+                  </caption>
+                  <thead class="bg-navy-50 text-xs uppercase tracking-wide text-navy-600">
+                    <tr>
+                      <th scope="col" class="px-4 py-2.5 font-semibold">
+                        #
+                      </th>
+                      <th scope="col" class="px-4 py-2.5 font-semibold">
+                        Port
+                      </th>
+                      <th scope="col" class="px-4 py-2.5 font-semibold">
+                        Country
+                      </th>
+                      <th scope="col" class="px-4 py-2.5 font-semibold">
+                        Region
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-navy-100">
+                    {service.rotation.map((call) => {
+                      const port = ports.find((candidate) => candidate.id === call.portId);
+                      if (!port) return null;
+                      return (
+                        <tr>
+                          <td class="px-4 py-2.5 font-mono text-xs text-navy-500">
+                            {String(call.order).padStart(2, '0')}
+                          </td>
+                          <th scope="row" class="px-4 py-2.5 font-medium">
+                            <a
+                              href={url(`/ports/${port.slug}`)}
+                              class="text-navy-900 underline decoration-navy-200 underline-offset-4 hover:text-sea-700 hover:decoration-sea-600"
+                            >
+                              {port.displayName}
+                            </a>
+                          </th>
+                          <td class="px-4 py-2.5 text-navy-700">{port.country}</td>
+                          <td class="px-4 py-2.5 text-navy-600">{port.region}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+</BaseLayout>

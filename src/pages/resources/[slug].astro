@@ -1,0 +1,26 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import ProseArticle from '@/components/ui/ProseArticle.astro';
+import { getProsePagesByGroup } from '@/data/pages';
+
+/** The reference pages under /resources. Content lives in src/data/pages.ts. */
+export function getStaticPaths() {
+  return getProsePagesByGroup('resources').map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <PageHeader
+    eyebrow={page.eyebrow}
+    title={page.title}
+    intro={page.intro}
+    breadcrumbs={[{ label: 'Resources', href: '/resources' }, { label: page.title }]}
+  />
+  <ProseArticle page={page} />
+</BaseLayout>

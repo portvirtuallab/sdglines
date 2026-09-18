@@ -1,0 +1,86 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { cargoServices } from '@/data/cargoServices';
+import { services as routes } from '@/data/services';
+import { url } from '@/lib/site';
+
+/**
+ * Cargo services index.
+ *
+ * Routes answer where SDG Lines sails. This section answers what it carries.
+ * The legacy site conflated the two, which is why cold chain and dangerous
+ * goods sat in the top level menu next to the five shipping routes.
+ */
+---
+
+<BaseLayout
+  title="Services"
+  description="What SDG Lines carries: container services, Ro-Ro, cold chain, dangerous goods, project cargo and Motorways of the Sea, with the routes that accept each cargo type."
+>
+  <PageHeader
+    eyebrow="Cargo"
+    title="Services"
+    intro="What SDG Lines carries, and what each cargo type requires. For where the ships sail, see the routes."
+    breadcrumbs={[{ label: 'Services' }]}
+  />
+
+  <div class="shell py-12 lg:py-16">
+    <ul class="grid gap-4 md:grid-cols-2">
+      {
+        cargoServices.map((service) => {
+          const acceptingRoutes = routes.filter((route) =>
+            route.capabilities.includes(service.capability),
+          );
+          return (
+            <li>
+              <a
+                href={url(`/services/${service.slug}`)}
+                class="group flex h-full flex-col rounded-2xl border border-navy-100 bg-white p-6 transition-all duration-(--duration-base) hover:-translate-y-0.5 hover:border-sea-300 hover:shadow-lg hover:shadow-navy-900/5"
+              >
+                <h2 class="font-display text-xl font-semibold text-navy-900 group-hover:text-sea-700">
+                  {service.title}
+                </h2>
+                <p class="mt-2 leading-relaxed text-navy-600">{service.summary}</p>
+
+                <div class="mt-auto pt-5">
+                  <p class="text-xs uppercase tracking-wide text-navy-500">Accepted on</p>
+                  <ul class="mt-2 flex flex-wrap gap-1.5">
+                    {acceptingRoutes.length > 0 ? (
+                      acceptingRoutes.map((route) => (
+                        <li class="flex items-center gap-1.5 rounded-full bg-navy-50 px-2.5 py-0.5 text-xs font-medium text-navy-700">
+                          <span
+                            class="h-1.5 w-1.5 rounded-full"
+                            style={`background-color:${route.mapColor}`}
+                            aria-hidden="true"
+                          />
+                          {route.name}
+                        </li>
+                      ))
+                    ) : (
+                      <li class="text-xs text-navy-500">No route currently accepts this cargo.</li>
+                    )}
+                  </ul>
+                </div>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+
+    <section class="mt-14 rounded-2xl border border-navy-100 bg-navy-50/60 p-7">
+      <h2 class="text-xl">Looking for where the ships sail?</h2>
+      <p class="mt-2 max-w-2xl text-navy-600">
+        The five shipping services, their ports of call and the vessels deployed on them are in the
+        routes section.
+      </p>
+      <a
+        href={url('/routes')}
+        class="tap-target mt-5 inline-flex items-center rounded-lg bg-navy-900 px-5 text-sm font-semibold text-white hover:bg-navy-800"
+      >
+        Explore the routes
+      </a>
+    </section>
+  </div>
+</BaseLayout>

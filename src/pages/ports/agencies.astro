@@ -1,0 +1,118 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import SimulationNotice from '@/components/layout/SimulationNotice.astro';
+import { ports, portRegions } from '@/data/ports';
+import { url } from '@/lib/site';
+
+/**
+ * Agency network.
+ *
+ * The legacy site had three separate pages under this heading - Agency Network,
+ * Owners Representatives and Agencies - none of which listed an agency. This
+ * page lists them, grouped by region, with the naming convention explained so
+ * that a learner can work out an address they have not seen.
+ */
+const byRegion = portRegions
+  .map((region) => ({
+    region,
+    offices: ports
+      .filter((port) => port.region === region && port.agency)
+      .sort((a, b) => a.name.localeCompare(b.name)),
+  }))
+  .filter((group) => group.offices.length > 0);
+---
+
+<BaseLayout
+  title="Agency network"
+  description="The SDG Lines agency network: a local office at each of the 36 ports of call, grouped by region, with the address convention used across the simulation."
+>
+  <PageHeader
+    eyebrow="Network"
+    title="Agency network"
+    intro="A local office at every port of call. In the simulation, the agency is who you deal with locally once the cargo arrives."
+    breadcrumbs={[{ label: 'Ports', href: '/ports' }, { label: 'Agency network' }]}
+  />
+
+  <div class="shell py-12 lg:py-16">
+    <section aria-labelledby="convention-heading" class="max-w-3xl">
+      <h2 id="convention-heading" class="text-2xl">How the addresses work</h2>
+      <div class="mt-4 space-y-4 leading-relaxed text-navy-700">
+        <p>
+          Every office address follows the same pattern:{' '}
+          <code class="rounded bg-navy-50 px-1.5 py-0.5 font-mono text-[0.875em] text-navy-800"
+            >city.country@sdglines.com</code
+          >. The city and country are written in lower case with no spaces or accents.
+        </p>
+        <p>
+          The convention exists so that a learner can work out an address they have never seen. The
+          Genoa office is{' '}
+          <code class="rounded bg-navy-50 px-1.5 py-0.5 font-mono text-[0.875em] text-navy-800"
+            >genoa.italy@sdglines.com</code
+          >, and the Radès office follows the port complex rather than the terminal name, as{' '}
+          <code class="rounded bg-navy-50 px-1.5 py-0.5 font-mono text-[0.875em] text-navy-800"
+            >tunis.tunisia@sdglines.com</code
+          >.
+        </p>
+      </div>
+
+      <SimulationNotice
+        variant="inline"
+        detail="These are not monitored mailboxes. Nothing sent to an sdglines.com address reaches anyone. To contact a person about this site, write to info@escolaeuropea.eu."
+        class="mt-6"
+      />
+    </section>
+
+    <section aria-labelledby="offices-heading" class="mt-14">
+      <h2 id="offices-heading" class="text-2xl">Offices</h2>
+      <p class="mt-2 text-navy-600">
+        {ports.length} offices across {byRegion.length} regions.
+      </p>
+
+      <div class="mt-8 space-y-10">
+        {
+          byRegion.map((group) => (
+            <section aria-labelledby={`region-${group.region.replace(/\s+/g, '-').toLowerCase()}`}>
+              <h3
+                id={`region-${group.region.replace(/\s+/g, '-').toLowerCase()}`}
+                class="font-display text-lg font-semibold text-navy-900"
+              >
+                {group.region}
+                <span class="ml-2 font-mono text-sm font-normal text-navy-400">
+                  {group.offices.length}
+                </span>
+              </h3>
+
+              <ul class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {group.offices.map((port) => (
+                  <li class="rounded-xl border border-navy-100 bg-white p-5">
+                    <h4 class="font-display text-base font-semibold text-navy-900">
+                      <a
+                        href={url(`/ports/${port.slug}`)}
+                        class="hover:text-sea-700 hover:underline underline-offset-4"
+                      >
+                        {port.agency!.officeName}
+                      </a>
+                    </h4>
+                    <p class="mt-0.5 text-sm text-navy-500">{port.country}</p>
+
+                    {port.agency!.contactName && (
+                      <p class="mt-3 text-sm text-navy-700">{port.agency!.contactName}</p>
+                    )}
+
+                    <a
+                      href={`mailto:${port.agency!.email}`}
+                      class="mt-2 block font-mono text-[0.8125rem] break-all text-sea-700 underline underline-offset-4 hover:text-sea-800"
+                    >
+                      {port.agency!.email}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </div>
+    </section>
+  </div>
+</BaseLayout>

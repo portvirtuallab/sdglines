@@ -1,0 +1,241 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import ReviewNotice from '@/components/ui/ReviewNotice.astro';
+import { arrivalCharges, arrivalChargesMeta } from '@/data/arrivalCharges';
+import { ports } from '@/data/ports';
+import { url } from '@/lib/site';
+import { CAPABILITY_LABELS } from '@/lib/labels';
+
+/**
+ * Arrival charges.
+ *
+ * The legacy Arrival Charges link redirects to the home page, so this page is
+ * built from nothing rather than migrated. See `src/data/arrivalCharges.ts` for
+ * why the amounts are absent and what has to be supplied to add them.
+ */
+const standardCharges = arrivalCharges.filter((charge) => !charge.conditional);
+const conditionalCharges = arrivalCharges.filter((charge) => charge.conditional);
+
+const sortedPorts = [...ports].sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<BaseLayout
+  title="Arrival charges"
+  description="The local charges applied on arrival at an SDG Lines port of discharge: what each charge covers, who pays it and what it is calculated on."
+>
+  <PageHeader
+    eyebrow="Resources"
+    title="Arrival charges"
+    intro="The charges that turn a freight rate into a landed cost. What each one covers, who settles it and how it is calculated."
+    breadcrumbs={[{ label: 'Resources', href: '/resources' }, { label: 'Arrival charges' }]}
+  />
+
+  <div class="shell py-12 lg:py-16">
+    <!-- What this page is and is not -->
+    <div class="rounded-2xl border border-navy-200 bg-navy-50 p-6">
+      <h2 class="font-display text-lg font-semibold text-navy-900">About the amounts</h2>
+      <p class="mt-2 max-w-3xl leading-relaxed text-navy-700">
+        This page publishes what each charge is, not what it costs. In the simulation, the tariff is
+        set by your trainer for each exercise, in the same way that a real tariff is negotiated,
+        dated and revised rather than being a fixed property of a port.
+      </p>
+      <p class="mt-3 max-w-3xl leading-relaxed text-navy-700">
+        If your exercise needs amounts, ask your trainer for the schedule that applies to it. Do not
+        assume a figure from another carrier.
+      </p>
+    </div>
+
+    <!-- Charge selector -->
+    <section aria-labelledby="lookup-heading" class="mt-12">
+      <h2 id="lookup-heading" class="text-2xl">Which charges apply to my shipment?</h2>
+      <p class="mt-2 max-w-2xl text-navy-600">
+        Choose a cargo type to see the charges that arise. Charges with no cargo type listed apply
+        to every shipment.
+      </p>
+
+      <div class="mt-5 max-w-sm">
+        <label for="cargo-filter" class="block text-sm font-medium text-navy-900">Cargo type</label>
+        <select
+          id="cargo-filter"
+          class="tap-target mt-1.5 w-full rounded-lg border border-navy-200 bg-white px-3 text-[0.9375rem] text-navy-900 focus:border-sea-600"
+          data-cargo-filter
+        >
+          <option value="">All cargo types</option>
+          <option value="containers">{CAPABILITY_LABELS.containers}</option>
+          <option value="reefer">{CAPABILITY_LABELS.reefer}</option>
+          <option value="roro">{CAPABILITY_LABELS.roro}</option>
+          <option value="dangerous-goods">{CAPABILITY_LABELS['dangerous-goods']}</option>
+          <option value="project-cargo">{CAPABILITY_LABELS['project-cargo']}</option>
+        </select>
+      </div>
+
+      <p class="mt-3 text-sm text-navy-600" role="status" aria-live="polite" data-charge-count>
+        Showing all {arrivalCharges.length} charges.
+      </p>
+    </section>
+
+    <!-- Standard charges -->
+    <section aria-labelledby="standard-heading" class="mt-10">
+      <h2 id="standard-heading" class="text-2xl">Charges applied on every shipment</h2>
+      <p class="mt-2 text-navy-600">
+        These arise as a matter of course when the cargo is discharged.
+      </p>
+
+      <div class="mt-5 space-y-3" data-charge-group>
+        {
+          standardCharges.map((charge) => (
+            <article
+              class="rounded-xl border border-navy-100 bg-white p-6"
+              data-charge
+              data-applies={charge.appliesTo.join(' ')}
+            >
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <h3 class="font-display text-lg font-semibold text-navy-900">
+                    <span class="font-mono text-sm text-sea-700">{charge.code}</span>{' '}
+                    {charge.name}
+                  </h3>
+                </div>
+                <dl class="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                  <div class="flex gap-1.5">
+                    <dt class="text-navy-500">Basis:</dt>
+                    <dd class="font-medium text-navy-900">{charge.basis}</dd>
+                  </div>
+                  <div class="flex gap-1.5">
+                    <dt class="text-navy-500">Paid by:</dt>
+                    <dd class="font-medium text-navy-900">{charge.payer}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <p class="mt-3 leading-relaxed text-navy-700">{charge.description}</p>
+
+              {charge.note && (
+                <p class="mt-3 rounded-lg bg-sea-50 px-4 py-3 text-sm leading-relaxed text-sea-900">
+                  <strong class="font-semibold">Watch out:</strong> {charge.note}
+                </p>
+              )}
+
+              {charge.appliesTo.length > 0 && (
+                <ul class="mt-4 flex flex-wrap gap-1.5">
+                  {charge.appliesTo.map((capability) => (
+                    <li class="rounded-full bg-navy-50 px-2.5 py-0.5 text-xs font-medium text-navy-700">
+                      {CAPABILITY_LABELS[capability]}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Conditional charges -->
+    <section aria-labelledby="conditional-heading" class="mt-12">
+      <h2 id="conditional-heading" class="text-2xl">Charges that arise only in some cases</h2>
+      <p class="mt-2 max-w-2xl text-navy-600">
+        These depend on what happens after the vessel arrives. They are the charges most often left
+        out of a landed cost estimate, and the ones that most often turn a profitable shipment into
+        a loss.
+      </p>
+
+      <div class="mt-5 space-y-3" data-charge-group>
+        {
+          conditionalCharges.map((charge) => (
+            <article
+              class="rounded-xl border border-signal-100 bg-signal-50/40 p-6"
+              data-charge
+              data-applies={charge.appliesTo.join(' ')}
+            >
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <h3 class="font-display text-lg font-semibold text-navy-900">
+                  <span class="font-mono text-sm text-signal-700">{charge.code}</span> {charge.name}
+                </h3>
+                <dl class="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+                  <div class="flex gap-1.5">
+                    <dt class="text-navy-500">Basis:</dt>
+                    <dd class="font-medium text-navy-900">{charge.basis}</dd>
+                  </div>
+                  <div class="flex gap-1.5">
+                    <dt class="text-navy-500">Paid by:</dt>
+                    <dd class="font-medium text-navy-900">{charge.payer}</dd>
+                  </div>
+                </dl>
+              </div>
+
+              <p class="mt-3 leading-relaxed text-navy-700">{charge.description}</p>
+
+              {charge.note && (
+                <p class="mt-3 rounded-lg bg-white px-4 py-3 text-sm leading-relaxed text-navy-800">
+                  <strong class="font-semibold">Watch out:</strong> {charge.note}
+                </p>
+              )}
+            </article>
+          ))
+        }
+      </div>
+    </section>
+
+    <ReviewNotice meta={arrivalChargesMeta} subject="This charge catalogue" class="mt-8" />
+
+    <!-- Per port -->
+    <section aria-labelledby="ports-heading" class="mt-14 border-t border-navy-100 pt-10">
+      <h2 id="ports-heading" class="text-2xl">Charges by port</h2>
+      <p class="mt-2 max-w-2xl text-navy-600">
+        The charge types above apply across the network. Local variation, currency and the tariff
+        in force are recorded per port. Open a port to see its agency and the services calling
+        there.
+      </p>
+
+      <ul class="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          sortedPorts.map((port) => (
+            <li>
+              <a
+                href={url(`/ports/${port.slug}`)}
+                class="tap-target flex items-center justify-between gap-3 rounded-lg border border-navy-100 px-4 transition-colors duration-(--duration-fast) hover:border-sea-300 hover:bg-sea-50/40"
+              >
+                <span class="text-sm font-medium text-navy-900">{port.displayName}</span>
+                <span class="font-mono text-xs text-navy-400">{port.locode}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  /** Narrow the charge list to those that arise for a given cargo type. */
+  function initChargeFilter(): void {
+    const select = document.querySelector<HTMLSelectElement>('[data-cargo-filter]');
+    const charges = Array.from(document.querySelectorAll<HTMLElement>('[data-charge]'));
+    const countEl = document.querySelector<HTMLElement>('[data-charge-count]');
+    if (!select || charges.length === 0) return;
+
+    select.addEventListener('change', () => {
+      const cargo = select.value;
+      let visible = 0;
+
+      for (const charge of charges) {
+        const applies = (charge.dataset.applies ?? '').split(' ').filter(Boolean);
+        // An empty `applies` list means the charge is universal.
+        const show = cargo === '' || applies.length === 0 || applies.includes(cargo);
+        charge.hidden = !show;
+        if (show) visible += 1;
+      }
+
+      if (countEl) {
+        countEl.textContent =
+          cargo === ''
+            ? `Showing all ${charges.length} charges.`
+            : `Showing ${visible} of ${charges.length} charges for this cargo type.`;
+      }
+    });
+  }
+
+  initChargeFilter();
+</script>

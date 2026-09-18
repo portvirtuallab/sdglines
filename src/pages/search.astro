@@ -1,0 +1,289 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { searchIndex } from '@/lib/searchIndex';
+import { url } from '@/lib/site';
+
+/**
+ * Global search.
+ *
+ * The index is built at compile time from the same data the pages render and
+ * inlined as JSON, so searching needs no network request and works offline.
+ * Every result is a real page: nothing is findable that does not exist.
+ *
+ * With JavaScript unavailable the page still lists everything, grouped by type,
+ * which is a usable if blunt fallback and better than an empty box.
+ */
+const grouped = searchIndex.reduce<Record<string, typeof searchIndex>>((accumulator, entry) => {
+  (accumulator[entry.type] ??= []).push(entry);
+  return accumulator;
+}, {});
+
+const groupOrder = ['Port', 'Route', 'Vessel', 'Equipment', 'Service', 'Charge', 'Page'];
+const indexJson = JSON.stringify(searchIndex);
+---
+
+<BaseLayout
+  title="Search"
+  description="Search the SDG Lines website: ports, routes, vessels, equipment, services, arrival charges and reference pages."
+  noindex
+>
+  <PageHeader
+    eyebrow="Search"
+    title="Search SDG Lines"
+    intro="Ports, routes, vessels, equipment, services, charges and reference pages."
+    breadcrumbs={[{ label: 'Search' }]}
+  />
+
+  <div class="shell py-10 lg:py-14">
+    <div class="max-w-2xl">
+      <label for="site-search" class="block text-sm font-medium text-navy-900">
+        What are you looking for?
+      </label>
+      <div class="relative mt-1.5">
+        <svg
+          class="pointer-events-none absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-navy-400"
+          viewBox="0 0 20 20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        >
+          <circle cx="9" cy="9" r="6"></circle>
+          <path d="m13.5 13.5 3.5 3.5" stroke-linecap="round"></path>
+        </svg>
+        <input
+          id="site-search"
+          type="search"
+          autocomplete="off"
+          autofocus
+          placeholder="Barcelona, Eastmed, reefer, THC, IMO 1999870..."
+          aria-describedby="search-hint"
+          class="tap-target w-full rounded-xl border border-navy-200 bg-white py-3 pl-11 pr-4 text-base text-navy-900 placeholder:text-navy-400 focus:border-sea-600"
+          data-search-input
+        />
+      </div>
+      <p id="search-hint" class="mt-2 text-sm text-navy-500">
+        Try a port, a route, a vessel name, an IMO number, a UN/LOCODE, a container type or a charge
+        code.
+      </p>
+    </div>
+
+    <p class="mt-6 text-sm text-navy-600" role="status" aria-live="polite" data-search-status>
+      Showing all {searchIndex.length} entries.
+    </p>
+
+    <!-- Results, rendered by the script -->
+    <div class="mt-6 hidden" data-search-results></div>
+
+    <!-- Empty state -->
+    <div
+      class="mt-6 hidden rounded-xl border border-dashed border-navy-200 bg-navy-50/60 p-8 text-center"
+      data-search-empty
+    >
+      <p class="font-display text-lg font-semibold text-navy-900">Nothing matched that</p>
+      <p class="mx-auto mt-2 max-w-md text-sm leading-relaxed text-navy-600">
+        Try fewer words, or a different spelling. SDG Lines only calls at 36 ports, so a port that
+        is not on the network will not appear here.
+      </p>
+      <div class="mt-5 flex flex-wrap justify-center gap-2">
+        <a
+          href={url('/ports')}
+          class="tap-target inline-flex items-center rounded-lg border border-navy-200 bg-white px-4 text-sm font-semibold text-navy-800 hover:bg-navy-50"
+          >Browse the ports</a
+        >
+        <a
+          href={url('/routes')}
+          class="tap-target inline-flex items-center rounded-lg border border-navy-200 bg-white px-4 text-sm font-semibold text-navy-800 hover:bg-navy-50"
+          >Browse the routes</a
+        >
+      </div>
+    </div>
+
+    <!-- Full listing. Replaced by results once a query is typed, and the only
+         thing shown when JavaScript is unavailable. -->
+    <div class="mt-6 space-y-10" data-search-browse>
+      {
+        groupOrder
+          .filter((type) => grouped[type]?.length)
+          .map((type) => (
+            <section aria-labelledby={`group-${type}`}>
+              <h2 id={`group-${type}`} class="text-xl">
+                {type === 'Page' ? 'Pages' : `${type}s`}
+                <span class="ml-2 font-mono text-sm font-normal text-navy-400">
+                  {grouped[type].length}
+                </span>
+              </h2>
+              <ul class="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                {grouped[type].map((entry) => (
+                  <li>
+                    <a
+                      href={url(entry.href)}
+                      class="flex h-full flex-col rounded-lg border border-navy-100 px-4 py-3 transition-colors duration-(--duration-fast) hover:border-sea-300 hover:bg-sea-50/40"
+                    >
+                      <span class="text-sm font-medium text-navy-900">{entry.title}</span>
+                      <span class="mt-0.5 line-clamp-2 text-xs leading-snug text-navy-500">
+                        {entry.subtitle}
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<script is:inline define:vars={{ indexJson, baseUrl: import.meta.env.BASE_URL }}>
+  // The index is inlined rather than fetched so that the first keystroke has
+  // something to search. It is a few tens of kilobytes.
+  window.__SDG_SEARCH_INDEX__ = JSON.parse(indexJson);
+  window.__SDG_BASE__ = baseUrl;
+</script>
+
+<script>
+  interface SearchEntry {
+    type: string;
+    title: string;
+    subtitle: string;
+    href: string;
+    keywords: string;
+  }
+
+  declare global {
+    interface Window {
+      __SDG_SEARCH_INDEX__: SearchEntry[];
+      __SDG_BASE__: string;
+    }
+  }
+
+  /** Strip accents and case so that "Durres" finds "Durrës". */
+  function fold(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .trim();
+  }
+
+  /**
+   * Score an entry against the query terms.
+   *
+   * A title match outranks a keyword match, and an entry has to match every
+   * term to appear at all. That is simple enough to reason about and behaves
+   * predictably, which matters more here than clever ranking: a learner
+   * searching mid-exercise needs the obvious answer first.
+   */
+  function score(entry: SearchEntry, terms: string[]): number {
+    const title = fold(entry.title);
+    let total = 0;
+
+    for (const term of terms) {
+      if (title.startsWith(term)) {
+        total += 100;
+      } else if (title.includes(term)) {
+        total += 50;
+      } else if (entry.keywords.includes(term)) {
+        total += 10;
+      } else {
+        return 0; // Every term has to match somewhere.
+      }
+    }
+
+    return total;
+  }
+
+  function initSearch(): void {
+    const input = document.querySelector<HTMLInputElement>('[data-search-input]');
+    const resultsEl = document.querySelector<HTMLElement>('[data-search-results]');
+    const emptyEl = document.querySelector<HTMLElement>('[data-search-empty]');
+    const browseEl = document.querySelector<HTMLElement>('[data-search-browse]');
+    const statusEl = document.querySelector<HTMLElement>('[data-search-status]');
+    const index = window.__SDG_SEARCH_INDEX__;
+    const base = (window.__SDG_BASE__ || '/').replace(/\/$/, '');
+
+    if (!input || !resultsEl || !index) return;
+
+    function render(query: string): void {
+      const terms = fold(query).split(/\s+/).filter(Boolean);
+
+      if (terms.length === 0) {
+        resultsEl!.classList.add('hidden');
+        emptyEl?.classList.add('hidden');
+        browseEl?.classList.remove('hidden');
+        if (statusEl) statusEl.textContent = `Showing all ${index.length} entries.`;
+        return;
+      }
+
+      const matches = index
+        .map((entry) => ({ entry, value: score(entry, terms) }))
+        .filter((item) => item.value > 0)
+        .sort((a, b) => b.value - a.value || a.entry.title.localeCompare(b.entry.title))
+        .slice(0, 40);
+
+      browseEl?.classList.add('hidden');
+
+      if (matches.length === 0) {
+        resultsEl!.classList.add('hidden');
+        emptyEl?.classList.remove('hidden');
+        if (statusEl) statusEl.textContent = `No results for "${query}".`;
+        return;
+      }
+
+      emptyEl?.classList.add('hidden');
+      resultsEl!.classList.remove('hidden');
+
+      if (statusEl) {
+        statusEl.textContent =
+          matches.length === 1 ? `1 result for "${query}".` : `${matches.length} results for "${query}".`;
+      }
+
+      const list = document.createElement('ul');
+      list.className = 'grid gap-2 sm:grid-cols-2 lg:grid-cols-3';
+
+      for (const { entry } of matches) {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = `${base}${entry.href}`;
+        link.className =
+          'flex h-full flex-col rounded-lg border border-navy-100 px-4 py-3 transition-colors duration-150 hover:border-sea-300 hover:bg-sea-50/40';
+
+        const chip = document.createElement('span');
+        chip.className = 'text-[0.6875rem] font-medium uppercase tracking-wider text-sea-700';
+        chip.textContent = entry.type;
+
+        const title = document.createElement('span');
+        title.className = 'mt-1 text-sm font-medium text-navy-900';
+        title.textContent = entry.title;
+
+        const subtitle = document.createElement('span');
+        subtitle.className = 'mt-0.5 line-clamp-2 text-xs leading-snug text-navy-500';
+        subtitle.textContent = entry.subtitle;
+
+        link.append(chip, title, subtitle);
+        item.append(link);
+        list.append(item);
+      }
+
+      resultsEl!.replaceChildren(list);
+    }
+
+    // Debounced so that the live region is not re-announced on every keystroke.
+    let timer: number | undefined;
+    input.addEventListener('input', () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => render(input.value), 160);
+    });
+
+    // Support arriving from a link such as /search?q=barcelona.
+    const initial = new URLSearchParams(window.location.search).get('q');
+    if (initial) {
+      input.value = initial;
+      render(initial);
+    }
+  }
+
+  initSearch();
+</script>

@@ -1,0 +1,32 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import ProseArticle from '@/components/ui/ProseArticle.astro';
+import { getProsePagesByGroup } from '@/data/pages';
+
+/**
+ * Top level prose pages: the legal notice, the privacy page and the
+ * accessibility statement.
+ *
+ * This route only generates the slugs returned below. Astro gives static routes
+ * priority over dynamic ones, so pages such as /quote are unaffected by it.
+ */
+export function getStaticPaths() {
+  return getProsePagesByGroup('root').map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <PageHeader
+    eyebrow={page.eyebrow}
+    title={page.title}
+    intro={page.intro}
+    breadcrumbs={[{ label: page.title }]}
+  />
+  <ProseArticle page={page} />
+</BaseLayout>

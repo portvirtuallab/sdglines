@@ -1,0 +1,120 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { url } from '@/lib/site';
+import { arrivalCharges } from '@/data/arrivalCharges';
+import { ports } from '@/data/ports';
+
+/**
+ * Resources index.
+ *
+ * The operational reference material: the things a learner looks up in the
+ * middle of an exercise rather than reads beforehand.
+ */
+const operational = [
+  {
+    title: 'Arrival charges',
+    href: '/resources/arrival-charges',
+    summary: `The ${arrivalCharges.length} local charges that turn a freight rate into a landed cost, with what each covers and who pays it.`,
+    primary: true,
+  },
+  {
+    title: 'Transport documentation',
+    href: '/resources/documentation',
+    summary:
+      'Bill of lading, sea waybill, packing list, certificate of origin and the dangerous goods declaration.',
+  },
+  {
+    title: 'Track a shipment',
+    href: '/resources/tracking',
+    summary: 'How tracking works inside the simulation, and what carrier tracking events mean.',
+  },
+  {
+    title: 'Customer service',
+    href: '/resources/customer-service',
+    summary: 'Who to ask, and what this simulation can and cannot answer.',
+  },
+  {
+    title: 'Downloads',
+    href: '/resources/downloads',
+    summary: 'Data sheets and reference files for use in exercises.',
+  },
+  {
+    title: 'News and updates',
+    href: '/resources/news',
+    summary: 'What has changed in the simulation and when.',
+  },
+];
+
+const shortcuts = [
+  { label: 'Request a quotation', href: '/quote' },
+  { label: 'Port directory', href: '/ports' },
+  { label: 'Equipment catalogue', href: '/equipment' },
+  { label: 'All routes', href: '/routes' },
+];
+---
+
+<BaseLayout
+  title="Resources"
+  description="Operational reference material for SDG Lines exercises: arrival charges, transport documentation, tracking, downloads and updates."
+>
+  <PageHeader
+    eyebrow="Resources"
+    title="Resources"
+    intro="The reference material you look up in the middle of an exercise: charges, documents, tracking and downloads."
+    breadcrumbs={[{ label: 'Resources' }]}
+  />
+
+  <div class="shell py-12 lg:py-16">
+    <ul class="grid gap-4 md:grid-cols-2">
+      {
+        operational.map((item) => (
+          <li class={item.primary ? 'md:col-span-2' : undefined}>
+            <a
+              href={url(item.href)}
+              class={`group flex h-full flex-col rounded-2xl border p-6 transition-all duration-(--duration-base) hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy-900/5 ${
+                item.primary
+                  ? 'border-sea-200 bg-sea-50/50 hover:border-sea-400'
+                  : 'border-navy-100 bg-white hover:border-sea-300'
+              }`}
+            >
+              <h2
+                class={`font-display font-semibold text-navy-900 group-hover:text-sea-700 ${item.primary ? 'text-2xl' : 'text-lg'}`}
+              >
+                {item.title}
+              </h2>
+              <p class="mt-2 max-w-2xl leading-relaxed text-navy-600">{item.summary}</p>
+              <span
+                class="mt-auto pt-4 text-sm font-medium text-sea-700 transition-transform duration-(--duration-base) group-hover:translate-x-0.5"
+                aria-hidden="true"
+              >
+                Open &rarr;
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <section aria-labelledby="shortcuts-heading" class="mt-14 border-t border-navy-100 pt-10">
+      <h2 id="shortcuts-heading" class="text-xl">Elsewhere on the site</h2>
+      <ul class="mt-4 flex flex-wrap gap-2">
+        {
+          shortcuts.map((shortcut) => (
+            <li>
+              <a
+                href={url(shortcut.href)}
+                class="tap-target inline-flex items-center rounded-lg border border-navy-200 px-4 text-sm font-semibold text-navy-800 transition-colors duration-(--duration-fast) hover:border-sea-400 hover:bg-sea-50"
+              >
+                {shortcut.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-6 text-sm text-navy-600">
+        Looking for a specific port? The directory covers all {ports.length} of them.
+      </p>
+    </section>
+  </div>
+</BaseLayout>

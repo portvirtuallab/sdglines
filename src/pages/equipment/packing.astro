@@ -1,0 +1,184 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { url } from '@/lib/site';
+
+/**
+ * Packing and securing guidance.
+ *
+ * Replaces the legacy "Container & Trailer Packing" and "How to pack a
+ * container" pages. Written as principles rather than as a procedure, because
+ * the cargo in an exercise is never the cargo in the example, and a learner who
+ * has understood why weight distribution matters can work out the procedure.
+ */
+const principles = [
+  {
+    heading: 'Distribute the weight, then check it twice',
+    body: 'Weight should be spread as evenly as the cargo allows, and the centre of gravity kept low and near the middle of the unit. A container loaded heavy at one end can exceed axle limits on the road leg even when its total weight is legal, and it behaves badly on the ship.',
+    watchFor:
+      'The most common failure is a dense cargo occupying half the floor, which passes every total weight check and fails at the weighbridge.',
+  },
+  {
+    heading: 'Fill the space or fill the gaps',
+    body: 'Cargo that can move will move. A container is subjected to accelerations in three axes for the whole voyage, and anything with room to shift arrives damaged or damages something else. Either pack tight to the walls or block and brace the gaps with dunnage.',
+    watchFor:
+      'A part loaded unit is more dangerous than a full one, because the empty space is where the movement happens.',
+  },
+  {
+    heading: 'Secure to the unit, not to the cargo',
+    body: 'Lashing points are built into the container or the trailer for the purpose. Strapping cargo to itself holds it together but does not hold it in place, and strapping to anything that is not a rated lashing point transfers load somewhere it was not designed to go.',
+    watchFor:
+      'On flat racks and roll trailers this is the whole job, because there are no walls to pack against.',
+  },
+  {
+    heading: 'Heavy at the bottom, fragile at the top',
+    body: 'Stack so that nothing bears more than it was packaged to bear. Packaging is rated for a stacking load, and exceeding it crushes the goods underneath long before anything visible happens to the outside of the unit.',
+    watchFor:
+      'Mixed consignments are where this goes wrong, because the heavy item is loaded first for weight reasons and ends up on top for space reasons.',
+  },
+  {
+    heading: 'Let the air move in a reefer',
+    body: 'Reefers deliver cold air through the floor and return it at the ceiling. Cargo must not block the floor channels, must not be stacked above the red load line, and needs a clear return path at the top. A reefer packed solid will not hold its set point.',
+    watchFor:
+      'This is the opposite of the advice for dry cargo, which is why it catches people out. Tight packing is right for a dry box and wrong for a reefer.',
+  },
+  {
+    heading: 'Declare what is actually inside',
+    body: 'The description on the documents has to match the cargo. For dangerous goods this is a legal requirement and a safety one: stowage and segregation decisions are made from the declaration, so an inaccurate one puts the cargo in the wrong place on the vessel.',
+    watchFor:
+      'General descriptions such as "machinery parts" or "chemicals" are not descriptions. They delay customs clearance at best.',
+  },
+];
+
+const checklist = [
+  'Gross weight calculated and within both the unit rating and the road limit',
+  'Weight distributed evenly, centre of gravity low and central',
+  'Voids blocked and braced, or the unit packed tight',
+  'Cargo lashed to rated points, not to itself',
+  'Stacking loads respected, fragile cargo protected',
+  'Reefer cargo pre-cooled, airflow clear, below the load line',
+  'Cargo description on the documents matches what is in the unit',
+  'Dangerous goods declared with UN number, class and packing group',
+  'Unit sealed and the seal number recorded on the documents',
+];
+---
+
+<BaseLayout
+  title="Packing guidance"
+  description="How to pack and secure a container, flat rack or roll trailer: weight distribution, void filling, lashing, stacking, reefer airflow and cargo declaration."
+>
+  <PageHeader
+    eyebrow="Equipment"
+    title="Packing and securing"
+    intro="Six principles that cover most of what goes wrong between the warehouse and the ship, and a checklist to work through before the unit is sealed."
+    breadcrumbs={[{ label: 'Equipment', href: '/equipment' }, { label: 'Packing guidance' }]}
+  />
+
+  <div class="shell py-12 lg:py-16">
+    <div class="grid gap-12 lg:grid-cols-[1.6fr_1fr] lg:gap-14">
+      <div class="min-w-0">
+        <section aria-labelledby="principles-heading">
+          <h2 id="principles-heading" class="text-2xl">The principles</h2>
+
+          <ol class="mt-6 space-y-4">
+            {
+              principles.map((principle, index) => (
+                <li>
+                  <article class="rounded-2xl border border-navy-100 bg-white p-6">
+                    <div class="flex gap-4">
+                      <span
+                        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy-900 font-mono text-sm font-semibold text-white"
+                        aria-hidden="true"
+                      >
+                        {index + 1}
+                      </span>
+                      <div class="min-w-0">
+                        <h3 class="font-display text-lg font-semibold text-navy-900">
+                          {principle.heading}
+                        </h3>
+                        <p class="mt-2 leading-relaxed text-navy-700">{principle.body}</p>
+                        <p class="mt-3 rounded-lg bg-sea-50 px-4 py-3 text-sm leading-relaxed text-sea-900">
+                          <strong class="font-semibold">Watch out:</strong> {principle.watchFor}
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+
+        <section aria-labelledby="responsibility-heading" class="mt-12">
+          <h2 id="responsibility-heading" class="text-2xl">Who is responsible</h2>
+          <div class="mt-4 space-y-4 leading-relaxed text-navy-700">
+            <p>
+              For a container packed at the shipper premises, the shipper packs and secures the
+              cargo and declares its weight. The carrier never sees inside the unit, and its
+              liability generally reflects that.
+            </p>
+            <p>
+              For a roll trailer, the platform is terminal equipment and the cargo is loaded onto it
+              inside the port, so responsibility for securing transfers earlier. That difference is
+              worth being explicit about in any exercise involving Ro-Ro cargo, because it changes
+              who carries the risk for a badly secured load.
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <aside class="lg:sticky lg:top-28 lg:self-start">
+        <div class="rounded-2xl border border-navy-100 bg-navy-50/60 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">
+            Before the unit is sealed
+          </h2>
+          <ul class="mt-4 space-y-2.5">
+            {
+              checklist.map((item) => (
+                <li class="flex gap-2.5 text-sm leading-snug text-navy-700">
+                  <svg
+                    class="mt-0.5 h-4 w-4 shrink-0 text-eco-600"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="m3 8.5 3.5 3.5L13 5" />
+                  </svg>
+                  {item}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="mt-6 rounded-2xl border border-navy-100 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">Related</h2>
+          <ul class="mt-3 space-y-1">
+            {
+              [
+                { label: 'Equipment catalogue', href: '/equipment' },
+                { label: 'Reefers and cold chain', href: '/equipment/reefers' },
+                { label: 'Flat racks', href: '/equipment/flat-racks' },
+                { label: 'Dangerous goods', href: '/services/dangerous-goods' },
+                { label: 'Transport documentation', href: '/resources/documentation' },
+              ].map((link) => (
+                <li>
+                  <a
+                    href={url(link.href)}
+                    class="flex min-h-9 items-center text-sm text-navy-700 hover:text-sea-700 hover:underline underline-offset-4"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

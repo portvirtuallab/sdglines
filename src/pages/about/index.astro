@@ -1,0 +1,265 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import SimulationNotice from '@/components/layout/SimulationNotice.astro';
+import { SITE, url } from '@/lib/site';
+import { ports } from '@/data/ports';
+import { vessels } from '@/data/vessels';
+import { services } from '@/data/services';
+
+/**
+ * About SDG Lines.
+ *
+ * Audit finding: the legacy About page described Escola Europea - its founding,
+ * its courses, its director and its alumni numbers - and mentioned SDG Lines in
+ * two sentences at the end. A visitor who arrived wanting to know what SDG Lines
+ * is left knowing about the training centre instead.
+ *
+ * This page is about SDG Lines. Escola Europea and Port Virtual Lab are
+ * explained in terms of their relationship to it, and each has its own page for
+ * the rest.
+ */
+---
+
+<BaseLayout
+  title="About SDG Lines"
+  description="SDG Lines is the simulated shipping company of Port Virtual Lab, created by Escola Europea - Intermodal Transport for education and professional training. What it is, how it is used and what it is not."
+>
+  <PageHeader
+    eyebrow="About"
+    title="About SDG Lines"
+    intro="A shipping company that exists so that people can learn how shipping companies work."
+    breadcrumbs={[{ label: 'About' }]}
+    tone="dark"
+  />
+
+  <div class="shell py-12 lg:py-16">
+    <div class="grid gap-12 lg:grid-cols-[1.6fr_1fr] lg:gap-14">
+      <div class="min-w-0">
+        <section aria-labelledby="what-heading">
+          <h2 id="what-heading" class="text-2xl">What SDG Lines is</h2>
+          <div class="mt-4 space-y-4 text-[1.0625rem] leading-relaxed text-navy-700">
+            <p>
+              SDG Lines is a shipping company that does not exist. It has {services.length} services,
+              {ports.length} ports of call and {vessels.length} vessels, it publishes rotations and equipment
+              specifications and arrival charges, and it accepts quotation requests. None of it moves
+              any cargo.
+            </p>
+            <p>
+              That is the point. Learning how international shipping works by reading about it does
+              not transfer well, and learning it on a real carrier account means learning it slowly
+              and expensively, with someone watching in case a mistake becomes a claim. SDG Lines is
+              a place to make those mistakes.
+            </p>
+            <p>
+              Everything on this site behaves the way a real carrier website behaves. The
+              information is organised the way a real one is organised, the terminology is the
+              terminology used in the industry, and the decisions a learner has to make are the
+              decisions a forwarder actually makes. What is missing is the consequence.
+            </p>
+          </div>
+        </section>
+
+        <section aria-labelledby="not-heading" class="mt-12">
+          <h2 id="not-heading" class="text-2xl">What SDG Lines is not</h2>
+          <div class="mt-4 space-y-4 leading-relaxed text-navy-700">
+            <p>
+              SDG Lines is not a carrier, a freight forwarder, a NVOCC or an agent. It holds no
+              licences, files no manifests and has no commercial relationship with any port,
+              terminal or customer. The vessels are not registered with the IMO or with any flag
+              state, and the IMO numbers, MMSI identifiers and call signs on the fleet pages belong
+              to the simulation.
+            </p>
+            <p>
+              The agency e-mail addresses on the port pages follow a convention so that learners can
+              work out an address from a port name. They are not monitored mailboxes. If you need to
+              reach a person about this site, write to{' '}
+              <a
+                href={`mailto:${SITE.contactEmail}`}
+                class="font-medium text-sea-700 underline underline-offset-4 hover:text-sea-800"
+                >{SITE.contactEmail}</a
+              >.
+            </p>
+            <p>
+              No figure on this site should be quoted as evidence about the real shipping industry.
+              Where a value is confirmed by the product owner it is published as such; where it is
+              not, the page says so rather than filling the gap with something plausible.
+            </p>
+          </div>
+        </section>
+
+        <section aria-labelledby="using-heading" class="mt-12">
+          <h2 id="using-heading" class="text-2xl">How it is used</h2>
+          <p class="mt-4 leading-relaxed text-navy-700">
+            SDG Lines is used inside Port Virtual Lab exercises, usually in one of four ways.
+          </p>
+
+          <ol class="mt-6 space-y-4">
+            {
+              [
+                {
+                  title: 'As a reference during an exercise',
+                  body: 'A learner working on a shipment needs to know which service reaches Beirut, what fits in a 40 foot high cube and what will be charged on arrival. This site is where they look it up, in the same way they would look it up on a carrier website.',
+                },
+                {
+                  title: 'As the carrier in a role play',
+                  body: 'Where an exercise casts participants as shipper, forwarder and agent, SDG Lines is the carrier they are all dealing with. The quotation form produces the reference that the rest of the exercise is built around.',
+                },
+                {
+                  title: 'As a worked example in teaching',
+                  body: 'A trainer explaining transhipment, or the difference between demurrage and detention, can point at a concrete network rather than at an abstraction. The Tanger Med transfer on the Westmed service exists so that it can be pointed at.',
+                },
+                {
+                  title: 'As a first encounter with the industry',
+                  body: 'For students who have never seen a carrier website, the value is partly in the shape of it: learning that rotations, equipment catalogues and local charges are separate things that live in separate places.',
+                },
+              ].map((item, index) => (
+                <li class="flex gap-4 rounded-xl border border-navy-100 bg-white p-5">
+                  <span
+                    class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy-900 font-mono text-sm font-semibold text-white"
+                    aria-hidden="true"
+                  >
+                    {index + 1}
+                  </span>
+                  <div>
+                    <h3 class="font-display text-base font-semibold text-navy-900">{item.title}</h3>
+                    <p class="mt-1 leading-relaxed text-navy-600">{item.body}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </section>
+
+        <section aria-labelledby="relationships-heading" class="mt-12">
+          <h2 id="relationships-heading" class="text-2xl">Who runs it</h2>
+
+          <div class="mt-5 space-y-4">
+            <article class="rounded-xl border border-navy-100 bg-white p-6">
+              <h3 class="font-display text-lg font-semibold text-navy-900">
+                Escola Europea &ndash; Intermodal Transport
+              </h3>
+              <p class="mt-2 leading-relaxed text-navy-700">
+                The training centre that owns and operates SDG Lines. Escola Europea runs courses in
+                intermodal and maritime transport from its base at Moll de Barcelona, combining
+                classroom teaching with simulation and with practical experience aboard vessels and
+                trains.
+              </p>
+              <a
+                href={SITE.operatorUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-3 inline-flex text-sm font-semibold text-sea-700 hover:underline underline-offset-4"
+              >
+                escolaeuropea.eu<span class="sr-only"> (opens in a new tab)</span> &rarr;
+              </a>
+            </article>
+
+            <article class="rounded-xl border border-navy-100 bg-white p-6">
+              <h3 class="font-display text-lg font-semibold text-navy-900">Port Virtual Lab</h3>
+              <p class="mt-2 leading-relaxed text-navy-700">
+                The simulation environment that SDG Lines belongs to. Port Virtual Lab contains
+                several simulated companies, of which SDG Lines is the shipping line, alongside SDG
+                Airlines, MEDtrade and Playforwarding. Exercises run across them, so a shipment can
+                move between modes and between parties.
+              </p>
+              <div class="mt-3 flex flex-wrap gap-4">
+                <a
+                  href={url('/about/port-virtual-lab')}
+                  class="inline-flex text-sm font-semibold text-sea-700 hover:underline underline-offset-4"
+                >
+                  More about Port Virtual Lab &rarr;
+                </a>
+                <a
+                  href={SITE.pvlUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex text-sm font-semibold text-sea-700 hover:underline underline-offset-4"
+                >
+                  Access PVL.ONE<span class="sr-only"> (opens in a new tab)</span> &rarr;
+                </a>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section aria-labelledby="accuracy-heading" class="mt-12">
+          <h2 id="accuracy-heading" class="text-2xl">How accurate is any of this?</h2>
+          <div class="mt-4 space-y-4 leading-relaxed text-navy-700">
+            <p>
+              A simulation is only useful to the extent that it is honest about where it is
+              simulating. Every record on this site carries a note of where its values came from and
+              whether they have been reviewed, and that note is shown on the page rather than kept
+              in a spreadsheet.
+            </p>
+            <p>
+              Real world facts, such as the country and geographic position of a port or the ISO
+              dimensions of a container, are verifiable and are published as facts. Simulation
+              values, such as a vessel call sign or a route rotation, are published as simulation
+              values. Where nothing has been confirmed, the page says <em>To be confirmed</em> instead
+              of offering a plausible number.
+            </p>
+            <p>
+              If you find something on this site that is presented as settled when it is not, that
+              is a defect. Please report it.
+            </p>
+          </div>
+
+          <a
+            href={url('/about/quality')}
+            class="mt-4 inline-flex text-sm font-semibold text-sea-700 hover:underline underline-offset-4"
+          >
+            How content is reviewed &rarr;
+          </a>
+        </section>
+      </div>
+
+      <aside class="space-y-6 lg:sticky lg:top-28 lg:self-start">
+        <div class="rounded-2xl border border-navy-100 bg-navy-50/60 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">The network</h2>
+          <dl class="mt-4 space-y-3">
+            <div class="flex items-baseline justify-between gap-3">
+              <dt class="text-sm text-navy-600">Services</dt>
+              <dd class="font-display text-2xl font-semibold text-navy-900">{services.length}</dd>
+            </div>
+            <div class="flex items-baseline justify-between gap-3">
+              <dt class="text-sm text-navy-600">Ports of call</dt>
+              <dd class="font-display text-2xl font-semibold text-navy-900">{ports.length}</dd>
+            </div>
+            <div class="flex items-baseline justify-between gap-3">
+              <dt class="text-sm text-navy-600">Vessels</dt>
+              <dd class="font-display text-2xl font-semibold text-navy-900">{vessels.length}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="rounded-2xl border border-navy-100 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">More about</h2>
+          <ul class="mt-3 space-y-1">
+            {
+              [
+                { label: 'Port Virtual Lab', href: '/about/port-virtual-lab' },
+                { label: 'Sustainability', href: '/about/sustainability' },
+                { label: 'Digitalisation', href: '/about/digitalisation' },
+                { label: 'Quality and content review', href: '/about/quality' },
+                { label: 'Legal notice', href: '/legal' },
+                { label: 'Accessibility statement', href: '/accessibility' },
+              ].map((link) => (
+                <li>
+                  <a
+                    href={url(link.href)}
+                    class="flex min-h-9 items-center text-sm text-navy-700 hover:text-sea-700 hover:underline underline-offset-4"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <SimulationNotice variant="inline" />
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

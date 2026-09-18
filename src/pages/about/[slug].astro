@@ -1,0 +1,32 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import ProseArticle from '@/components/ui/ProseArticle.astro';
+import { getProsePagesByGroup } from '@/data/pages';
+
+/**
+ * The explanatory pages under /about.
+ *
+ * Content lives in src/data/pages.ts so that every prose page shares one
+ * rendering and cannot drift apart, and so that editing the words does not mean
+ * editing a component.
+ */
+export function getStaticPaths() {
+  return getProsePagesByGroup('about').map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props;
+---
+
+<BaseLayout title={page.title} description={page.description}>
+  <PageHeader
+    eyebrow={page.eyebrow}
+    title={page.title}
+    intro={page.intro}
+    breadcrumbs={[{ label: 'About', href: '/about' }, { label: page.title }]}
+  />
+  <ProseArticle page={page} />
+</BaseLayout>

@@ -1,0 +1,122 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import { vessels } from '@/data/vessels';
+import { url } from '@/lib/site';
+
+/**
+ * The spirit of the vessels.
+ *
+ * The legacy site had a section under this name that contained only images and
+ * navigation links; the idea behind the fleet naming was never actually written
+ * down. It is the most distinctive thing about SDG Lines, so it is written down
+ * here.
+ *
+ * The biographies are of real people and are written from public biographical
+ * record. They are ordered by the period the person worked in rather than
+ * alphabetically, because read in that order the fleet becomes a timeline.
+ */
+const ordered = [...vessels].sort((a, b) => {
+  /** Pull the first year out of a lifespan string, treating BCE as negative. */
+  const yearOf = (lifespan: string): number => {
+    const match = lifespan.match(/(\d+)/);
+    const value = match ? Number(match[1]) : 0;
+    return /BCE/.test(lifespan) ? -value : value;
+  };
+  return yearOf(a.namesake.lifespan) - yearOf(b.namesake.lifespan);
+});
+
+const fields = [...new Set(vessels.map((vessel) => vessel.namesake.field))].sort();
+---
+
+<BaseLayout
+  title="The spirit of the vessels"
+  description="Every SDG Lines vessel is named after a woman in science, medicine, mathematics, literature or education. Who they were and why the fleet carries their names."
+>
+  <PageHeader
+    eyebrow="The fleet"
+    title="The spirit of the vessels"
+    intro="A fleet list that is also a reading list. Fourteen ships, fourteen women, and roughly two and a half thousand years."
+    breadcrumbs={[{ label: 'Fleet', href: '/fleet' }, { label: 'The spirit of the vessels' }]}
+    tone="dark"
+  />
+
+  <div class="shell py-12 lg:py-16">
+    <section aria-labelledby="why-heading" class="max-w-3xl">
+      <h2 id="why-heading" class="text-2xl">Why these names</h2>
+      <div class="mt-4 space-y-4 text-[1.0625rem] leading-relaxed text-navy-700">
+        <p>
+          Shipping companies name their vessels after places, after founders, after the ships that
+          came before. SDG Lines names them after women whose work changed what was known, and who
+          were for the most part paid less, credited later, or not credited at all.
+        </p>
+        <p>
+          The choice does a small amount of teaching on its own. A participant who spends a week
+          working with the Rita Levi-Montalcini has read her name a hundred times by the end of it,
+          and will usually have looked her up somewhere around the twentieth. That is a low cost way
+          of putting fourteen people in front of learners who would otherwise not have met them.
+        </p>
+        <p>
+          The span runs from Theano of Crotone in the sixth century BCE to Frances Allen, who
+          received the Turing Award in 2006. Between them they cover {fields.length} fields:{' '}
+          {fields.join(', ').toLowerCase()}.
+        </p>
+      </div>
+    </section>
+
+    <section aria-labelledby="timeline-heading" class="mt-14">
+      <h2 id="timeline-heading" class="text-2xl">The fourteen</h2>
+      <p class="mt-2 text-navy-600">In the order they lived and worked.</p>
+
+      <ol class="mt-8 space-y-4">
+        {
+          ordered.map((vessel) => (
+            <li>
+              <article class="rounded-2xl border border-navy-100 bg-white p-6 sm:p-7">
+                <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                  <h3 class="font-display text-xl font-semibold text-navy-900">
+                    {vessel.namesake.fullName}
+                  </h3>
+                  <p class="font-mono text-sm text-navy-500">{vessel.namesake.lifespan}</p>
+                </div>
+
+                <p class="mt-1 text-sm font-medium text-sea-700">{vessel.namesake.field}</p>
+
+                <p class="mt-4 leading-relaxed text-navy-700">{vessel.namesake.biography}</p>
+
+                <div class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-navy-100 pt-4">
+                  <p class="text-sm text-navy-600">
+                    Carried by{' '}
+                    <a
+                      href={url(`/fleet/${vessel.slug}`)}
+                      class="font-semibold text-navy-900 underline decoration-navy-200 underline-offset-4 hover:text-sea-700 hover:decoration-sea-600"
+                    >
+                      {vessel.name}
+                    </a>
+                  </p>
+                  <p class="font-mono text-xs text-navy-400">
+                    {vessel.vesselType} &middot; IMO {vessel.imo} &middot; launched{' '}
+                    {vessel.yearLaunched}
+                  </p>
+                </div>
+              </article>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    <section class="mt-14 rounded-2xl border border-navy-100 bg-navy-50/60 p-7">
+      <h2 class="text-xl">The technical side</h2>
+      <p class="mt-2 max-w-2xl text-navy-600">
+        Type, class, identifiers and service deployment for every vessel are in the fleet register.
+      </p>
+      <a
+        href={url('/fleet')}
+        class="tap-target mt-5 inline-flex items-center rounded-lg bg-navy-900 px-5 text-sm font-semibold text-white hover:bg-navy-800"
+      >
+        Open the fleet register
+      </a>
+    </section>
+  </div>
+</BaseLayout>
