@@ -1,0 +1,576 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import NetworkChart from '@/components/map/NetworkChart.astro';
+import { SITE, url } from '@/lib/site';
+import { services } from '@/data/services';
+import { ports } from '@/data/ports';
+import { vessels } from '@/data/vessels';
+
+/**
+ * Home page.
+ *
+ * The hero answers three questions in the first screen: what this is, that it
+ * is a simulation, and what the visitor can do next. The legacy home page
+ * opened with three rotating slogans and no heading at all, so a visitor
+ * arriving from a search result had no way to tell what they were looking at.
+ *
+ * Hero variants A and B are documented in docs/hero-variants.md for later A/B
+ * testing. Variant A is implemented here because it leads with the action a
+ * learner actually arrives to perform.
+ */
+
+const quickActions = [
+  {
+    label: 'Find a route',
+    description: 'Five services, their ports of call and the vessels deployed on them.',
+    href: '/routes',
+    icon: 'route',
+  },
+  {
+    label: 'Find a port',
+    description: `Search all ${ports.length} ports of call by name, country or region.`,
+    href: '/ports',
+    icon: 'anchor',
+  },
+  {
+    label: 'Choose equipment',
+    description: 'Containers, reefers, flat racks and roll trailers with their dimensions.',
+    href: '/equipment',
+    icon: 'container',
+  },
+  {
+    label: 'View a vessel',
+    description: `Technical data for the ${vessels.length} vessels in the fleet.`,
+    href: '/fleet',
+    icon: 'vessel',
+  },
+  {
+    label: 'Check arrival charges',
+    description: 'Local charges applied on arrival, by port and by cargo type.',
+    href: '/resources/arrival-charges',
+    icon: 'receipt',
+  },
+  {
+    label: 'Request a quotation',
+    description: 'Build a simulated quotation for a shipment in your exercise.',
+    href: '/quote',
+    icon: 'quote',
+  },
+] as const;
+
+const cargoServices = [
+  {
+    name: 'Container services',
+    href: '/services/containers',
+    summary: 'Dry, high cube and open top units across all five services.',
+  },
+  {
+    name: 'Ro-Ro services',
+    href: '/services/roro',
+    summary: 'Accompanied and unaccompanied trailers, cars and high and heavy cargo.',
+  },
+  {
+    name: 'Cold chain',
+    href: '/services/cold-chain',
+    summary: 'Reefer containers with temperature monitoring for food and pharmaceuticals.',
+  },
+  {
+    name: 'Dangerous goods',
+    href: '/services/dangerous-goods',
+    summary: 'IMDG classified cargo, declarations and segregation requirements.',
+  },
+  {
+    name: 'Project cargo',
+    href: '/services/project-cargo',
+    summary: 'Out of gauge and heavy lift shipments on flat racks and roll trailers.',
+  },
+  {
+    name: 'Motorways of the Sea',
+    href: '/services/motorways-of-the-sea',
+    summary: 'Short sea relations designed to move freight from road to sea.',
+  },
+] as const;
+
+const featuredVessels = vessels
+  .filter((vessel) => ['caroline-herschel', 'merce-rodoreda', 'rosa-sensat'].includes(vessel.id))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+const structuredData = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SITE.name,
+  url: 'https://portvirtuallab.github.io/sdglines/',
+  description: SITE.description,
+  publisher: { '@type': 'EducationalOrganization', name: SITE.operator },
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: 'https://portvirtuallab.github.io/sdglines/search?q={search_term_string}',
+    'query-input': 'required name=search_term_string',
+  },
+});
+---
+
+<BaseLayout
+  fullTitle="SDG Lines | The simulated shipping line of Port Virtual Lab"
+  title="Home"
+  description={SITE.description}
+  structuredData={structuredData}
+>
+  <!-- ==================================================================
+       Hero
+       ================================================================== -->
+  <section class="on-dark relative overflow-hidden bg-navy-900 text-white">
+    <div class="chart-grid absolute inset-0" aria-hidden="true"></div>
+    <!-- Horizon glow: a Mediterranean dawn rather than a stock photograph. -->
+    <div
+      class="pointer-events-none absolute -right-1/4 top-0 h-[42rem] w-[42rem] rounded-full bg-sea-600/20 blur-3xl"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="shell relative grid gap-12 py-14 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-10 lg:py-20">
+      <div class="max-w-xl">
+        <p
+          class="font-mono text-xs font-medium uppercase tracking-[0.18em] text-sea-300 sm:text-[0.8125rem]"
+        >
+          The simulated shipping line of Port Virtual Lab
+        </p>
+
+        <h1 class="mt-4 text-4xl leading-[1.08] sm:text-5xl lg:text-[3.5rem]">
+          Navigate maritime logistics through realistic simulation
+        </h1>
+
+        <p class="mt-5 text-lg leading-relaxed text-navy-100">
+          Explore routes, vessels, ports and cargo services while managing practical shipping
+          operations in a safe digital learning environment.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a
+            href={url('/routes')}
+            class="tap-target inline-flex items-center gap-2 rounded-lg bg-signal-600 px-6 text-base font-semibold text-white transition-colors duration-(--duration-fast) hover:bg-signal-700"
+          >
+            Explore the routes
+            <svg
+              class="h-4 w-4"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M2 8h11M9 4l4 4-4 4"></path>
+            </svg>
+          </a>
+
+          <a
+            href={url('/quote')}
+            class="tap-target inline-flex items-center rounded-lg border border-navy-500 bg-navy-800/60 px-6 text-base font-semibold text-white transition-colors duration-(--duration-fast) hover:border-navy-400 hover:bg-navy-800"
+          >
+            Request a simulated quotation
+          </a>
+        </div>
+
+        <p class="mt-6 text-sm text-navy-200">
+          Already participating in a course?{' '}
+          <a
+            href={SITE.pvlUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-semibold text-white underline decoration-sea-400 decoration-2 underline-offset-4 hover:decoration-white"
+          >
+            Access PVL.ONE<span class="sr-only"> (opens in a new tab)</span>
+          </a>
+        </p>
+      </div>
+
+      <!-- Network chart. Decorative here in the sense that nothing depends on
+           it: the same network is listed in full further down the page and at
+           /routes and /ports. -->
+      <div class="relative text-sea-200">
+        <NetworkChart
+          animate
+          showLabels={false}
+          bounds={[-19, 26, 42, 57]}
+          description="Chart of the SDG Lines Mediterranean network. Each line is one service and each point is a port of call. Every route and port is listed as text on the routes and ports pages."
+          class="opacity-95"
+        />
+
+        <!-- Network summary as text, so the figures are readable without the chart. -->
+        <dl
+          class="mt-6 grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-navy-700 bg-navy-700 text-center"
+        >
+          <div class="bg-navy-800 px-3 py-4">
+            <dt class="text-xs uppercase tracking-wider text-navy-300">Services</dt>
+            <dd class="mt-1 font-display text-2xl font-semibold text-white">{services.length}</dd>
+          </div>
+          <div class="bg-navy-800 px-3 py-4">
+            <dt class="text-xs uppercase tracking-wider text-navy-300">Ports of call</dt>
+            <dd class="mt-1 font-display text-2xl font-semibold text-white">{ports.length}</dd>
+          </div>
+          <div class="bg-navy-800 px-3 py-4">
+            <dt class="text-xs uppercase tracking-wider text-navy-300">Vessels</dt>
+            <dd class="mt-1 font-display text-2xl font-semibold text-white">{vessels.length}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================================
+       Quick actions
+       ================================================================== -->
+  <section class="shell py-16 lg:py-20" aria-labelledby="quick-actions-heading">
+    <h2 id="quick-actions-heading" class="text-2xl sm:text-3xl">What do you need to do?</h2>
+    <p class="mt-2 max-w-2xl text-navy-600">
+      The seven tasks that come up most often during a training exercise. Each one goes straight to
+      the information, without a landing page in between.
+    </p>
+
+    <ul class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        quickActions.map((action) => (
+          <li>
+            <a
+              href={url(action.href)}
+              class="group flex h-full flex-col rounded-xl border border-navy-100 bg-white p-5 transition-all duration-(--duration-base) hover:-translate-y-0.5 hover:border-sea-300 hover:shadow-lg hover:shadow-navy-900/5"
+            >
+              <span class="flex items-center gap-2.5">
+                <span
+                  class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sea-50 text-sea-700 transition-colors duration-(--duration-base) group-hover:bg-sea-100"
+                  aria-hidden="true"
+                >
+                  <svg class="h-5 w-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    {action.icon === 'route' && <path d="M4 16c0-4 12-8 12-12M4 16h.01M16 4h.01" />}
+                    {action.icon === 'anchor' && <path d="M10 7v10M10 7a2 2 0 100-4 2 2 0 000 4M4 12a6 6 0 0012 0M4 12h2M16 12h-2" />}
+                    {action.icon === 'container' && <path d="M3 6h14v9H3zM6 6v9M10 6v9M14 6v9" />}
+                    {action.icon === 'vessel' && <path d="M3 13l1.5 4h11L17 13M5 13V8h10v5M8 8V5h4v3" />}
+                    {action.icon === 'receipt' && <path d="M5 3h10v14l-2.5-1.5L10 17l-2.5-1.5L5 17zM8 7h4M8 10h4" />}
+                    {action.icon === 'quote' && <path d="M5 4h10v12H5zM8 8h4M8 11h4" />}
+                  </svg>
+                </span>
+                <span class="font-display text-base font-semibold text-navy-900">
+                  {action.label}
+                </span>
+              </span>
+              <span class="mt-3 text-sm leading-relaxed text-navy-600">{action.description}</span>
+              <span
+                class="mt-auto pt-4 text-sm font-medium text-sea-700 transition-transform duration-(--duration-base) group-hover:translate-x-0.5"
+                aria-hidden="true"
+              >
+                Open &rarr;
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ==================================================================
+       Services
+       ================================================================== -->
+  <section class="border-y border-navy-100 bg-navy-50/60" aria-labelledby="services-heading">
+    <div class="shell py-16 lg:py-20">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="max-w-2xl">
+          <h2 id="services-heading" class="text-2xl sm:text-3xl">Cargo services</h2>
+          <p class="mt-2 text-navy-600">
+            What SDG Lines carries, and the rules that apply to each cargo type in the simulation.
+          </p>
+        </div>
+        <a
+          href={url('/services')}
+          class="tap-target inline-flex items-center gap-1.5 rounded-lg border border-navy-200 bg-white px-4 text-sm font-semibold text-navy-800 hover:border-navy-300 hover:bg-navy-50"
+        >
+          All services &rarr;
+        </a>
+      </div>
+
+      <ul class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          cargoServices.map((service) => (
+            <li>
+              <a
+                href={url(service.href)}
+                class="group flex h-full flex-col rounded-xl border border-navy-100 bg-white p-5 transition-all duration-(--duration-base) hover:border-navy-300 hover:shadow-md"
+              >
+                <h3 class="font-display text-base font-semibold text-navy-900 group-hover:text-sea-700">
+                  {service.name}
+                </h3>
+                <p class="mt-2 text-sm leading-relaxed text-navy-600">{service.summary}</p>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ==================================================================
+       Routes
+       ================================================================== -->
+  <section class="shell py-16 lg:py-20" aria-labelledby="routes-heading">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div class="max-w-2xl">
+        <h2 id="routes-heading" class="text-2xl sm:text-3xl">The network</h2>
+        <p class="mt-2 text-navy-600">
+          Five services connecting {ports.length} ports across Europe, the Mediterranean, Africa,
+          the Middle East and Asia.
+        </p>
+      </div>
+      <a
+        href={url('/ports/map')}
+        class="tap-target inline-flex items-center gap-1.5 rounded-lg border border-navy-200 px-4 text-sm font-semibold text-navy-800 hover:border-navy-300 hover:bg-navy-50"
+      >
+        Open the interactive map &rarr;
+      </a>
+    </div>
+
+    <ul class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      {
+        services.map((service) => (
+          <li>
+            <a
+              href={url(`/routes/${service.slug}`)}
+              class="group flex h-full flex-col rounded-xl border border-navy-100 bg-white p-6 transition-all duration-(--duration-base) hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy-900/5"
+            >
+              <div class="flex items-center gap-3">
+                <span
+                  class="h-2.5 w-10 shrink-0 rounded-full"
+                  style={`background-color:${service.mapColor}`}
+                  aria-hidden="true"
+                />
+                <span class="font-mono text-xs font-medium tracking-wider text-navy-500">
+                  {service.code}
+                </span>
+              </div>
+
+              <h3 class="mt-3 font-display text-xl font-semibold text-navy-900 group-hover:text-sea-700">
+                {service.name}
+              </h3>
+              <p class="mt-1 text-sm font-medium text-navy-500">{service.coverage}</p>
+              <p class="mt-3 text-sm leading-relaxed text-navy-600">{service.summary}</p>
+
+              <dl class="mt-5 grid grid-cols-2 gap-3 border-t border-navy-100 pt-4 text-sm">
+                <div>
+                  <dt class="text-xs uppercase tracking-wide text-navy-500">Ports of call</dt>
+                  <dd class="mt-0.5 font-semibold text-navy-900">{service.rotation.length}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs uppercase tracking-wide text-navy-500">Vessels</dt>
+                  <dd class="mt-0.5 font-semibold text-navy-900">
+                    {service.vesselIds.length > 0 ? service.vesselIds.length : 'To be confirmed'}
+                  </dd>
+                </div>
+              </dl>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ==================================================================
+       Fleet
+       ================================================================== -->
+  <section class="on-dark bg-navy-900 text-white" aria-labelledby="fleet-heading">
+    <div class="chart-grid">
+      <div class="shell py-16 lg:py-20">
+        <div class="flex flex-wrap items-end justify-between gap-4">
+          <div class="max-w-2xl">
+            <p class="font-mono text-xs uppercase tracking-[0.18em] text-sea-300">The fleet</p>
+            <h2 id="fleet-heading" class="mt-3 text-2xl sm:text-3xl">
+              Fourteen vessels, named after women who changed what we know
+            </h2>
+            <p class="mt-3 text-navy-100">
+              Every ship in the SDG Lines fleet carries the name of a woman in science, medicine,
+              mathematics, literature or education. The names are part of the teaching: a fleet list
+              is also a reading list.
+            </p>
+          </div>
+          <a
+            href={url('/fleet')}
+            class="tap-target inline-flex items-center gap-1.5 rounded-lg border border-navy-600 px-4 text-sm font-semibold text-white hover:bg-navy-800"
+          >
+            View the fleet &rarr;
+          </a>
+        </div>
+
+        <ul class="mt-8 grid gap-4 md:grid-cols-3">
+          {
+            featuredVessels.map((vessel) => (
+              <li>
+                <a
+                  href={url(`/fleet/${vessel.slug}`)}
+                  class="group flex h-full flex-col rounded-xl border border-navy-700 bg-navy-800/70 p-6 transition-colors duration-(--duration-base) hover:border-sea-500 hover:bg-navy-800"
+                >
+                  <h3 class="font-display text-lg font-semibold text-white group-hover:text-sea-200">
+                    {vessel.name}
+                  </h3>
+                  <p class="mt-1 font-mono text-xs tracking-wide text-navy-300">
+                    {vessel.vesselType} &middot; IMO {vessel.imo}
+                  </p>
+                  <p class="mt-4 text-sm leading-relaxed text-navy-100">
+                    {vessel.namesake.field}, {vessel.namesake.lifespan}
+                  </p>
+                  <p class="mt-auto pt-4 text-sm font-medium text-sea-300" aria-hidden="true">
+                    Technical data &rarr;
+                  </p>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================================
+       How the simulation works
+       ================================================================== -->
+  <section class="shell py-16 lg:py-20" aria-labelledby="simulation-heading">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+      <div>
+        <h2 id="simulation-heading" class="text-2xl sm:text-3xl">How the simulation works</h2>
+        <p class="mt-4 leading-relaxed text-navy-700">
+          SDG Lines is one of the companies that make up Port Virtual Lab, the simulation
+          environment built by {SITE.operator}. Learners take the part of shippers, forwarders and
+          agents, and use this website the way they would use a real carrier website: to find a
+          service, check what equipment fits the cargo, look up what it will cost on arrival, and
+          request a quotation.
+        </p>
+        <p class="mt-4 leading-relaxed text-navy-700">
+          Nothing on this site moves real cargo. The value is that everything behaves as though it
+          might, so that a mistake made here costs nothing but teaches the same lesson.
+        </p>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a
+            href={url('/about')}
+            class="tap-target inline-flex items-center rounded-lg bg-navy-900 px-5 text-sm font-semibold text-white hover:bg-navy-800"
+          >
+            About SDG Lines
+          </a>
+          <a
+            href={url('/about/port-virtual-lab')}
+            class="tap-target inline-flex items-center rounded-lg border border-navy-200 px-5 text-sm font-semibold text-navy-800 hover:bg-navy-50"
+          >
+            What is Port Virtual Lab?
+          </a>
+        </div>
+      </div>
+
+      <ol class="space-y-4">
+        {
+          [
+            {
+              step: 'Find the service',
+              body: 'Start from a port or from a cargo type. Each service page lists its rotation, the vessels deployed on it and the cargo it accepts.',
+            },
+            {
+              step: 'Choose the equipment',
+              body: 'Match the cargo to a container, a reefer, a flat rack or a roll trailer, using the published internal dimensions and payloads.',
+            },
+            {
+              step: 'Check the arrival charges',
+              body: 'Local charges differ by port and by cargo type. They are what turns a freight rate into a landed cost.',
+            },
+            {
+              step: 'Request a simulated quotation',
+              body: 'Submit the shipment and receive a quotation reference you can use in the rest of the exercise.',
+            },
+          ].map((item, index) => (
+            <li class="flex gap-4 rounded-xl border border-navy-100 bg-white p-5">
+              <span
+                class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-navy-900 font-mono text-sm font-semibold text-white"
+                aria-hidden="true"
+              >
+                {index + 1}
+              </span>
+              <div>
+                <h3 class="font-display text-base font-semibold text-navy-900">{item.step}</h3>
+                <p class="mt-1 text-sm leading-relaxed text-navy-600">{item.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ==================================================================
+       Sustainability and digitalisation
+       ================================================================== -->
+  <section class="border-y border-eco-100 bg-eco-50/50" aria-labelledby="sustainability-heading">
+    <div class="shell grid gap-8 py-16 md:grid-cols-2 lg:py-20">
+      <div class="rounded-2xl border border-eco-200 bg-white p-7">
+        <p class="font-mono text-xs uppercase tracking-[0.16em] text-eco-700">Sustainability</p>
+        <h2 id="sustainability-heading" class="mt-3 text-xl sm:text-2xl">
+          The Sustainable Development Goals, built into the exercise
+        </h2>
+        <p class="mt-3 leading-relaxed text-navy-700">
+          The name SDG Lines is not decoration. The simulation is designed so that a learner
+          comparing a road leg with a sea leg, or a direct call with a transhipment, is also
+          comparing their consequences. Modal shift, emissions and the trade-offs between speed and
+          impact are part of the decision, not a separate topic.
+        </p>
+        <a
+          href={url('/about/sustainability')}
+          class="tap-target mt-5 inline-flex items-center rounded-lg bg-eco-700 px-5 text-sm font-semibold text-white hover:bg-eco-800"
+        >
+          How sustainability is taught here
+        </a>
+      </div>
+
+      <div class="rounded-2xl border border-sea-200 bg-white p-7">
+        <p class="font-mono text-xs uppercase tracking-[0.16em] text-sea-700">Digitalisation</p>
+        <h2 class="mt-3 text-xl sm:text-2xl">Operations that behave like the real thing</h2>
+        <p class="mt-3 leading-relaxed text-navy-700">
+          Quotation requests, shipment references, documentation and arrival charges all follow the
+          patterns a learner will meet in a working office. The point of digitalising the
+          simulation is that the habits transfer: someone who has used this site can read a real
+          carrier website without being taught it twice.
+        </p>
+        <a
+          href={url('/about/digitalisation')}
+          class="tap-target mt-5 inline-flex items-center rounded-lg bg-sea-700 px-5 text-sm font-semibold text-white hover:bg-sea-800"
+        >
+          Digital operations in the simulation
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================================
+       Closing call to action
+       ================================================================== -->
+  <section class="shell py-16 lg:py-20">
+    <div class="on-dark relative overflow-hidden rounded-2xl bg-navy-900 px-7 py-12 text-white sm:px-12 lg:py-16">
+      <div class="chart-grid absolute inset-0" aria-hidden="true"></div>
+      <div class="relative max-w-2xl">
+        <h2 class="text-2xl sm:text-3xl">Ready to run an operation?</h2>
+        <p class="mt-3 text-lg leading-relaxed text-navy-100">
+          Build a simulated quotation for your shipment, or start from the network and work
+          backwards to the service that fits.
+        </p>
+        <div class="mt-7 flex flex-wrap gap-3">
+          <a
+            href={url('/quote')}
+            class="tap-target inline-flex items-center rounded-lg bg-signal-600 px-6 text-base font-semibold text-white hover:bg-signal-700"
+          >
+            Request a simulated quotation
+          </a>
+          <a
+            href={url('/ports')}
+            class="tap-target inline-flex items-center rounded-lg border border-navy-500 px-6 text-base font-semibold text-white hover:bg-navy-800"
+          >
+            Browse the port directory
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,310 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import NetworkChart from '@/components/map/NetworkChart.astro';
+import ReviewNotice from '@/components/ui/ReviewNotice.astro';
+import SimulationNotice from '@/components/layout/SimulationNotice.astro';
+import { services } from '@/data/services';
+import { getPortById } from '@/data/ports';
+import { getVesselById } from '@/data/vessels';
+import { url } from '@/lib/site';
+import { CAPABILITY_DESCRIPTIONS, CAPABILITY_LABELS, TO_BE_CONFIRMED } from '@/lib/labels';
+import type { Port } from '@/types/content';
+
+/**
+ * One page per service.
+ *
+ * This is the page the legacy site was missing. Its four service pages carried
+ * a symbolic photograph and a paragraph of general company copy, with no
+ * rotation, no vessels and no transit times, which made them unusable as an
+ * operational reference during an exercise.
+ *
+ * The rotation is rendered as an ordered table rather than only on the chart,
+ * so that the information is reachable by keyboard and by screen reader.
+ */
+export function getStaticPaths() {
+  return services.map((service) => ({
+    params: { slug: service.slug },
+    props: { service },
+  }));
+}
+
+const { service } = Astro.props;
+
+const rotationPorts = service.rotation
+  .map((call) => ({ call, port: getPortById(call.portId) }))
+  .filter((entry): entry is { call: (typeof service.rotation)[number]; port: Port } =>
+    Boolean(entry.port),
+  );
+
+const deployedVessels = service.vesselIds
+  .map((id) => getVesselById(id))
+  .filter((vessel): vessel is NonNullable<typeof vessel> => Boolean(vessel));
+
+/** Bounds that comfortably contain every port on this rotation. */
+const lats = rotationPorts.map((entry) => entry.port.coordinates[0]);
+const lons = rotationPorts.map((entry) => entry.port.coordinates[1]);
+const padding = 6;
+const bounds: [number, number, number, number] = [
+  Math.min(...lons) - padding,
+  Math.min(...lats) - padding,
+  Math.max(...lons) + padding,
+  Math.max(...lats) + padding,
+];
+
+const countries = [...new Set(rotationPorts.map((entry) => entry.port.country))];
+---
+
+<BaseLayout
+  title={`${service.name} service`}
+  description={`${service.name} (${service.code}): ${service.summary} ${service.rotation.length} ports of call across ${countries.length} countries.`}
+>
+  <PageHeader
+    eyebrow={`${service.code} service`}
+    title={`${service.name}`}
+    intro={service.summary}
+    breadcrumbs={[{ label: 'Routes', href: '/routes' }, { label: service.name }]}
+    tone="dark"
+  >
+    <dl class="mt-8 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-xl border border-navy-700 bg-navy-700 sm:grid-cols-4">
+      <div class="bg-navy-800 px-4 py-3.5">
+        <dt class="text-xs uppercase tracking-wide text-navy-300">Ports of call</dt>
+        <dd class="mt-1 font-display text-xl font-semibold text-white">
+          {service.rotation.length}
+        </dd>
+      </div>
+      <div class="bg-navy-800 px-4 py-3.5">
+        <dt class="text-xs uppercase tracking-wide text-navy-300">Countries</dt>
+        <dd class="mt-1 font-display text-xl font-semibold text-white">{countries.length}</dd>
+      </div>
+      <div class="bg-navy-800 px-4 py-3.5">
+        <dt class="text-xs uppercase tracking-wide text-navy-300">Vessels</dt>
+        <dd class="mt-1 font-display text-xl font-semibold text-white">
+          {deployedVessels.length > 0 ? deployedVessels.length : '—'}
+        </dd>
+      </div>
+      <div class="bg-navy-800 px-4 py-3.5">
+        <dt class="text-xs uppercase tracking-wide text-navy-300">Frequency</dt>
+        <dd class="mt-1 font-display text-base font-semibold text-white">
+          {service.frequency ?? TO_BE_CONFIRMED}
+        </dd>
+      </div>
+    </dl>
+  </PageHeader>
+
+  <div class="shell py-12 lg:py-16">
+    <div class="grid gap-12 lg:grid-cols-[1.6fr_1fr] lg:gap-16">
+      <div class="min-w-0">
+        <!-- About the service -->
+        <section aria-labelledby="about-heading">
+          <h2 id="about-heading" class="text-2xl">About this service</h2>
+          <div class="mt-4 space-y-4 text-[1.0625rem] leading-relaxed text-navy-700">
+            {service.description.map((paragraph) => <p>{paragraph}</p>)}
+          </div>
+        </section>
+
+        <!-- Chart -->
+        <section aria-labelledby="map-heading" class="mt-12">
+          <h2 id="map-heading" class="text-2xl">Route chart</h2>
+          <p class="mt-2 text-navy-600">
+            The same rotation is listed as a table below, so the schedule can be read without the
+            chart.
+          </p>
+          <div class="on-dark mt-5 overflow-hidden rounded-2xl bg-navy-900 p-4 text-sea-200 sm:p-6">
+            <NetworkChart
+              serviceIds={[service.id]}
+              bounds={bounds}
+              showLabels={true}
+              description={`Chart of the ${service.name} service showing its ${service.rotation.length} ports of call connected in rotation order. The same rotation is listed as a table on this page.`}
+            />
+          </div>
+        </section>
+
+        <!-- Rotation table -->
+        <section aria-labelledby="rotation-heading" class="mt-12">
+          <h2 id="rotation-heading" class="text-2xl">Rotation</h2>
+          <p class="mt-2 text-navy-600">
+            Ports in rotation order. Transit times are not yet published for this service.
+          </p>
+
+          <div class="mt-5 overflow-x-auto rounded-xl border border-navy-100">
+            <table class="w-full min-w-[34rem] text-left text-sm">
+              <caption class="sr-only">
+                {service.name} rotation: port, country, region and transit time from the first port
+              </caption>
+              <thead class="bg-navy-50 text-xs uppercase tracking-wide text-navy-600">
+                <tr>
+                  <th scope="col" class="px-4 py-3 font-semibold">#</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Port</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Country</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Region</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Transit</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-navy-100">
+                {
+                  rotationPorts.map(({ call, port }) => (
+                    <tr class="transition-colors duration-(--duration-fast) hover:bg-navy-50/60">
+                      <td class="px-4 py-3 font-mono text-xs text-navy-500">
+                        {String(call.order).padStart(2, '0')}
+                      </td>
+                      <th scope="row" class="px-4 py-3 font-medium">
+                        <a
+                          href={url(`/ports/${port.slug}`)}
+                          class="text-navy-900 underline decoration-navy-200 underline-offset-4 hover:decoration-sea-600 hover:text-sea-700"
+                        >
+                          {port.displayName}
+                        </a>
+                        {port.locode && (
+                          <span class="ml-2 font-mono text-xs font-normal text-navy-400">
+                            {port.locode}
+                          </span>
+                        )}
+                      </th>
+                      <td class="px-4 py-3 text-navy-700">{port.country}</td>
+                      <td class="px-4 py-3 text-navy-600">{port.region}</td>
+                      <td class="px-4 py-3 text-navy-500">
+                        {call.transitDaysFromOrigin !== undefined
+                          ? `${call.transitDaysFromOrigin} days`
+                          : TO_BE_CONFIRMED}
+                      </td>
+                    </tr>
+                  ))
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <ReviewNotice meta={service.meta} subject="This rotation" class="mt-4" />
+        </section>
+
+        <!-- Vessels -->
+        <section aria-labelledby="vessels-heading" class="mt-12">
+          <h2 id="vessels-heading" class="text-2xl">Vessels deployed</h2>
+
+          {
+            deployedVessels.length > 0 ? (
+              <ul class="mt-5 grid gap-3 sm:grid-cols-2">
+                {deployedVessels.map((vessel) => (
+                  <li>
+                    <a
+                      href={url(`/fleet/${vessel.slug}`)}
+                      class="group flex h-full flex-col rounded-xl border border-navy-100 bg-white p-5 transition-all duration-(--duration-base) hover:border-sea-300 hover:shadow-md"
+                    >
+                      <h3 class="font-display text-base font-semibold text-navy-900 group-hover:text-sea-700">
+                        {vessel.name}
+                      </h3>
+                      <p class="mt-1 font-mono text-xs text-navy-500">
+                        {vessel.vesselType} &middot; {vessel.className} class &middot; IMO{' '}
+                        {vessel.imo}
+                      </p>
+                      <p class="mt-3 text-sm text-navy-600">
+                        Named after {vessel.namesake.fullName}, {vessel.namesake.field.toLowerCase()}
+                        .
+                      </p>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div class="mt-5 rounded-xl border border-dashed border-navy-200 bg-navy-50/60 p-6">
+                <p class="text-navy-700">
+                  No vessel is currently assigned to the {service.name} service in the fleet
+                  register. The service is published because its rotation is confirmed, but the
+                  tonnage operating it has still to be recorded.
+                </p>
+                <a
+                  href={url('/fleet')}
+                  class="mt-3 inline-flex text-sm font-semibold text-sea-700 hover:underline underline-offset-4"
+                >
+                  View the full fleet &rarr;
+                </a>
+              </div>
+            )
+          }
+        </section>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="space-y-6 lg:sticky lg:top-28 lg:self-start">
+        <div class="rounded-2xl border border-navy-100 bg-navy-50/60 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">Cargo accepted</h2>
+          <dl class="mt-4 space-y-3">
+            {
+              service.capabilities.map((capability) => (
+                <div>
+                  <dt class="text-sm font-semibold text-navy-900">
+                    {CAPABILITY_LABELS[capability]}
+                  </dt>
+                  <dd class="mt-0.5 text-sm leading-snug text-navy-600">
+                    {CAPABILITY_DESCRIPTIONS[capability]}
+                  </dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+
+        <div class="rounded-2xl border border-navy-100 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">Use this service</h2>
+          <ul class="mt-4 space-y-2">
+            <li>
+              <a
+                href={url(`/quote?service=${service.slug}`)}
+                class="tap-target flex w-full items-center justify-center rounded-lg bg-signal-600 px-4 text-sm font-semibold text-white hover:bg-signal-700"
+              >
+                Request a quotation
+              </a>
+            </li>
+            <li>
+              <a
+                href={url('/resources/arrival-charges')}
+                class="tap-target flex w-full items-center justify-center rounded-lg border border-navy-200 px-4 text-sm font-semibold text-navy-800 hover:bg-navy-50"
+              >
+                Check arrival charges
+              </a>
+            </li>
+            <li>
+              <a
+                href={url('/equipment')}
+                class="tap-target flex w-full items-center justify-center rounded-lg border border-navy-200 px-4 text-sm font-semibold text-navy-800 hover:bg-navy-50"
+              >
+                Choose equipment
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="rounded-2xl border border-navy-100 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">Other services</h2>
+          <ul class="mt-3 space-y-1">
+            {
+              services
+                .filter((other) => other.id !== service.id)
+                .map((other) => (
+                  <li>
+                    <a
+                      href={url(`/routes/${other.slug}`)}
+                      class="flex min-h-9 items-center gap-2.5 text-sm text-navy-700 hover:text-sea-700 hover:underline underline-offset-4"
+                    >
+                      <span
+                        class="h-1 w-6 shrink-0 rounded-full"
+                        style={`background-color:${other.mapColor}`}
+                        aria-hidden="true"
+                      />
+                      {other.name}
+                    </a>
+                  </li>
+                ))
+            }
+          </ul>
+        </div>
+
+        <SimulationNotice
+          variant="inline"
+          detail="Rotations, frequencies and transit times on this page exist for training exercises only."
+        />
+      </aside>
+    </div>
+  </div>
+</BaseLayout>
