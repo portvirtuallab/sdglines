@@ -72,7 +72,7 @@ export const services: Service[] = [
       'motorways-of-the-sea',
       'project-cargo',
     ],
-    mapColor: '#C8102E',
+    mapColor: '#00b8d8',
     meta: {
       source: 'simulation-design',
       status: 'needs-review',
@@ -107,7 +107,7 @@ export const services: Service[] = [
     frequency: undefined,
     vesselIds: ['merce-rodoreda', 'sappho'],
     capabilities: ['containers', 'roro', 'reefer', 'dangerous-goods', 'express-transit'],
-    mapColor: '#0B5FA5',
+    mapColor: '#2e6be6',
     meta: {
       source: 'simulation-design',
       status: 'needs-review',
@@ -142,7 +142,7 @@ export const services: Service[] = [
     frequency: undefined,
     vesselIds: ['aglaonike', 'hagnodice', 'theano-of-crotone'],
     capabilities: ['roro', 'project-cargo'],
-    mapColor: '#0F8A7E',
+    mapColor: '#40a838',
     meta: {
       source: 'simulation-design',
       status: 'needs-review',
@@ -198,7 +198,7 @@ export const services: Service[] = [
       'project-cargo',
       'express-transit',
     ],
-    mapColor: '#5B3FA8',
+    mapColor: '#8b5cf6',
     meta: {
       source: 'simulation-design',
       status: 'needs-review',
@@ -224,7 +224,7 @@ export const services: Service[] = [
     frequency: undefined,
     vesselIds: [],
     capabilities: ['containers', 'roro', 'reefer', 'motorways-of-the-sea'],
-    mapColor: '#D97706',
+    mapColor: '#f2a22e',
     meta: {
       source: 'legacy-site',
       status: 'needs-review',

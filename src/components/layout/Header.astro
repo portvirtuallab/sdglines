@@ -30,13 +30,13 @@ function isActiveSection(href: string): boolean {
 }
 ---
 
-<header class="on-dark sticky top-0 z-50 bg-navy-900 text-white">
-  <div class="shell flex h-16 items-center gap-3 lg:h-20">
+<header class="sticky top-0 z-50 border-b border-navy-100 bg-white text-navy-900">
+  <div class="shell flex h-18 items-center gap-3 lg:h-22">
     <a
       href={url('/')}
-      class="tap-target -ml-1 flex items-center rounded-md px-1 text-white transition-opacity duration-(--duration-fast) hover:opacity-80"
+      class="tap-target -ml-1 flex items-center rounded-md px-1 transition-opacity duration-(--duration-fast) hover:opacity-80"
     >
-      <Logo class="h-8 w-auto lg:h-9" />
+      <Logo class="h-11 w-auto lg:h-14" />
     </a>
 
     <!-- Desktop navigation -->
@@ -47,12 +47,12 @@ function isActiveSection(href: string): boolean {
             <li class="relative" data-nav-item>
               <button
                 type="button"
-                class="tap-target flex items-center gap-1.5 rounded-md px-3 py-2 text-[0.9375rem] font-medium text-navy-100 transition-colors duration-(--duration-fast) hover:bg-navy-800 hover:text-white aria-expanded:bg-navy-800 aria-expanded:text-white"
+                class="tap-target flex items-center gap-1.5 rounded-md px-3 py-2 text-[0.9375rem] font-medium text-navy-700 transition-colors duration-(--duration-fast) hover:bg-navy-50 hover:text-navy-900 aria-expanded:bg-navy-50 aria-expanded:text-navy-900"
                 aria-expanded="false"
                 aria-haspopup="true"
                 data-nav-trigger
               >
-                <span class={isActiveSection(section.href) ? 'text-white' : ''}>
+                <span class={isActiveSection(section.href) ? 'text-navy-900' : ''}>
                   {section.label}
                 </span>
                 <svg
@@ -75,27 +75,27 @@ function isActiveSection(href: string): boolean {
               </button>
 
               <div class="absolute left-0 top-full hidden w-80 pt-2" data-nav-panel hidden>
-                <div class="rounded-xl border border-navy-700 bg-navy-800 p-2 shadow-2xl shadow-navy-950/50">
+                <div class="rounded-xl border border-navy-200 bg-white p-2 shadow-2xl shadow-navy-900/10">
                   <a
                     href={url(section.href)}
-                    class="block rounded-lg px-3 py-2.5 text-sm font-semibold text-white transition-colors duration-(--duration-fast) hover:bg-navy-700"
+                    class="block rounded-lg px-3 py-2.5 text-sm font-semibold text-navy-900 transition-colors duration-(--duration-fast) hover:bg-navy-50"
                   >
                     {section.label} overview
-                    <span class="ml-1 text-navy-300" aria-hidden="true">
+                    <span class="ml-1 text-navy-400" aria-hidden="true">
                       &rarr;
                     </span>
                   </a>
-                  <hr class="my-1.5 border-navy-700" />
+                  <hr class="my-1.5 border-navy-100" />
                   <ul>
                     {section.children?.map((child) => (
                       <li>
                         <a
                           href={url(child.href)}
-                          class="block rounded-lg px-3 py-2 transition-colors duration-(--duration-fast) hover:bg-navy-700"
+                          class="block rounded-lg px-3 py-2 transition-colors duration-(--duration-fast) hover:bg-navy-50"
                         >
-                          <span class="block text-sm font-medium text-white">{child.label}</span>
+                          <span class="block text-sm font-medium text-navy-900">{child.label}</span>
                           {child.description && (
-                            <span class="mt-0.5 block text-xs leading-snug text-navy-300">
+                            <span class="mt-0.5 block text-xs leading-snug text-navy-500">
                               {child.description}
                             </span>
                           )}
@@ -115,7 +115,7 @@ function isActiveSection(href: string): boolean {
     <div class="ml-auto flex items-center gap-2">
       <a
         href={url(UTILITY_NAV.search.href)}
-        class="tap-target flex items-center justify-center rounded-md px-2.5 text-navy-100 transition-colors duration-(--duration-fast) hover:bg-navy-800 hover:text-white"
+        class="tap-target flex items-center justify-center rounded-md px-2.5 text-navy-700 transition-colors duration-(--duration-fast) hover:bg-navy-50 hover:text-navy-900"
       >
         <svg
           class="h-5 w-5"
@@ -133,7 +133,7 @@ function isActiveSection(href: string): boolean {
 
       <a
         href={url(UTILITY_NAV.arrivalCharges.href)}
-        class="tap-target hidden items-center rounded-md px-3 text-sm font-medium text-navy-100 transition-colors duration-(--duration-fast) hover:bg-navy-800 hover:text-white xl:flex"
+        class="tap-target hidden items-center rounded-md px-3 text-sm font-medium text-navy-700 transition-colors duration-(--duration-fast) hover:bg-navy-50 hover:text-navy-900 xl:flex"
       >
         Arrival charges
       </a>
@@ -142,7 +142,7 @@ function isActiveSection(href: string): boolean {
         href={SITE.pvlUrl}
         rel="noopener noreferrer"
         target="_blank"
-        class="tap-target hidden items-center gap-1.5 rounded-md px-3 text-sm font-medium text-navy-100 transition-colors duration-(--duration-fast) hover:bg-navy-800 hover:text-white lg:flex"
+        class="tap-target hidden items-center gap-1.5 rounded-md px-3 text-sm font-medium text-navy-700 transition-colors duration-(--duration-fast) hover:bg-navy-50 hover:text-navy-900 lg:flex"
       >
         PVL.ONE
         <svg
@@ -161,7 +161,7 @@ function isActiveSection(href: string): boolean {
 
       <a
         href={url(UTILITY_NAV.quote.href)}
-        class="tap-target hidden items-center rounded-md bg-signal-600 px-4 text-sm font-semibold text-white transition-colors duration-(--duration-fast) hover:bg-signal-700 sm:flex"
+        class="tap-target hidden items-center rounded-md bg-signal-500 px-4 text-sm font-semibold text-navy-950 transition-colors duration-(--duration-fast) hover:bg-signal-400 sm:flex"
       >
         Request a quote
       </a>
@@ -169,7 +169,7 @@ function isActiveSection(href: string): boolean {
       <!-- Mobile menu trigger -->
       <button
         type="button"
-        class="tap-target flex items-center justify-center rounded-md px-2.5 text-white transition-colors duration-(--duration-fast) hover:bg-navy-800 lg:hidden"
+        class="tap-target flex items-center justify-center rounded-md px-2.5 text-navy-900 transition-colors duration-(--duration-fast) hover:bg-navy-50 lg:hidden"
         aria-expanded="false"
         aria-controls="mobile-menu"
         data-mobile-trigger
@@ -193,17 +193,17 @@ function isActiveSection(href: string): boolean {
   <!-- Mobile navigation -->
   <div
     id="mobile-menu"
-    class="hidden max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-navy-700 bg-navy-900 lg:hidden"
+    class="hidden max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-navy-100 bg-white lg:hidden"
     hidden
     data-mobile-menu
   >
     <nav class="shell py-4" aria-label="Main, mobile">
-      <ul class="divide-y divide-navy-800">
+      <ul class="divide-y divide-navy-100">
         {
           PRIMARY_NAV.map((section) => (
             <li class="py-1">
               <details class="group">
-                <summary class="tap-target flex cursor-pointer list-none items-center justify-between rounded-md px-2 py-2 text-base font-semibold text-white">
+                <summary class="tap-target flex cursor-pointer list-none items-center justify-between rounded-md px-2 py-2 text-base font-semibold text-navy-900">
                   {section.label}
                   <svg
                     class="h-4 w-4 opacity-60 transition-transform duration-(--duration-fast) group-open:rotate-180"
@@ -221,7 +221,7 @@ function isActiveSection(href: string): boolean {
                   <li>
                     <a
                       href={url(section.href)}
-                      class="tap-target flex items-center rounded-md px-2 text-sm font-medium text-navy-100 hover:bg-navy-800 hover:text-white"
+                      class="tap-target flex items-center rounded-md px-2 text-sm font-medium text-navy-800 hover:bg-navy-50 hover:text-navy-900"
                     >
                       {section.label} overview
                     </a>
@@ -230,7 +230,7 @@ function isActiveSection(href: string): boolean {
                     <li>
                       <a
                         href={url(child.href)}
-                        class="tap-target flex items-center rounded-md px-2 text-sm text-navy-200 hover:bg-navy-800 hover:text-white"
+                        class="tap-target flex items-center rounded-md px-2 text-sm text-navy-600 hover:bg-navy-50 hover:text-navy-900"
                       >
                         {child.label}
                       </a>
@@ -246,13 +246,13 @@ function isActiveSection(href: string): boolean {
       <div class="mt-4 grid gap-2">
         <a
           href={url(UTILITY_NAV.quote.href)}
-          class="tap-target flex items-center justify-center rounded-lg bg-signal-600 px-4 text-sm font-semibold text-white hover:bg-signal-700"
+          class="tap-target flex items-center justify-center rounded-lg bg-signal-500 px-4 text-sm font-semibold text-navy-950 hover:bg-signal-400"
         >
           Request a simulated quotation
         </a>
         <a
           href={url(UTILITY_NAV.arrivalCharges.href)}
-          class="tap-target flex items-center justify-center rounded-lg border border-navy-600 px-4 text-sm font-medium text-white hover:bg-navy-800"
+          class="tap-target flex items-center justify-center rounded-lg border border-navy-200 px-4 text-sm font-medium text-navy-900 hover:bg-navy-50"
         >
           Arrival charges
         </a>
@@ -260,7 +260,7 @@ function isActiveSection(href: string): boolean {
           href={SITE.pvlUrl}
           rel="noopener noreferrer"
           target="_blank"
-          class="tap-target flex items-center justify-center gap-1.5 rounded-lg border border-navy-600 px-4 text-sm font-medium text-white hover:bg-navy-800"
+          class="tap-target flex items-center justify-center gap-1.5 rounded-lg border border-navy-200 px-4 text-sm font-medium text-navy-900 hover:bg-navy-50"
         >
           Access PVL.ONE
           <span class="sr-only">(opens in a new tab)</span>

@@ -77,9 +77,12 @@ const organisationJsonLd = JSON.stringify({
     <link rel="canonical" href={canonical.href} />
     {noindex && <meta name="robots" content="noindex, follow" />}
 
-    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <!-- Generated from the logo mark, padded onto the brand navy so that it
+         stays legible at 16px against either a light or a dark browser theme. -->
+    <link rel="icon" href={url('/favicon-32.png')} type="image/png" sizes="32x32" />
     <link rel="apple-touch-icon" href={url('/icons/apple-touch-icon.png')} />
-    <meta name="theme-color" content="#081831" />
+    <link rel="icon" href={url('/icons/icon-512.png')} type="image/png" sizes="512x512" />
+    <meta name="theme-color" content="#10182e" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE.name} />

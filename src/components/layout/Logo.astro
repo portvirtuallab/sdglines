@@ -1,60 +1,40 @@
 ---
+import { Image } from 'astro:assets';
+import logo from '@/assets/sdg-lines-logo.png';
+
 /**
- * SDG Lines wordmark.
+ * The SDG Lines logo.
  *
- * Drawn inline as SVG rather than loaded as an image file: it is a handful of
- * bytes, it never causes a layout shift, and it inherits the surrounding text
- * colour so the same component works on the navy header and on a white page.
+ * This is the real brand artwork, not a redrawing. It is served through Astro's
+ * image pipeline so that it is emitted at the sizes actually used and with
+ * explicit dimensions, which keeps it out of the layout shift budget.
  *
- * The mark is a stylised bow wave over the wordmark, taken from the chart and
- * horizon language of the rest of the site rather than from nautical clip art.
+ * One thing to know before using it on a dark surface: the mark contains a navy
+ * swoosh (#203058) that disappears against the navy backgrounds used elsewhere
+ * on this site. Rather than recolour the brand artwork, `plate` sets the logo on
+ * a white panel, which is the conventional treatment and leaves the mark
+ * untouched.
  */
 interface Props {
-  /** Accessible name. Set to the empty string when the logo sits next to a
-      visible text link to the same destination, to avoid a duplicate label. */
-  title?: string;
+  /**
+   * Accessible name. Set to the empty string when the logo sits inside a link
+   * that already has visible text, to avoid announcing the destination twice.
+   */
+  alt?: string;
+  /** White backing panel, for use on the navy surfaces. */
+  plate?: boolean;
   class?: string;
 }
 
-const { title = 'SDG Lines, home', class: className = '' } = Astro.props;
+const { alt = 'SDG Lines, home', plate = false, class: className = '' } = Astro.props;
 ---
 
-<svg
-  class={className}
-  viewBox="0 0 208 40"
-  role="img"
-  aria-label={title || undefined}
-  aria-hidden={title ? undefined : 'true'}
-  fill="none"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <!-- Bow wave: three chart contours rising to the right. -->
-  <g stroke="currentColor" stroke-linecap="round" stroke-width="2.6" opacity="0.9">
-    <path d="M4 29c6.5 0 8.5-6 15-6s8.5 6 15 6"></path>
-    <path d="M4 21c6.5 0 8.5-6 15-6s8.5 6 15 6" opacity="0.6"></path>
-    <path d="M4 13c6.5 0 8.5-6 15-6s8.5 6 15 6" opacity="0.32"></path>
-  </g>
-
-  <text
-    x="46"
-    y="27"
-    font-family="Space Grotesk Variable, sans-serif"
-    font-size="21"
-    font-weight="700"
-    letter-spacing="-0.02em"
-    fill="currentColor">SDG</text
-  >
-  <text
-    x="94"
-    y="27"
-    font-family="Space Grotesk Variable, sans-serif"
-    font-size="21"
-    font-weight="400"
-    letter-spacing="0.01em"
-    fill="currentColor">LINES</text
-  >
-  <!-- The registered mark is part of the brand and has to appear. -->
-  <text x="172" y="16" font-family="Inter Variable, sans-serif" font-size="9" fill="currentColor"
-    >&#174;</text
-  >
-</svg>
+{
+  plate ? (
+    <span class={`inline-flex items-center justify-center rounded-xl bg-white p-2.5 ${className}`}>
+      <Image src={logo} alt={alt} class="h-full w-auto" densities={[1, 2]} loading="eager" />
+    </span>
+  ) : (
+    <Image src={logo} alt={alt} class={className} densities={[1, 2]} loading="eager" />
+  )
+}

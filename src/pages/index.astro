@@ -1,5 +1,7 @@
 ---
+import { Image } from 'astro:assets';
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import heroPhoto from '@/assets/hero-container-ship.jpg';
 import NetworkChart from '@/components/map/NetworkChart.astro';
 import { SITE, url } from '@/lib/site';
 import { services } from '@/data/services';
@@ -119,18 +121,41 @@ const structuredData = JSON.stringify({
   <!-- ==================================================================
        Hero
        ================================================================== -->
-  <section class="on-dark relative overflow-hidden bg-navy-900 text-white">
-    <div class="chart-grid absolute inset-0" aria-hidden="true"></div>
-    <!-- Horizon glow: a Mediterranean dawn rather than a stock photograph. -->
+  <section class="on-dark relative overflow-hidden bg-navy-950 text-white">
+    <!-- Hero photograph.
+         Decorative: the heading and supporting copy carry everything a visitor
+         needs, so the alt text is empty rather than describing the picture.
+         Rendered through Astro's image pipeline so it ships as WebP at the
+         sizes actually used, and marked eager because it is the largest element
+         above the fold. -->
+    <Image
+      src={heroPhoto}
+      alt=""
+      widths={[768, 1280, 1920, 2400]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="absolute inset-0 h-full w-full object-cover"
+    />
+
+    <!-- The navy wash. Solid where the copy sits and thinning towards the
+         right, so the vessel is visible without the text ever having to compete
+         with the photograph: contrast is measured against navy, not against
+         whatever happens to be in the picture.
+
+         Small screens get a near solid vertical wash instead, because there the
+         copy runs the full width and an angled one would leave it over the
+         brightest part of the image. -->
     <div
-      class="pointer-events-none absolute -right-1/4 top-0 h-[42rem] w-[42rem] rounded-full bg-sea-600/20 blur-3xl"
+      class="absolute inset-0 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--color-navy-950)_93%,transparent)_0%,color-mix(in_srgb,var(--color-navy-950)_88%,transparent)_100%)] lg:bg-[linear-gradient(100deg,var(--color-navy-950)_0%,color-mix(in_srgb,var(--color-navy-950)_96%,transparent)_30%,color-mix(in_srgb,var(--color-navy-950)_78%,transparent)_52%,color-mix(in_srgb,var(--color-navy-950)_40%,transparent)_100%)]"
       aria-hidden="true"
     >
     </div>
+    <div class="chart-grid absolute inset-0" aria-hidden="true"></div>
 
-    <div
-      class="shell relative grid gap-12 py-14 lg:grid-cols-[1fr_1.05fr] lg:items-center lg:gap-10 lg:py-20"
-    >
+    <!-- One column, not two. The photograph is the right-hand half of this
+         section, so nothing is placed over it. -->
+    <div class="shell relative py-16 sm:py-20 lg:py-28">
       <div class="max-w-xl">
         <p
           class="font-mono text-xs font-medium uppercase tracking-[0.18em] text-sea-300 sm:text-[0.8125rem]"
@@ -150,7 +175,7 @@ const structuredData = JSON.stringify({
         <div class="mt-8 flex flex-wrap gap-3">
           <a
             href={url('/routes')}
-            class="tap-target inline-flex items-center gap-2 rounded-lg bg-signal-600 px-6 text-base font-semibold text-white transition-colors duration-(--duration-fast) hover:bg-signal-700"
+            class="tap-target inline-flex items-center gap-2 rounded-lg bg-signal-500 px-6 text-base font-semibold text-navy-950 transition-colors duration-(--duration-fast) hover:bg-signal-400"
           >
             Explore the routes
             <svg
@@ -169,7 +194,7 @@ const structuredData = JSON.stringify({
 
           <a
             href={url('/quote')}
-            class="tap-target inline-flex items-center rounded-lg border border-navy-500 bg-navy-800/60 px-6 text-base font-semibold text-white transition-colors duration-(--duration-fast) hover:border-navy-400 hover:bg-navy-800"
+            class="tap-target inline-flex items-center rounded-lg border border-navy-400/70 bg-navy-900/75 px-6 text-base font-semibold text-white backdrop-blur-sm transition-colors duration-(--duration-fast) hover:border-navy-300 hover:bg-navy-900"
           >
             Request a simulated quotation
           </a>
@@ -186,33 +211,22 @@ const structuredData = JSON.stringify({
             Access PVL.ONE<span class="sr-only"> (opens in a new tab)</span>
           </a>
         </p>
-      </div>
 
-      <!-- Network chart. Decorative here in the sense that nothing depends on
-           it: the same network is listed in full further down the page and at
-           /routes and /ports. -->
-      <div class="relative text-sea-200">
-        <NetworkChart
-          animate
-          showLabels={false}
-          bounds={[-19, 26, 42, 57]}
-          description="Chart of the SDG Lines Mediterranean network. Each line is one service and each point is a port of call. Every route and port is listed as text on the routes and ports pages."
-          class="opacity-95"
-        />
-
-        <!-- Network summary as text, so the figures are readable without the chart. -->
+        <!-- The network in figures. Sits under the copy rather than beside it
+             so that the right of the hero stays clear and the photograph is
+             actually visible instead of being covered by a panel. -->
         <dl
-          class="mt-6 grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-navy-700 bg-navy-700 text-center"
+          class="mt-10 grid max-w-lg grid-cols-3 gap-px overflow-hidden rounded-xl border border-navy-700/80 bg-navy-700/80 text-center backdrop-blur-sm"
         >
-          <div class="bg-navy-800 px-3 py-4">
+          <div class="flex flex-col justify-between bg-navy-900/85 px-3 py-4">
             <dt class="text-xs uppercase tracking-wider text-navy-300">Services</dt>
             <dd class="mt-1 font-display text-2xl font-semibold text-white">{services.length}</dd>
           </div>
-          <div class="bg-navy-800 px-3 py-4">
+          <div class="flex flex-col justify-between bg-navy-900/85 px-3 py-4">
             <dt class="text-xs uppercase tracking-wider text-navy-300">Ports of call</dt>
             <dd class="mt-1 font-display text-2xl font-semibold text-white">{ports.length}</dd>
           </div>
-          <div class="bg-navy-800 px-3 py-4">
+          <div class="flex flex-col justify-between bg-navy-900/85 px-3 py-4">
             <dt class="text-xs uppercase tracking-wider text-navy-300">Vessels</dt>
             <dd class="mt-1 font-display text-2xl font-semibold text-white">{vessels.length}</dd>
           </div>
@@ -343,6 +357,33 @@ const structuredData = JSON.stringify({
       >
         Open the interactive map &rarr;
       </a>
+    </div>
+
+    <!-- The network chart. It sits here rather than in the hero, where it would
+         have been laid over the photograph and both would have suffered. The
+         route cards below carry the same information as text, so nothing on the
+         page depends on reading the chart. -->
+    <div class="on-dark mt-8 overflow-hidden rounded-2xl bg-navy-900 p-4 text-sea-200 sm:p-8">
+      <NetworkChart
+        animate
+        showLabels={false}
+        bounds={[-19, 26, 42, 57]}
+        description="Chart of the SDG Lines Mediterranean network. Each coloured line is one service and each point is a port of call. Every route and port is listed as text below and on the routes and ports pages."
+      />
+      <ul class="mt-6 flex flex-wrap gap-x-6 gap-y-2 border-t border-navy-700 pt-5">
+        {
+          services.map((service) => (
+            <li class="flex items-center gap-2.5 text-sm text-white">
+              <span
+                class="h-1 w-8 rounded-full"
+                style={`background-color:${service.mapColor}`}
+                aria-hidden="true"
+              />
+              {service.name}
+            </li>
+          ))
+        }
+      </ul>
     </div>
 
     <ul class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -577,7 +618,7 @@ const structuredData = JSON.stringify({
         <div class="mt-7 flex flex-wrap gap-3">
           <a
             href={url('/quote')}
-            class="tap-target inline-flex items-center rounded-lg bg-signal-600 px-6 text-base font-semibold text-white hover:bg-signal-700"
+            class="tap-target inline-flex items-center rounded-lg bg-signal-500 px-6 text-base font-semibold text-navy-950 hover:bg-signal-400"
           >
             Request a simulated quotation
           </a>

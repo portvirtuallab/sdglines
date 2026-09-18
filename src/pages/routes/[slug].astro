@@ -163,7 +163,7 @@ const countries = [...new Set(rotationPorts.map((entry) => entry.port.country))]
                           {port.displayName}
                         </a>
                         {port.locode && (
-                          <span class="ml-2 font-mono text-xs font-normal text-navy-400">
+                          <span class="ml-2 font-mono text-xs font-normal text-navy-500">
                             {port.locode}
                           </span>
                         )}
@@ -258,7 +258,7 @@ const countries = [...new Set(rotationPorts.map((entry) => entry.port.country))]
             <li>
               <a
                 href={url(`/quote?service=${service.slug}`)}
-                class="tap-target flex w-full items-center justify-center rounded-lg bg-signal-600 px-4 text-sm font-semibold text-white hover:bg-signal-700"
+                class="tap-target flex w-full items-center justify-center rounded-lg bg-signal-500 px-4 text-sm font-semibold text-navy-950 hover:bg-signal-400"
               >
                 Request a quotation
               </a>

@@ -10,7 +10,10 @@ const year = new Date().getFullYear();
     <div class="shell py-14 lg:py-16">
       <div class="grid gap-10 lg:grid-cols-[1.2fr_2.4fr]">
         <div>
-          <Logo class="h-9 w-auto text-white" title="" />
+          <!-- The footer sits on navy, where the logo's own navy swoosh would
+               disappear, so the artwork goes on a white panel rather than being
+               recoloured. -->
+          <Logo class="h-16" plate alt="" />
           <p class="mt-4 max-w-xs text-sm leading-relaxed">
             The simulated shipping line of Port Virtual Lab, operated by {SITE.operator} for education
             and professional training.
@@ -49,7 +52,7 @@ const year = new Date().getFullYear();
             {
               FOOTER_NAV.map((group) => (
                 <div>
-                  <h2 class="font-display text-xs font-semibold uppercase tracking-[0.12em] text-navy-400">
+                  <h2 class="font-display text-xs font-semibold uppercase tracking-[0.12em] text-navy-300">
                     {group.heading}
                   </h2>
                   <ul class="mt-3 space-y-1">
@@ -73,7 +76,7 @@ const year = new Date().getFullYear();
 
       <hr class="my-10 border-navy-800" />
 
-      <div class="space-y-4 text-xs leading-relaxed text-navy-400">
+      <div class="space-y-4 text-xs leading-relaxed text-navy-300">
         <p class="rounded-lg border border-navy-700 bg-navy-800/60 p-4 text-navy-100">
           <strong class="font-semibold text-white">{SITE.simulationNotice}</strong> Routes, vessels, ports,
           charges and quotations on this site exist for training exercises within Port Virtual Lab. Nothing

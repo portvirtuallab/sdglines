@@ -17,63 +17,99 @@
 /* ==========================================================================
    SDG Lines design tokens
    --------------------------------------------------------------------------
-   The palette is built around the navy and red of the existing SDG Lines logo.
-   Every pairing used for text in the interface is listed in
-   docs/design-system.md together with its measured contrast ratio against
-   WCAG 2.2 AA (4.5:1 for body text, 3:1 for large text and UI boundaries).
+   The palette is taken from the SDG Lines logo. The three brand colours were
+   sampled directly from the logo artwork rather than estimated:
+
+     cyan   #00b8d8   the swoosh and the wordmark
+     navy   #203058   the dark swoosh
+     green  #40a838   the accent swoosh
+
+   Each is the anchor of a scale built around it. Every pairing used for text
+   or a UI boundary is listed in docs/design-system.md with its measured
+   contrast ratio against WCAG 2.2 AA (4.5:1 for body text, 3:1 for large text
+   and UI components).
 
    Naming follows the role the colour plays, not the colour itself, so that a
-   future rebrand changes these values and nothing else.
+   future rebrand changes these values and nothing else. That claim was tested
+   when the palette moved from the placeholder navy-and-red to the real brand
+   colours: no component needed a new token, only the primary button changed,
+   because brand cyan is too light to carry white text.
    ========================================================================== */
 @theme {
-  /* Brand navy - the primary surface and the colour of the deep sea. */
-  --color-navy-50: #eef3f9;
-  --color-navy-100: #d6e2f0;
-  --color-navy-200: #adc3de;
-  --color-navy-300: #7b9cc6;
-  --color-navy-400: #4a72a8;
-  --color-navy-500: #2b5286;
-  --color-navy-600: #1b3d68;
-  --color-navy-700: #132f51;
-  --color-navy-800: #0d2340;
-  --color-navy-900: #081831;
-  --color-navy-950: #050f20;
+  /* Brand navy - the primary surface, headings and body text.
+     --color-navy-700 is the logo navy, #203058. */
+  --color-navy-50: #f2f4f9;
+  --color-navy-100: #e2e7f1;
+  --color-navy-200: #c3cbe0;
+  --color-navy-300: #98a4c4;
+  --color-navy-400: #6a7aa5;
+  --color-navy-500: #47588a;
+  --color-navy-600: #33436e;
+  --color-navy-700: #203058;
+  --color-navy-800: #172341;
+  --color-navy-900: #10182e;
+  --color-navy-950: #0a1020;
 
-  /* SDG Lines red - reserved for primary actions and nothing else. */
-  --color-signal-50: #fdf2f4;
-  --color-signal-100: #fbe0e5;
-  --color-signal-200: #f6c2cc;
-  --color-signal-300: #ee92a5;
-  --color-signal-400: #e25576;
-  --color-signal-500: #d12a4f;
-  --color-signal-600: #c8102e;
-  --color-signal-700: #a50d26;
-  --color-signal-800: #870e22;
-  --color-signal-900: #731021;
+  /* Brand cyan - primary actions and nothing else.
+     --color-signal-500 is the logo cyan, #00b8d8.
 
-  /* Mediterranean blue - secondary emphasis, links, the sea on maps. */
-  --color-sea-50: #eff7fd;
-  --color-sea-100: #dceffb;
-  --color-sea-200: #b9dff6;
-  --color-sea-300: #85c7ef;
-  --color-sea-400: #4aa8e3;
-  --color-sea-500: #2489cd;
-  --color-sea-600: #0b5fa5;
-  --color-sea-700: #0a4f87;
-  --color-sea-800: #0c4270;
-  --color-sea-900: #0f385e;
+     Note for anyone adding a button: this colour is too light to carry white
+     text. A primary action is cyan with navy-950 text, which measures 7.99:1.
+     White on cyan measures 2.2:1 and fails. */
+  --color-signal-50: #e6fafd;
+  --color-signal-100: #c7f3fa;
+  --color-signal-200: #8fe7f5;
+  --color-signal-300: #4dd6ec;
+  --color-signal-400: #14c4e0;
+  --color-signal-500: #00b8d8;
+  --color-signal-600: #0098b4;
+  --color-signal-700: #007890;
+  --color-signal-800: #066074;
+  --color-signal-900: #0a5060;
 
-  /* Teal - sustainability and environmental content only. */
-  --color-eco-50: #eefbf7;
-  --color-eco-100: #d3f5eb;
-  --color-eco-200: #abe9da;
-  --color-eco-300: #75d6c3;
-  --color-eco-400: #3fbca7;
-  --color-eco-500: #1fa18d;
-  --color-eco-600: #0f8a7e;
-  --color-eco-700: #0b6f66;
-  --color-eco-800: #0c5852;
-  --color-eco-900: #0d4945;
+  /* Deep cyan - secondary emphasis, links, the sea on charts. The same hue
+     family as the brand cyan, darkened far enough to carry body text. */
+  --color-sea-50: #ecf8fc;
+  --color-sea-100: #d3eff7;
+  --color-sea-200: #a5dfef;
+  --color-sea-300: #6cc8e0;
+  --color-sea-400: #33a9c8;
+  --color-sea-500: #1289a8;
+  --color-sea-600: #0e6f8b;
+  --color-sea-700: #0c5a72;
+  --color-sea-800: #0d4a5e;
+  --color-sea-900: #0e3f4f;
+
+  /* Alert red - NOT a brand colour.
+     The SDG Lines logo contains no red. This scale exists for two things that
+     are conventions rather than branding, and that people rely on reading
+     without thinking: form validation errors, and the notice stating that the
+     site is a simulation. Using brand cyan for those would make a warning look
+     like a link. Kept deliberately separate so that nobody mistakes it for
+     part of the identity. */
+  --color-alert-50: #fdf2f3;
+  --color-alert-100: #fbe2e4;
+  --color-alert-200: #f6c7cb;
+  --color-alert-300: #ee9aa2;
+  --color-alert-400: #e26571;
+  --color-alert-500: #d13c4b;
+  --color-alert-600: #b82636;
+  --color-alert-700: #9a1c2c;
+  --color-alert-800: #801a27;
+  --color-alert-900: #6d1a25;
+
+  /* Brand green - sustainability and environmental content only.
+     --color-eco-500 is the logo green, #40a838. */
+  --color-eco-50: #eef9ec;
+  --color-eco-100: #d6f1d1;
+  --color-eco-200: #aee3a6;
+  --color-eco-300: #7ccf72;
+  --color-eco-400: #56bb4b;
+  --color-eco-500: #40a838;
+  --color-eco-600: #34882e;
+  --color-eco-700: #2a6c26;
+  --color-eco-800: #245722;
+  --color-eco-900: #1f481e;
 
   /* Neutral greys for technical panels, tables and rules. */
   --color-slate-25: #fbfcfd;

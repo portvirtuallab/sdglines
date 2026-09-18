@@ -134,9 +134,9 @@ export default function NetworkMap({ ports, services, base }: Props) {
         const isHub = port.serviceIds.length > 1;
         L.circleMarker(port.coordinates, {
           radius: isHub ? 7 : 5,
-          color: '#081831',
+          color: '#10182e',
           weight: 2,
-          fillColor: isHub ? '#C8102E' : '#0B5FA5',
+          fillColor: isHub ? '#00b8d8' : '#2e6be6',
           fillOpacity: 1,
         })
           .bindPopup(

@@ -29,7 +29,7 @@ const { variant = 'bar', detail, class: className = '' } = Astro.props;
     <div class={`border-b border-navy-700 bg-navy-800 text-navy-100 ${className}`}>
       <p class="shell flex items-center gap-2.5 py-2 text-[0.8125rem] leading-snug">
         <svg
-          class="h-4 w-4 shrink-0 text-signal-300"
+          class="h-4 w-4 shrink-0 text-alert-300"
           viewBox="0 0 20 20"
           fill="currentColor"
           aria-hidden="true"
@@ -49,12 +49,12 @@ const { variant = 'bar', detail, class: className = '' } = Astro.props;
 {
   variant === 'inline' && (
     <aside
-      class={`rounded-xl border border-signal-200 bg-signal-50 p-4 sm:p-5 ${className}`}
+      class={`rounded-xl border border-alert-200 bg-alert-50 p-4 sm:p-5 ${className}`}
       aria-label="Educational simulation notice"
     >
       <div class="flex gap-3">
         <svg
-          class="mt-0.5 h-5 w-5 shrink-0 text-signal-600"
+          class="mt-0.5 h-5 w-5 shrink-0 text-alert-600"
           viewBox="0 0 20 20"
           fill="currentColor"
           aria-hidden="true"
@@ -66,7 +66,7 @@ const { variant = 'bar', detail, class: className = '' } = Astro.props;
           />
         </svg>
         <div class="text-sm leading-relaxed text-navy-800">
-          <p class="font-semibold text-signal-800">{SITE.simulationNotice}</p>
+          <p class="font-semibold text-alert-800">{SITE.simulationNotice}</p>
           {detail && <p class="mt-1">{detail}</p>}
         </div>
       </div>
