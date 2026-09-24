@@ -218,10 +218,27 @@ export function Confirmation({
 
       <section>
         <h3 className="font-display text-lg font-semibold text-navy-900">What it costs</h3>
-        <p className="mt-2 text-sm text-navy-600">
-          The FEU reference rate for this lane is {money.format(quotation.seaFreightBaseFeuEur)}.
-          Every line marked <em>per unit</em> already covers all {quantity}{' '}
-          {quantity === 1 ? 'unit' : 'units'}.
+        <p className="mt-2 text-sm leading-relaxed text-navy-600">
+          Every lane has one reference rate, quoted for a forty-foot equivalent unit, or FEU. On
+          this lane it is {money.format(quotation.seaFreightBaseFeuEur)}. Each unit type is charged
+          a fraction of it:{' '}
+          {item && (
+            <>
+              a {item.name} is {item.freightFactor.toFixed(2)}, so its sea freight is{' '}
+              {money.format(quotation.seaFreightBaseFeuEur * item.freightFactor)} per unit
+              {quantity > 1 && <> and the line below covers all {quantity}</>}.{' '}
+            </>
+          )}
+          {quantity > 1 ? (
+            <>
+              Every other line marked <em>per unit</em> covers all {quantity} as well.
+            </>
+          ) : (
+            <>
+              Lines marked <em>per unit</em> would scale with a larger order; those marked{' '}
+              <em>per shipment</em> would not.
+            </>
+          )}
         </p>
         <table className="mt-4 w-full border-collapse overflow-hidden rounded-xl border border-navy-200 text-sm">
           <caption className="sr-only">
@@ -261,7 +278,11 @@ export function Confirmation({
           </tbody>
           <tfoot>
             <tr className="bg-navy-800 text-white">
-              <th scope="row" colSpan={2} className="px-5 py-4 text-left font-display font-semibold">
+              <th
+                scope="row"
+                colSpan={2}
+                className="px-5 py-4 text-left font-display font-semibold"
+              >
                 Total
               </th>
               <td className="px-5 py-4 text-right font-mono text-lg font-semibold">
@@ -361,9 +382,7 @@ export function Confirmation({
             </>
           )}
         </p>
-        <p className="mt-3 text-sm leading-relaxed text-navy-600">
-          {vesselComparison}
-        </p>
+        <p className="mt-3 text-sm leading-relaxed text-navy-600">{vesselComparison}</p>
       </section>
 
       <div className="flex flex-wrap gap-3 border-t border-navy-100 pt-6">

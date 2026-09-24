@@ -82,11 +82,7 @@ export class QuotationError extends Error {
   constructor(
     message: string,
     readonly reason:
-      | 'unknown-port'
-      | 'not-quotable'
-      | 'no-distance'
-      | 'no-route'
-      | 'unknown-equipment',
+      'unknown-port' | 'not-quotable' | 'no-distance' | 'no-route' | 'unknown-equipment',
   ) {
     super(message);
     this.name = 'QuotationError';
@@ -220,7 +216,11 @@ export const freightNeedsMention = (base: FreightBase) =>
  * zero.
  */
 function correctedEmissions(
-  item: { teuEquivalent: number | null; requiresPlug: boolean; emissionsTonnesPerTeu: number | null },
+  item: {
+    teuEquivalent: number | null;
+    requiresPlug: boolean;
+    emissionsTonnesPerTeu: number | null;
+  },
   distanceNm: number,
   quantity: number,
   vesselFactor: number,
@@ -232,9 +232,7 @@ function correctedEmissions(
       : (item.emissionsTonnesPerTeu / 1000) * distanceNm * quantity;
   }
 
-  const perTeuNm = item.requiresPlug
-    ? intensity.refrigeratedKgPerTeuNm
-    : intensity.dryKgPerTeuNm;
+  const perTeuNm = item.requiresPlug ? intensity.refrigeratedKgPerTeuNm : intensity.dryKgPerTeuNm;
 
   return (perTeuNm / 1000) * item.teuEquivalent * distanceNm * quantity * vesselFactor;
 }
@@ -393,7 +391,8 @@ export function calculatePrice(input: PriceInput): PriceBreakdown {
 
   // CORRECTED: bunker recovery follows the freight, so it is per container.
   // LEGACY: charged once.
-  const brafBase = (tariffs.bunkerRecovery[item.id] ?? 0) * BRAF_CLASS_STEP ** CLASS_ORDER.indexOf(portClass);
+  const brafBase =
+    (tariffs.bunkerRecovery[item.id] ?? 0) * BRAF_CLASS_STEP ** CLASS_ORDER.indexOf(portClass);
   add('bunker-recovery', 'Bunker recovery (BRAF)', brafBase * (legacy ? 1 : quantity), {
     perUnit: !legacy,
   });
@@ -478,7 +477,10 @@ export function priceQuotation(
   const destination = getPort(request.destinationPortId);
 
   if (!origin || !destination) {
-    throw new QuotationError('The quotation names a port that is not on the network', 'unknown-port');
+    throw new QuotationError(
+      'The quotation names a port that is not on the network',
+      'unknown-port',
+    );
   }
   if (!origin.portClass || origin.baseIndex == null) {
     throw new QuotationError(

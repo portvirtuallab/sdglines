@@ -225,7 +225,7 @@ function EquipmentDetails({ id }: { id: number }) {
     facts.push(['Maximum payload', `${number.format(item.maxPayloadKg)} kg`]);
   }
   facts.push(['Linear metres', `${item.linearMetres.toFixed(3)} m`]);
-  facts.push(['Freight factor', `${item.freightFactor.toFixed(2)} of the FEU rate`]);
+  facts.push(['Freight factor', `${item.freightFactor.toFixed(2)} of the 40-foot reference rate`]);
   if (item.emissionsTonnesPerTeu != null) {
     facts.push(['Emissions factor', `${item.emissionsTonnesPerTeu} t CO2e per TEU`]);
   }

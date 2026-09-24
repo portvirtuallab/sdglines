@@ -128,7 +128,9 @@ test.describe('producing a quotation', () => {
     const perUnit = await bySize
       .locator('tbody tr')
       .evaluateAll((rows) =>
-        rows.map((row) => Number((row.querySelectorAll('td')[1]?.textContent ?? '').replace(/[^0-9.]/g, ''))),
+        rows.map((row) =>
+          Number((row.querySelectorAll('td')[1]?.textContent ?? '').replace(/[^0-9.]/g, '')),
+        ),
       );
     expect(perUnit.length).toBeGreaterThan(3);
     for (let i = 1; i < perUnit.length; i++) expect(perUnit[i]).toBeLessThan(perUnit[i - 1]);
@@ -193,7 +195,9 @@ test.describe('refusing what the network cannot do', () => {
     const origins = await page
       .getByLabel('Port of origin')
       .locator('option')
-      .evaluateAll((options) => options.map((option) => (option as HTMLOptionElement).value).filter(Boolean));
+      .evaluateAll((options) =>
+        options.map((option) => (option as HTMLOptionElement).value).filter(Boolean),
+      );
 
     expect(origins.length).toBeGreaterThan(30);
     expect(origins).toContain('palma');
@@ -201,10 +205,7 @@ test.describe('refusing what the network cannot do', () => {
     for (const origin of origins) {
       await page.getByLabel('Port of origin').selectOption(origin);
       await expect(page.getByLabel('Port of destination')).toBeEnabled();
-      const destinations = await page
-        .getByLabel('Port of destination')
-        .locator('option')
-        .count();
+      const destinations = await page.getByLabel('Port of destination').locator('option').count();
       expect(destinations, `${origin} has no reachable destination`).toBeGreaterThan(1);
     }
   });
