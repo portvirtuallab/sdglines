@@ -200,7 +200,30 @@ charges them per container:
 - **Reefer plug-in**, now per container.
 - **Bunker recovery (BRAF)**, now per container, since it adjusts the freight.
 
-## 10. Still unresolved
+## 10. What the quotation shows
+
+Beside the total, two derived figures and two comparisons, all from the same
+engine so that none of them can disagree with the quotation:
+
+- **Price per unit**: the total over the number of units.
+- **Price per TEU equivalent**: the unit price over the unit's slot equivalent,
+  which is its linear metres over 6.096. Derived, not stated by the workbook.
+- **By order size**: 1, 2, 5, 10, 20 and 50 units, plus whatever was asked for.
+  Only documentation, logistic management and customs clearance are per
+  shipment, so the unit price falls by under 10 % between one unit and fifty.
+  That is the whole of the economy of scale here, and seeing how small it is
+  matters more than seeing that it exists.
+- **By unit type**: the whole catalogue on the same lane at the same quantity,
+  ordered cheapest per TEU. On Barcelona-Damietta at three units this puts
+  project cargo first at 737 EUR per TEU and a 20' reefer near the bottom at
+  1 825 EUR per TEU, which is the freight factor and the handling tariff made
+  concrete.
+
+The second table also exposes a data defect rather than hiding it: the 45-foot
+roll trailer sorts last per TEU only because the workbook records it as 6.096
+linear metres, the length of a twenty-foot unit. The importer now reports that.
+
+## 11. Still unresolved
 
 - **The freight formula itself.** Interpolated between 36 anchors. The original
   is still readable in the Google Sheet; see item 12 in `docs/open-questions.md`.
@@ -209,3 +232,6 @@ charges them per container:
 - **Two distances that disagree with themselves.** `GENERAL!Distance NM` is not
   symmetric for Barcelona-Oran (279 against 362 NM) or Jeddah-Abu Dhabi (2 452
   against 2 542 NM), so the direction a learner quotes in changes the price.
+- **The 45-foot roll trailer's length.** Recorded as 6.096 linear metres, which
+  is a twenty-foot unit. Both its freight rate and its TEU equivalent follow
+  that figure, so the correction will move its price.

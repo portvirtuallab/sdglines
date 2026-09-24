@@ -157,6 +157,12 @@ export interface Equipment {
   maxPayloadKg: number | null;
   /** Linear metres of deck or slot the unit occupies. */
   linearMetres: number;
+  /**
+   * Slot equivalent in TEU, derived from the linear metres rather than stated
+   * by the workbook. Used only to express a price per TEU beside the price per
+   * unit, which is how a shipper compares equipment.
+   */
+  teuEquivalent: number | null;
   /** Tonnes of CO2 equivalent per TEU, used for the emissions estimate. */
   emissionsTonnesPerTeu: number | null;
   /** True when the unit needs a reefer plug. */

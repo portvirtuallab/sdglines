@@ -431,6 +431,8 @@ function importEquipment(bookings) {
     if (id == null || !name) continue;
 
     const family = familyOf(name);
+    const linearMetres = round(num(row[12]) ?? 0, 3);
+
     equipment.push({
       id,
       slug: slugify(name),
@@ -438,7 +440,12 @@ function importEquipment(bookings) {
       family,
       freightFactor: num(row[3]) ?? 1,
       maxPayloadKg: num(row[8]),
-      linearMetres: round(num(row[12]) ?? 0, 3),
+      linearMetres,
+      // Derived, not stated. A TEU is defined by the twenty-foot unit, which
+      // the workbook gives as 6.096 linear metres, so the slot equivalent of
+      // anything else is its own length over that. Used only to express a
+      // price per TEU beside the price per unit.
+      teuEquivalent: linearMetres ? round(linearMetres / 6.096, 3) : null,
       emissionsTonnesPerTeu: num(row[11]),
       requiresPlug: family === 'reefer' || name.toLowerCase().includes('frigo'),
       meta: {
@@ -451,6 +458,22 @@ function importEquipment(bookings) {
   }
 
   if (equipment.length !== 16) problem(`Expected 16 unit types, found ${equipment.length}`);
+
+  // A unit type that names its own length should be that long. Where the two
+  // disagree the workbook is wrong about one of them, and since the linear
+  // metres drive the freight rate and the slot equivalent, it matters.
+  for (const item of equipment) {
+    const feet = /(\d+)\s*feet/i.exec(item.name);
+    if (!feet || !item.linearMetres) continue;
+    const expected = Number(feet[1]) * 0.3048;
+    if (Math.abs(item.linearMetres - expected) > expected * 0.1) {
+      problem(
+        `${item.name} is ${item.linearMetres} linear metres, but ${feet[1]} feet is ` +
+          `${expected.toFixed(3)} m. The freight rate and the TEU equivalent both follow this figure.`,
+      );
+    }
+  }
+
   return equipment;
 }
 

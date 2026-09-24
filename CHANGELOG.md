@@ -29,6 +29,11 @@ Changes that affect how the site is used in a training exercise are also summari
 - The destination list is now built by the journey search itself rather than by a second walk over
   the rotations, so it can no longer offer a port the search would refuse.
 
+- The quotation states the price per unit and the price per TEU equivalent beside the total, and
+  offers two comparisons: the same shipment at other order sizes, and at every other unit type on
+  the lane. Both are collapsed by default and both are priced by the same engine as the quotation,
+  so they cannot disagree with it.
+
 ### Removed
 
 - The PBKDF2 check of the Port Virtual Lab code. A four-digit code checked in a browser cannot be an
@@ -45,6 +50,9 @@ Changes that affect how the site is used in a training exercise are also summari
   published, so ranking on time alone made transshipment look better than it is.
 - The quotation breakdown states, for every line, whether it follows the container or the shipment,
   and says when a freight rate was interpolated rather than published.
+- The import checks that a unit type which names its own length actually is that long. It is not:
+  the workbook gives the 45-foot roll trailer 6.096 linear metres, which is a 20-foot unit, and both
+  the freight rate and the TEU equivalent follow that figure.
 
 ### Added
 

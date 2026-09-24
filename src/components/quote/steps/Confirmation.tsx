@@ -8,11 +8,115 @@
  */
 
 import { getEquipment, getPort } from '@/lib/quote/network';
+import { acrossEquipment, acrossQuantities, type PriceVariant } from '@/lib/quote/comparisons';
 import type { Journey } from '@/lib/quote/routing';
 import type { Quotation } from '@/types/quote';
 import type { QuoteDraft } from '../model';
 import { longDate, money, number } from '../format';
 import { JourneyPanel } from './JourneyPanel';
+
+/** One of the three figures a shipper reads first. */
+function Headline({
+  term,
+  value,
+  detail,
+  emphasis,
+}: {
+  term: string;
+  value: string;
+  detail?: string;
+  emphasis?: boolean;
+}) {
+  return (
+    <div
+      className={
+        'rounded-xl border p-4 ' +
+        (emphasis ? 'border-navy-800 bg-navy-800 text-white' : 'border-navy-200 bg-white')
+      }
+    >
+      <dt className={emphasis ? 'text-sm text-navy-100' : 'text-sm text-navy-600'}>{term}</dt>
+      <dd className="mt-1 font-mono text-xl font-semibold">{value}</dd>
+      {detail && (
+        <dd className={'mt-1 text-xs ' + (emphasis ? 'text-navy-200' : 'text-navy-500')}>
+          {detail}
+        </dd>
+      )}
+    </div>
+  );
+}
+
+/**
+ * A comparison table, collapsed by default.
+ *
+ * Collapsed because the quotation is the answer and these are the reasoning
+ * behind it; a learner who wants to know why opens them, and one who does not
+ * is not made to scroll past two tables to reach the buttons.
+ */
+function Comparison({
+  summary,
+  caption,
+  explanation,
+  variants,
+  firstColumn,
+  firstCell,
+}: {
+  summary: string;
+  caption: string;
+  explanation: string;
+  variants: PriceVariant[];
+  firstColumn: string;
+  firstCell: (variant: PriceVariant) => string;
+}) {
+  return (
+    <details className="mt-4 rounded-xl border border-navy-200 bg-white">
+      <summary className="cursor-pointer px-5 py-3 text-sm font-semibold text-navy-800">
+        {summary}
+      </summary>
+      <div className="border-t border-navy-100 px-5 py-4">
+        <p className="text-sm leading-relaxed text-navy-600">{explanation}</p>
+        <table className="mt-4 w-full border-collapse text-sm">
+          <caption className="sr-only">{caption}</caption>
+          <thead>
+            <tr className="border-b border-navy-200 text-left text-xs uppercase tracking-wide text-navy-500">
+              <th scope="col" className="py-2 pr-4 font-semibold">
+                {firstColumn}
+              </th>
+              <th scope="col" className="py-2 pr-4 text-right font-semibold">
+                Total
+              </th>
+              <th scope="col" className="py-2 pr-4 text-right font-semibold">
+                Per unit
+              </th>
+              <th scope="col" className="py-2 text-right font-semibold">
+                Per TEU
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-navy-50">
+            {variants.map((variant) => (
+              <tr
+                key={`${variant.equipmentId}-${variant.quantity}`}
+                className={variant.isChosen ? 'bg-sea-50 font-semibold text-sea-900' : ''}
+              >
+                <th scope="row" className="py-2 pr-4 text-left font-normal">
+                  {firstCell(variant)}
+                  {variant.isChosen && <span className="sr-only"> (your quotation)</span>}
+                </th>
+                <td className="py-2 pr-4 text-right font-mono">{money.format(variant.totalEur)}</td>
+                <td className="py-2 pr-4 text-right font-mono">
+                  {money.format(variant.perUnitEur)}
+                </td>
+                <td className="py-2 text-right font-mono">
+                  {variant.perTeuEur == null ? '—' : money.format(variant.perTeuEur)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  );
+}
 
 export function Confirmation({
   quotation,
@@ -27,6 +131,19 @@ export function Confirmation({
   const destination = getPort(quotation.request.destinationPortId);
   const item = getEquipment(quotation.request.equipmentId);
   const quantity = quotation.request.quantity;
+
+  const perUnit = quotation.totalEur / quantity;
+  const perTeu = item?.teuEquivalent ? perUnit / item.teuEquivalent : null;
+
+  // The comparisons hold the shipment fixed and move one thing at a time.
+  const basis = {
+    portClass: origin?.portClass ?? 'C',
+    equipmentId: quotation.request.equipmentId,
+    quantity,
+    distanceNm: quotation.distanceNm,
+    vgmSolas: quotation.request.vgmSolas,
+    dangerousGoods: quotation.request.dangerousGoods,
+  } as const;
 
   const needsReview =
     quotation.seaFreightStatus === 'needs-review' ||
@@ -157,6 +274,52 @@ export function Confirmation({
             spreadsheet but their derivation has not yet been confirmed by the operator.
           </p>
         )}
+
+        <dl className="mt-6 grid gap-4 sm:grid-cols-3">
+          <Headline term="Total" value={money.format(quotation.totalEur)} emphasis />
+          <Headline
+            term={`Per unit × ${quantity}`}
+            value={money.format(perUnit)}
+            detail={item?.name}
+          />
+          <Headline
+            term="Per TEU equivalent"
+            value={perTeu == null ? 'Not derivable' : money.format(perTeu)}
+            detail={
+              item?.teuEquivalent
+                ? `${item.teuEquivalent} TEU per unit, from ${item.linearMetres} linear metres`
+                : 'The workbook gives no length for this unit'
+            }
+          />
+        </dl>
+      </section>
+
+      <section>
+        <h3 className="font-display text-lg font-semibold text-navy-900">
+          How the price would change
+        </h3>
+        <p className="mt-2 text-sm leading-relaxed text-navy-700">
+          The same shipment on the same lane, with one thing altered. Both tables are priced by the
+          same engine as the quotation above, so they cannot disagree with it.
+        </p>
+
+        <Comparison
+          summary={`Ordering a different number of ${item?.name ?? 'units'}`}
+          caption="Price by order size"
+          explanation="Documentation, logistic management and customs clearance are charged once per shipment. Everything else follows the container, so the price per unit falls only as those three spread over a larger order."
+          variants={acrossQuantities(basis)}
+          firstColumn="Units"
+          firstCell={(variant) => String(variant.quantity)}
+        />
+
+        <Comparison
+          summary="Using a different unit type"
+          caption="Price by unit type, cheapest per TEU first"
+          explanation="The freight factor runs from 0.80 for a 20' dry container to 1.60 for project cargo, and the terminal handling tariff moves with the unit type as well. A reefer also carries the plug-in charge."
+          variants={acrossEquipment(basis)}
+          firstColumn="Unit type"
+          firstCell={(variant) => variant.label}
+        />
       </section>
 
       <section>

@@ -259,6 +259,26 @@ and still needed.
 
 ---
 
+## 18. The 45-foot roll trailer is recorded as 6.096 linear metres
+
+**Status:** needs correction in the workbook.
+
+`BOOKINGS!Tariffs` gives the 45-foot roll trailer 6.096 linear metres. That is the length of a
+twenty-foot unit; 45 feet is 13.716 m, which is what the 45-foot flatrack and the 45-foot high cube
+both carry.
+
+The figure is not cosmetic. The freight rate is derived from linear metres, and so is the TEU
+equivalent the quotation prices by, so the unit is currently quoted as though it occupied a single
+twenty-foot slot. It shows up immediately in the comparison table on any quotation: it sorts last
+by price per TEU, well behind equipment of the same length.
+
+**Currently:** imported as the workbook states it, and reported by every import run.
+
+**Needed:** confirmation that 13.716 m is intended, after which the workbook cell is the only thing
+that has to change.
+
+---
+
 ## Answered items
 
 ### 11. Four arithmetic defects in the live quotation spreadsheet

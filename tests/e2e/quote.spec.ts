@@ -85,6 +85,60 @@ test.describe('producing a quotation', () => {
     await expect(charges).toContainText('per shipment');
   });
 
+  test('shows the unit price, the price per TEU and both comparisons', async ({ page }) => {
+    await page.goto(QUOTE);
+
+    await chooseRoute(page);
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await page.getByRole('radio', { name: 'No' }).check();
+    await page.getByLabel('Type of service').selectOption('container');
+    await page.getByLabel('Unit type').selectOption('1');
+    await page.getByLabel('Number of units').fill('4');
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await page.getByRole('radio', { name: /^No/ }).check();
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await page.getByLabel('Name').fill('Ada Pujol');
+    await page.getByLabel('Email address').fill('ada@example.org');
+    await page.getByLabel('Company or institution').fill('Escola Europea');
+    await page.getByLabel('Country').fill('Spain');
+    await page.getByLabel('Port Virtual Lab activity code').fill('1234');
+    await page.getByRole('checkbox').check();
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await page.getByRole('button', { name: 'Produce the simulated quotation' }).click();
+
+    // A 20' dry is one TEU, so the unit price and the TEU price agree, which
+    // is the simplest case to assert without restating the pricing rules here.
+    const headline = page.getByRole('definition').or(page.locator('dt'));
+    await expect(headline.getByText('Per unit × 4', { exact: true })).toBeVisible();
+    await expect(page.getByText('1 TEU per unit, from 6.096 linear metres')).toBeVisible();
+
+    // Both comparisons start collapsed, so the quotation is the answer and the
+    // reasoning is there for whoever wants it.
+    const bySize = page.locator('details', { hasText: 'Ordering a different number' });
+    await expect(bySize.getByRole('table')).toBeHidden();
+    await bySize.locator('summary').click();
+    await expect(bySize.getByRole('table')).toBeVisible();
+
+    // The per-unit price must fall as the order grows: the three per-shipment
+    // charges are the only thing that spreads over a bigger booking.
+    const perUnit = await bySize
+      .locator('tbody tr')
+      .evaluateAll((rows) =>
+        rows.map((row) => Number((row.querySelectorAll('td')[1]?.textContent ?? '').replace(/[^0-9.]/g, ''))),
+      );
+    expect(perUnit.length).toBeGreaterThan(3);
+    for (let i = 1; i < perUnit.length; i++) expect(perUnit[i]).toBeLessThan(perUnit[i - 1]);
+
+    const byType = page.locator('details', { hasText: 'Using a different unit type' });
+    await byType.locator('summary').click();
+    await expect(byType.getByRole('table')).toContainText('40 feet Container (Dry Cargo)');
+    await expect(byType.getByRole('table')).toContainText('Project');
+
+    // The whole catalogue, and the chosen one marked in it.
+    await expect(byType.locator('tbody tr')).toHaveCount(16);
+    await expect(byType.getByText('(your quotation)')).toBeAttached();
+  });
+
   test('carries the origin through from a port page', async ({ page }) => {
     await page.goto(path('/ports/valencia'));
     await page.getByRole('link', { name: /Quote from/ }).click();
