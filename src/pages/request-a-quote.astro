@@ -1,0 +1,129 @@
+---
+/**
+ * The SDG Lines quotation tool.
+ *
+ * This replaces the Google Form the simulation used to run on. What the form
+ * did in a spreadsheet - resolve a route across the service rotations, pick the
+ * vessel, and price the shipment against the tariff tables - now happens here,
+ * against the same operational data the route pages, the port directory and the
+ * network map read.
+ *
+ * It produces a price. That is the substantive change: a learner can see what a
+ * shipment costs and what the cost is made of, rather than waiting for a
+ * quotation to come back by email.
+ *
+ * Nothing is submitted. GitHub Pages serves static files, there is no server to
+ * send a learner's details to, and the brief forbids sending them to an
+ * unapproved one. The quotation is produced in the browser and shown on the
+ * page. Where a real submission is wanted later, `docs/quote/architecture.md`
+ * documents the single function that has to change.
+ */
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import SimulationNotice from '@/components/layout/SimulationNotice.astro';
+import QuoteWizard from '@/components/quote/QuoteWizard.tsx';
+import { quotablePorts, services, equipment } from '@/lib/quote/network';
+import { url } from '@/lib/site';
+
+const portCount = quotablePorts.length;
+const serviceCount = services.length;
+const equipmentCount = equipment.length;
+---
+
+<BaseLayout
+  title="Request a simulated quote"
+  description="Build a simulated quotation on the SDG Lines network. Choose the route, the equipment and the cargo, and see the transit time, the itinerary and the full cost breakdown."
+>
+  <PageHeader
+    eyebrow="Operations"
+    title="Request a simulated quote"
+    intro="Tell us what you are shipping and where. You will get the routing, the transit time, a full price breakdown and a quotation reference to carry into the rest of your exercise."
+    breadcrumbs={[{ label: 'Request a quote' }]}
+  />
+
+  <div class="shell py-12 lg:py-16">
+    <div class="grid gap-12 lg:grid-cols-[1.7fr_1fr] lg:gap-14">
+      <div class="min-w-0">
+        <SimulationNotice
+          variant="inline"
+          detail="This tool does not send your details anywhere. It works out the quotation in your browser for use inside Port Virtual Lab, and nothing is stored or transmitted."
+          class="mb-8"
+        />
+
+        <QuoteWizard client:load />
+      </div>
+
+      <aside class="min-w-0 space-y-8 lg:sticky lg:top-24 lg:self-start">
+        <section class="rounded-xl border border-navy-200 bg-white p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">
+            What the quotation is built from
+          </h2>
+          <dl class="mt-4 space-y-3 text-sm">
+            <div class="flex justify-between gap-4">
+              <dt class="text-navy-600">Ports</dt>
+              <dd class="font-mono text-navy-900">{portCount}</dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-navy-600">Services</dt>
+              <dd class="font-mono text-navy-900">{serviceCount}</dd>
+            </div>
+            <div class="flex justify-between gap-4">
+              <dt class="text-navy-600">Unit types</dt>
+              <dd class="font-mono text-navy-900">{equipmentCount}</dd>
+            </div>
+          </dl>
+          <p class="mt-4 text-sm leading-relaxed text-navy-600">
+            The routing, the transit times and the tariffs come from the SDG Lines operational
+            configuration, which is the same source the
+            <a class="font-medium text-sea-700 underline underline-offset-2" href={url('/routes')}
+              >route pages</a
+            >, the
+            <a class="font-medium text-sea-700 underline underline-offset-2" href={url('/ports')}
+              >port directory</a
+            > and the network map read. A combination this network cannot serve cannot be selected.
+          </p>
+        </section>
+
+        <section class="rounded-xl border border-navy-200 bg-navy-50/50 p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">Before you start</h2>
+          <ul class="mt-4 space-y-3 text-sm leading-relaxed text-navy-700">
+            <li>
+              You will need the four-digit Port Virtual Lab PIN your trainer issued for this
+              activity.
+            </li>
+            <li>
+              SDG Lines publishes no sailing schedule, so the departure date you give is a request
+              rather than a confirmed sailing.
+            </li>
+            <li>
+              Prices are the simulation&rsquo;s own. They are modelled on published market indices
+              but they are not a commercial offer.
+            </li>
+          </ul>
+        </section>
+
+        <section class="rounded-xl border border-navy-200 bg-white p-6">
+          <h2 class="font-display text-base font-semibold text-navy-900">Need the detail first?</h2>
+          <ul class="mt-4 space-y-2.5 text-sm">
+            <li>
+              <a class="font-medium text-sea-700 underline underline-offset-2" href={url('/equipment')}
+                >Equipment and packing</a
+              >
+            </li>
+            <li>
+              <a
+                class="font-medium text-sea-700 underline underline-offset-2"
+                href={url('/resources/arrival-charges')}>Arrival charges</a
+              >
+            </li>
+            <li>
+              <a class="font-medium text-sea-700 underline underline-offset-2" href={url('/ports')}
+                >Ports and agencies</a
+              >
+            </li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+  </div>
+</BaseLayout>

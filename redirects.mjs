@@ -112,7 +112,7 @@ const contentRedirects = {
   '/agencies': '/ports/agencies',
   '/OwnersRepresentatives': '/ports/agencies',
 
-  '/quotation': '/quote',
+  '/quotation': '/request-a-quote',
   '/arrival-charges': '/resources/arrival-charges',
   '/CustomerService': '/resources/customer-service',
 
@@ -135,7 +135,19 @@ const contentRedirects = {
   '/securing-air-cargo': '/resources',
 };
 
+/**
+ * Addresses this site itself published earlier in the rebuild.
+ *
+ * The quotation tool moved from /quote to /request-a-quote when the Google Form
+ * was replaced by the tool that prices a shipment. Course handouts and learning
+ * platform links written against the old address keep working.
+ */
+const internalRedirects = {
+  '/quote': '/request-a-quote',
+};
+
 export const legacyRedirects = {
+  ...internalRedirects,
   ...vesselRedirects,
   ...portRedirects,
   ...contentRedirects,

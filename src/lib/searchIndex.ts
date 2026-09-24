@@ -145,7 +145,7 @@ export const searchIndex: SearchEntry[] = [
     type: 'Page',
     title: 'Request a simulated quotation',
     subtitle: 'Build a quotation for a shipment in your exercise',
-    href: '/quote',
+    href: '/request-a-quote',
     keywords: normalise('quote quotation rate booking request price shipment'),
   },
   {

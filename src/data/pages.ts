@@ -440,8 +440,8 @@ export const prosePages: ProsePage[] = [
         blocks: [
           {
             type: 'callout',
-            heading: 'This site collects no personal data',
-            text: 'There are no accounts, no cookies set by this site, no analytics and no trackers. Nothing you type into a form on this site is transmitted anywhere.',
+            heading: 'Nothing you type here leaves your device',
+            text: 'There are no accounts, no cookies set by this site, no analytics and no trackers. The quotation tool asks for a few contact details so that the quotation it produces is addressed to someone, but they stay in your browser: nothing you type into a form on this site is transmitted or stored anywhere.',
           },
         ],
       },
@@ -451,11 +451,11 @@ export const prosePages: ProsePage[] = [
         blocks: [
           {
             type: 'paragraph',
-            text: 'The quotation request form runs entirely in your browser. It validates what you enter, generates a quotation reference from the shipment details and shows the result on the page. No request is sent to any server and nothing is stored.',
+            text: 'The quotation tool runs entirely in your browser. It works out the routing, prices the shipment, generates a quotation reference and shows the result on the page. No request is sent to any server, nothing is stored, and closing the tab discards everything you entered.',
           },
           {
             type: 'paragraph',
-            text: 'The form does not ask for your name, e-mail address, telephone number or company, because the simulation does not need them. Please do not enter personal details in the free text fields.',
+            text: 'It asks for your name, e-mail address and the company or institution you are taking part as, because those appear on the quotation you receive. It does not ask for a telephone number or an address, and no field is required that the exercise does not use. Please do not enter personal details in the free text fields.',
           },
         ],
       },
@@ -651,7 +651,7 @@ export const prosePages: ProsePage[] = [
             items: [
               { label: 'Arrival charges', href: '/resources/arrival-charges' },
               { label: 'Dangerous goods', href: '/services/dangerous-goods' },
-              { label: 'Request a quotation', href: '/quote' },
+              { label: 'Request a quotation', href: '/request-a-quote' },
             ],
           },
         ],
@@ -900,7 +900,7 @@ export const prosePages: ProsePage[] = [
             type: 'links',
             items: [
               { label: 'Arrival charges', href: '/resources/arrival-charges' },
-              { label: 'Request a quotation', href: '/quote' },
+              { label: 'Request a quotation', href: '/request-a-quote' },
               { label: 'Access PVL.ONE', href: 'https://pvl.one', external: true },
             ],
           },

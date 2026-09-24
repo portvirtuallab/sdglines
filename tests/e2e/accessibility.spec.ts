@@ -27,7 +27,7 @@ const PAGES = [
   { path: '/services', name: 'services index' },
   { path: '/services/cold-chain', name: 'cargo service' },
   { path: '/resources/arrival-charges', name: 'arrival charges' },
-  { path: '/quote', name: 'quotation form' },
+  { path: '/request-a-quote', name: 'quotation tool' },
   { path: '/search', name: 'search' },
   { path: '/about', name: 'about' },
   { path: '/legal', name: 'legal notice' },

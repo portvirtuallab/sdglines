@@ -107,60 +107,7 @@ test.describe('checking arrival charges', () => {
   });
 });
 
-test.describe('requesting a simulated quotation', () => {
-  test('reports every error before accepting the form', async ({ page }) => {
-    await page.goto(path('/quote'));
-
-    await page.getByRole('button', { name: 'Request quotation' }).click();
-
-    const summary = page.getByRole('alert');
-    await expect(summary).toBeVisible();
-    await expect(summary).toContainText('There is a problem with this form');
-    await expect(summary).toContainText('Choose the port where the cargo will be loaded');
-  });
-
-  test('rejects the same port for loading and discharge', async ({ page }) => {
-    await page.goto(path('/quote'));
-
-    await page.getByLabel('Port of loading').selectOption('barcelona');
-    await page.getByLabel('Port of discharge').selectOption('barcelona');
-    await page.getByLabel('Cargo type').selectOption('containers');
-    await page.getByLabel('Equipment').selectOption('dry-40');
-
-    await page.getByRole('button', { name: 'Request quotation' }).click();
-
-    await expect(page.getByRole('alert')).toContainText(
-      'port of discharge has to be different from the port of loading',
-    );
-  });
-
-  test('produces a quotation reference and echoes the shipment back', async ({ page }) => {
-    await page.goto(path('/quote'));
-
-    await page.getByLabel('Port of loading').selectOption('barcelona');
-    await page.getByLabel('Port of discharge').selectOption('beirut');
-    await page.getByLabel('Cargo type').selectOption('containers');
-    await page.getByLabel('Equipment').selectOption('high-cube-40');
-    await page.getByLabel('Number of units').fill('3');
-
-    await page.getByRole('button', { name: 'Request quotation' }).click();
-
-    const result = page.getByRole('region', { name: 'Simulated quotation created' });
-    await expect(result).toBeVisible();
-
-    // The reference format is SDG-YYDDD-XXXX.
-    await expect(result.getByText(/^SDG-\d{5}-[0-9A-Z]{4}$/)).toBeVisible();
-    await expect(result).toContainText('Port of Beirut');
-    await expect(result).toContainText("40' high cube container");
-  });
-
-  test('pre-selects the route when arriving from a port page', async ({ page }) => {
-    await page.goto(path('/ports/valencia'));
-    await page.getByRole('link', { name: 'Quote from Valencia' }).click();
-
-    await expect(page.getByLabel('Port of loading')).toHaveValue('valencia');
-  });
-});
+// The quotation tool has a suite of its own: see tests/e2e/quote.spec.ts.
 
 test.describe('search', () => {
   test('finds a port, a vessel and a charge code', async ({ page }) => {
