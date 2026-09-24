@@ -199,7 +199,9 @@ export const tariffs: Tariffs = {
     },
     "dangerousGoods": {
       "C": 65,
-      "D": 70
+      "D": 70,
+      "B": 60,
+      "A": 55
     }
   },
   "portAdditionalRate": 0.2,

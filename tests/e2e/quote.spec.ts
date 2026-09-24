@@ -78,7 +78,11 @@ test.describe('producing a quotation', () => {
     await expect(charges).toContainText('€304.00');
     await expect(charges).toContainText('€60.80');
     await expect(charges).toContainText('€58.39');
-    await expect(charges).toContainText('€1,923.93');
+    await expect(charges).toContainText('€1,914.15');
+
+    // Spain to Egypt leaves the EU emissions scheme, so half the voyage is
+    // covered and the line says which scope was applied.
+    await expect(charges).toContainText('half scope');
 
     // Every line says whether it follows the container or the shipment.
     await expect(charges).toContainText('per unit');
@@ -263,6 +267,12 @@ test.describe('accessibility', () => {
    * that it never reaches, so they are checked here where they are on screen.
    */
   test('every step passes an automated audit', async ({ page }) => {
+    // The radio and button styles animate on state change. Axe samples the
+    // computed colour at whatever moment it runs, so a transition in flight
+    // reads as a contrast failure that is not there once it settles. The
+    // stylesheet already collapses every transition under reduced motion, so
+    // asking for it removes the race rather than papering over it with a wait.
+    await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(QUOTE);
 
     const audit = async (label: string) => {

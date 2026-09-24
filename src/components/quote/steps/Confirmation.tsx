@@ -8,6 +8,7 @@
  */
 
 import { getEquipment, getPort } from '@/lib/quote/network';
+import { freightNeedsMention } from '@/lib/quote/pricing';
 import { acrossEquipment, acrossQuantities, type PriceVariant } from '@/lib/quote/comparisons';
 import type { Journey } from '@/lib/quote/routing';
 import type { Quotation } from '@/types/quote';
@@ -145,9 +146,15 @@ export function Confirmation({
     dangerousGoods: quotation.request.dangerousGoods,
   } as const;
 
+  // Almost every lane is interpolated, so saying so every time would teach
+  // people to ignore it. Mentioned only when it could move the figure.
+  const freightIsUncertain = freightNeedsMention({
+    eur: quotation.seaFreightBaseFeuEur,
+    status: quotation.seaFreightStatus,
+    maxErrorEur: quotation.seaFreightMaxErrorEur,
+  });
   const needsReview =
-    quotation.seaFreightStatus === 'needs-review' ||
-    quotation.charges.some((charge) => charge.status === 'needs-review');
+    freightIsUncertain || quotation.charges.some((charge) => charge.status === 'needs-review');
   const blocked = quotation.charges.filter((charge) => charge.status === 'blocked');
 
   return (
@@ -264,10 +271,11 @@ export function Confirmation({
         )}
         {needsReview && (
           <p className="mt-3 text-sm text-navy-600">
-            {quotation.seaFreightStatus === 'needs-review' && (
+            {freightIsUncertain && (
               <>
-                The sea freight for this distance was interpolated between two published rates
-                rather than taken from one.{' '}
+                The sea freight for this distance was interpolated between two published rates that
+                sit far apart, so it could be out by up to{' '}
+                {money.format(quotation.seaFreightMaxErrorEur)}.{' '}
               </>
             )}
             Charges marked <em>under review</em> are reproduced from the current quotation

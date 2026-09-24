@@ -20,6 +20,7 @@ import { describe, expect, it } from 'vitest';
 import corpus from '../fixtures/worked-quotations.json';
 import { QuotationError, calculatePrice, seaFreightBaseFeu } from '@/lib/quote/pricing';
 import { equipment } from '@/data/quote/equipment';
+import { tariffs } from '@/data/quote/tariffs';
 import type { PortClass } from '@/types/quote';
 
 const byName = new Map(equipment.map((item) => [item.name, item]));
@@ -277,10 +278,37 @@ describe('corrected rules', () => {
     const one = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1 });
     const ten = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 10 });
 
-    // The fixed component is charged once, so ten units cost ten times the
-    // variable part plus one fixed part, not ten of each.
-    const variable = (result: typeof one) => charge(result, 'ets') - 20;
-    expect(variable(ten)).toBeCloseTo(variable(one) * 10, 6);
+    expect(charge(ten, 'ets')).toBeCloseTo(charge(one, 'ets') * 10, 6);
+  });
+
+  it('charges the ETS administration once per booking, not per container', () => {
+    const one = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1 });
+    const ten = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 10 });
+
+    expect(charge(ten, 'ets-administration')).toBe(charge(one, 'ets-administration'));
+  });
+
+  it('covers half the emissions when one end of the voyage is outside the EU scheme', () => {
+    const intraEu = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 2, etsScope: 'full' });
+    const leaving = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 2, etsScope: 'half' });
+
+    expect(charge(leaving, 'ets')).toBeCloseTo(charge(intraEu, 'ets') / 2, 6);
+    // The administration is unaffected: the paperwork is the same either way.
+    expect(charge(leaving, 'ets-administration')).toBe(charge(intraEu, 'ets-administration'));
+  });
+
+  it('says on the line which scope was applied', () => {
+    const full = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1, etsScope: 'full' });
+    const half = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1, etsScope: 'half' });
+
+    expect(full.charges.find((entry) => entry.key === 'ets')?.label).toContain('full scope');
+    expect(half.charges.find((entry) => entry.key === 'ets')?.label).toContain('half scope');
+  });
+
+  it('covers a voyage in full by default', () => {
+    const chosen = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1 });
+    const full = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1, etsScope: 'full' });
+    expect(charge(chosen, 'ets')).toBe(charge(full, 'ets'));
   });
 
   it('charges the paperwork once however many containers are on it', () => {
@@ -296,7 +324,7 @@ describe('corrected rules', () => {
     const quotation = calculatePrice({ ...LANE, equipmentId: REEFER_20, quantity: 3 });
     const perShipment = quotation.charges.filter((entry) => !entry.perUnit).map((entry) => entry.key);
     expect(perShipment.sort()).toEqual(
-      ['customs-clearance', 'documentation', 'logistic-management'].sort(),
+      ['customs-clearance', 'documentation', 'ets-administration', 'logistic-management'].sort(),
     );
   });
 
@@ -340,16 +368,31 @@ describe('when it cannot price something', () => {
     }
   });
 
-  it('shows the dangerous goods charge as unresolved from a class A port', () => {
-    const quotation = calculatePrice({
-      ...LANE,
-      portClass: 'A',
-      equipmentId: DRY_40,
-      quantity: 1,
-      dangerousGoods: true,
-    });
-    const imo = quotation.charges.find((entry) => entry.key === 'imo');
-    expect(imo?.status).toBe('blocked');
-    expect(imo?.amountEur).toBe(0);
+  it('has a dangerous goods rate for every port class', () => {
+    // Two of the four were never published: no worked quotation carried
+    // dangerous goods from a class A or B port. They were completed by
+    // continuing the workbook's own five-euro step down the ladder. If a class
+    // ever loses its rate, the engine marks the charge blocked rather than
+    // charging nothing, and this is the test that would notice.
+    const ladder = tariffs.perUnitSurcharges.dangerousGoods;
+    expect([ladder.A, ladder.B, ladder.C, ladder.D]).toEqual([55, 60, 65, 70]);
+
+    for (const portClass of ['A', 'B', 'C', 'D'] as PortClass[]) {
+      const quotation = calculatePrice({
+        ...LANE,
+        portClass,
+        equipmentId: DRY_40,
+        quantity: 2,
+        dangerousGoods: true,
+      });
+      const imo = quotation.charges.find((entry) => entry.key === 'imo');
+      expect(imo?.status, portClass).toBeUndefined();
+      expect(imo?.amountEur, portClass).toBe(ladder[portClass]! * 2);
+    }
+  });
+
+  it('charges nothing for dangerous goods that were not declared', () => {
+    const quotation = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1 });
+    expect(quotation.charges.some((entry) => entry.key === 'imo')).toBe(false);
   });
 });

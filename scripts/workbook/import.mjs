@@ -103,6 +103,89 @@ const OWNER_SUPPLIED = new Map([
         'neither. Class follows the TEU band; the base index matches the other Spanish ports.',
     },
   ],
+  [
+    'ORAN',
+    {
+      latitude: 35.71,
+      longitude: -0.64,
+      note:
+        'Coordinates supplied on 2026-09-23. The workbook row is column-shifted - it carries ' +
+        '271 in the latitude cell and nothing in the longitude - so the port could not be ' +
+        'placed on the map. These are the real position of the Port of Oran, which is a ' +
+        'geographic fact rather than a simulation choice.',
+    },
+  ],
+]);
+
+/**
+ * Cells the workbook gets wrong, with the evidence for the replacement.
+ *
+ * These are corrections, not preferences. Each one is resolved from something
+ * else the workbook itself says, or from arithmetic, and the reasoning travels
+ * with the value so that a reviewer can disagree with it on the merits.
+ */
+const DISTANCE_CORRECTIONS = [
+  {
+    from: 'BARCELONA',
+    to: 'ORAN',
+    distanceNm: 362,
+    note:
+      'The matrix reads 279 NM one way and 362 the other. 279 is the Barcelona-Algiers ' +
+      'figure, sitting two columns away in the same row, so the Oran cell was filled from ' +
+      'its neighbour. Barcelona to Oran is about 365 NM in a straight line, which 362 fits ' +
+      'and 279 cannot.',
+  },
+  {
+    from: 'JEDDAH',
+    to: 'ABU DHABI',
+    distanceNm: 2452,
+    note:
+      'The matrix reads 2452 NM one way and 2542 the other, a transposition. ' +
+      'GENERAL!SERVICES gives 2452 for the EurAsia leg between the two, and the rotation ' +
+      'table is the operational source.',
+  },
+];
+
+/**
+ * A unit type whose recorded length is wrong.
+ *
+ * Linear metres drive the freight rate and the TEU equivalent, so this is not
+ * cosmetic: the unit was being quoted as though it occupied a single
+ * twenty-foot slot.
+ */
+const EQUIPMENT_CORRECTIONS = new Map([
+  [
+    'Roll Trailer 45 feet',
+    {
+      linearMetres: 13.716,
+      note:
+        'The workbook records 6.096 linear metres, which is the length of a twenty-foot ' +
+        'unit. 45 feet is 13.716 m, which is what the 45-foot flatrack and the 45-foot high ' +
+        'cube both carry in the same table.',
+    },
+  ],
+]);
+
+/**
+ * Countries whose ports are inside the EU Emissions Trading System.
+ *
+ * The scheme covers voyages between EU ports in full and voyages with one end
+ * outside the EU at half, so the price of a voyage depends on where both ends
+ * sit. The workbook has an `ETSSTATUS` column that reads `EUM` for every port
+ * and is never used; this replaces it with the distinction the scheme actually
+ * makes. The United Kingdom is deliberately absent: it left the EU scheme and
+ * runs its own.
+ */
+const EU_ETS_COUNTRIES = new Set([
+  'Spain',
+  'Portugal',
+  'France',
+  'Belgium',
+  'Netherlands',
+  'Germany',
+  'Italy',
+  'Greece',
+  'Malta',
 ]);
 
 const corrections = [];
@@ -213,8 +296,9 @@ function importPorts(general) {
       continue;
     }
 
-    let latitude = num(row[5]);
-    let longitude = num(row[6]);
+    const suppliedForRow = OWNER_SUPPLIED.get(name);
+    let latitude = suppliedForRow?.latitude ?? num(row[5]);
+    let longitude = suppliedForRow?.longitude ?? num(row[6]);
     let note;
     // Two rows are column-shifted in the workbook: Oran carries a stray number
     // in latitude with no longitude, and Palma carries the maps link there.
@@ -228,7 +312,7 @@ function importPorts(general) {
     const id = slugify(name);
     let port = ports.get(id);
     if (!port) {
-      const supplied = OWNER_SUPPLIED.get(name);
+      const supplied = suppliedForRow;
       const portClass = str(row[15]) ?? supplied?.portClass ?? null;
       const base = baseIndex.get(name) ?? supplied?.baseIndex ?? null;
 
@@ -240,7 +324,10 @@ function importPorts(general) {
         corrections.push({
           what: 'owner-supplied',
           from: name,
-          to: `class ${supplied.portClass}, base index ${supplied.baseIndex}`,
+          to:
+            supplied.baseIndex != null
+              ? `class ${supplied.portClass}, base index ${supplied.baseIndex}`
+              : `coordinates ${supplied.latitude}, ${supplied.longitude}`,
         });
       }
       port = {
@@ -254,6 +341,10 @@ function importPorts(general) {
         latitude,
         longitude,
         teu: num(row[14]),
+        // Derived from the country. See EU_ETS_COUNTRIES.
+        inEuEts: EU_ETS_COUNTRIES.has(
+          correct(str(row[12]), COUNTRY_CORRECTIONS, 'country') ?? 'Unknown',
+        ),
         portClass: ['A', 'B', 'C', 'D'].includes(portClass) ? portClass : null,
         baseIndex: base,
         services: [],
@@ -431,7 +522,15 @@ function importEquipment(bookings) {
     if (id == null || !name) continue;
 
     const family = familyOf(name);
-    const linearMetres = round(num(row[12]) ?? 0, 3);
+    const fix = EQUIPMENT_CORRECTIONS.get(name);
+    const linearMetres = fix?.linearMetres ?? round(num(row[12]) ?? 0, 3);
+    if (fix) {
+      corrections.push({
+        what: 'equipment length',
+        from: `${name} at ${round(num(row[12]) ?? 0, 3)} m`,
+        to: `${fix.linearMetres} m`,
+      });
+    }
 
     equipment.push({
       id,
@@ -449,10 +548,11 @@ function importEquipment(bookings) {
       emissionsTonnesPerTeu: num(row[11]),
       requiresPlug: family === 'reefer' || name.toLowerCase().includes('frigo'),
       meta: {
-        source: 'workbook',
+        source: fix ? 'corrected' : 'workbook',
         status: 'verified',
         sourceSheet: 'BOOKINGS!Tariffs',
         lastReviewed: TODAY,
+        note: fix?.note,
       },
     });
   }
@@ -553,6 +653,22 @@ function importDistances(general, portIds) {
       if (value == null || value <= 0) continue;
       (matrix[fromId] ??= {})[toId] = value;
     }
+  }
+
+  // Two cells are demonstrably wrong rather than merely inconsistent. Each is
+  // replaced in both directions, with the evidence recorded above.
+  for (const fix of DISTANCE_CORRECTIONS) {
+    const fromId = slugify(fix.from);
+    const toId = slugify(fix.to);
+    if (!matrix[fromId]?.[toId] && !matrix[toId]?.[fromId]) continue;
+    const before = [matrix[fromId]?.[toId], matrix[toId]?.[fromId]].filter(Boolean).join(' / ');
+    (matrix[fromId] ??= {})[toId] = fix.distanceNm;
+    (matrix[toId] ??= {})[fromId] = fix.distanceNm;
+    corrections.push({
+      what: 'distance',
+      from: `${fix.from}-${fix.to} at ${before} NM`,
+      to: `${fix.distanceNm} NM`,
+    });
   }
 
   // The matrix should be symmetric. Where it is not, the workbook disagrees
@@ -743,7 +859,7 @@ function recoverClassSurcharges(worked) {
       isps: tables.isps,
       control: tables.control,
       seal: tables.seal,
-      dangerousGoods: tables.imo,
+      dangerousGoods: completeImoLadder(tables.imo),
     },
   };
 }
@@ -848,6 +964,28 @@ function importPublishedRoutes(bookings, portIds, serviceIds) {
   return [...seen.values()].sort(
     (a, b) => a.originId.localeCompare(b.originId) || a.destinationId.localeCompare(b.destinationId),
   );
+}
+
+/**
+ * Fill in the two IMO rates the corpus never covered.
+ *
+ * No worked quotation ever carried dangerous goods from a class A or B port, so
+ * only C (65) and D (70) were ever published. Every other per-unit surcharge in
+ * this tariff steps by a fixed amount between classes, and the IMO rate steps by
+ * 5 from C to D, so the ladder is continued downwards: B = 60, A = 55.
+ *
+ * This is an extrapolation of the workbook's own pattern rather than a figure
+ * from outside it, which is the most defensible basis available. The values are
+ * flagged for review so that they stay distinguishable from the two the corpus
+ * actually proves.
+ */
+function completeImoLadder(table) {
+  const step = table.D != null && table.C != null ? table.D - table.C : null;
+  if (step == null) return table;
+  const completed = { ...table };
+  if (completed.B == null) completed.B = round(completed.C - step, 2);
+  if (completed.A == null) completed.A = round(completed.B - step, 2);
+  return completed;
 }
 
 /* -------------------------------------------------------------------------- */

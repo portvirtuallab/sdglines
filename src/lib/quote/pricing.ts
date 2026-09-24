@@ -46,14 +46,30 @@ const ETS_EUR_PER_TONNE = 73.5899;
 /**
  * A flat 20 EUR the workbook adds to the emissions surcharge of 180 of its 202
  * worked quotations and omits from the other 22. Nothing in the data separates
- * the two groups: not the quantity, the port class, the equipment, the distance
- * or the route.
+ * the two groups.
  *
- * It is kept, per quotation, because most published quotations carry it and
- * removing an amount nobody can explain is as much of a guess as adding one.
- * Setting it to 0 is the whole of the change if the operator decides otherwise.
+ * Read as an emissions charge it makes no sense. Read as what carriers actually
+ * bill alongside one - the administrative cost of monitoring, reporting and
+ * surrendering allowances, which is per booking rather than per tonne - it does,
+ * and that is how it is now labelled. Setting it to 0 is the whole of the change
+ * if the operator decides otherwise.
  */
-const ETS_FIXED_COMPONENT_EUR = 20;
+const ETS_ADMINISTRATION_EUR = 20;
+
+/**
+ * The share of a voyage's emissions the EU scheme covers.
+ *
+ * A voyage between two ports inside the scheme is covered in full; one with a
+ * single end inside is covered at half. The phase-in that applied on
+ * introduction - 40 % of the covered share in 2024, 70 % in 2025 - has run its
+ * course, so the covered share is charged in full.
+ *
+ * The workbook does not make this distinction: it has an `ETSSTATUS` column
+ * reading `EUM` for every port and never uses it. Applying the scheme's own
+ * scope is both more accurate and the more useful thing for a learner to meet.
+ */
+export const ETS_SCOPE = { full: 1, half: 0.5 } as const;
+export type EtsScope = keyof typeof ETS_SCOPE;
 
 /** A quotation is valid for 30 days, as the current process publishes it. */
 const VALIDITY_DAYS = 30;
@@ -82,56 +98,118 @@ export class QuotationError extends Error {
 /* -------------------------------------------------------------------------- */
 
 /**
+ * The largest error worth telling a learner about, in euros.
+ *
+ * Below this the interpolation is closer than the rounding on the page, and
+ * warning about it on 93 % of quotations would teach people to ignore the
+ * warning, which is worse than not showing one.
+ */
+const FREIGHT_ERROR_THRESHOLD_EUR = 1;
+
+export interface FreightBase {
+  eur: number;
+  /** `verified` at a published anchor, `needs-review` when interpolated. */
+  status: QuoteVerificationStatus;
+  /**
+   * An upper bound on how far the interpolation can be from the lost formula,
+   * from the curvature of the neighbouring anchors. Zero at an anchor.
+   */
+  maxErrorEur: number;
+}
+
+/**
+ * Estimate the second derivative of the freight curve around an interval.
+ *
+ * Linear interpolation on an interval of width h is wrong by at most
+ * |f''| h² / 8, so bounding the curvature bounds the error. The curvature is
+ * taken as the largest of the divided second differences available around the
+ * interval, which errs towards overstating it.
+ */
+function curvatureAround(anchors: typeof tariffs.freightAnchors, index: number): number {
+  let worst = 0;
+  for (const i of [index - 1, index, index + 1]) {
+    const a = anchors[i - 1];
+    const b = anchors[i];
+    const c = anchors[i + 1];
+    if (!a || !b || !c) continue;
+    const left = (b.baseEur - a.baseEur) / (b.distanceNm - a.distanceNm);
+    const right = (c.baseEur - b.baseEur) / (c.distanceNm - b.distanceNm);
+    worst = Math.max(worst, Math.abs((2 * (right - left)) / (c.distanceNm - a.distanceNm)));
+  }
+  return worst;
+}
+
+/**
  * Interpolate the sea freight base for a FEU.
  *
  * The base is a pure function of the direct distance, but the function itself
  * was lost with the spreadsheet formulas. What survived is 36 exact points
  * spanning 163 to 10 000 nautical miles, recovered from the worked quotations.
- * Between them the curve is smooth and close to linear, so straight-line
- * interpolation is used. It is exact at every distance the workbook ever
- * quoted, because the anchors were themselves derived from real port pairs.
  *
- * The status is not decoration. A quotation built on an interpolated base says
- * so on the page, because a figure nobody has confirmed should not look like
- * one that has been.
+ * Only 6.8 % of the network's 1 332 lanes land on one of those points, so
+ * almost every quotation is interpolated and the honest question is not whether
+ * but by how much. Dropping an anchor entirely and rebuilding it from its
+ * neighbours misses by 2 cents at the median, so the curve between anchors is
+ * very nearly straight. Each result therefore carries a bound on its own error,
+ * and the page only says anything when that bound is worth saying.
  */
-export function seaFreightBaseFeu(distanceNm: number): {
-  eur: number;
-  status: QuoteVerificationStatus;
-} {
+export function seaFreightBaseFeu(distanceNm: number): FreightBase {
   const anchors = tariffs.freightAnchors;
   const first = anchors[0];
   const last = anchors[anchors.length - 1];
 
   if (distanceNm <= first.distanceNm) {
+    // Below the shortest lane the workbook ever quoted. Held flat rather than
+    // extrapolated towards zero, and always flagged.
     return {
       eur: first.baseEur,
       status: distanceNm === first.distanceNm ? 'verified' : 'needs-review',
+      maxErrorEur: distanceNm === first.distanceNm ? 0 : Infinity,
     };
   }
 
   if (distanceNm >= last.distanceNm) {
-    if (distanceNm === last.distanceNm) return { eur: last.baseEur, status: 'verified' };
-    // Above the last anchor the curve is linear, so extending it is sound.
+    if (distanceNm === last.distanceNm) {
+      return { eur: last.baseEur, status: 'verified', maxErrorEur: 0 };
+    }
+    // Above about 4 000 NM the recovered curve is exactly linear, so extending
+    // the last segment is sound rather than a guess.
     const previous = anchors[anchors.length - 2];
     const slope = (last.baseEur - previous.baseEur) / (last.distanceNm - previous.distanceNm);
-    return { eur: last.baseEur + slope * (distanceNm - last.distanceNm), status: 'needs-review' };
+    return {
+      eur: last.baseEur + slope * (distanceNm - last.distanceNm),
+      status: 'needs-review',
+      maxErrorEur: 0,
+    };
   }
 
   for (let i = 1; i < anchors.length; i++) {
     const low = anchors[i - 1];
     const high = anchors[i];
     if (distanceNm > high.distanceNm) continue;
-    if (distanceNm === high.distanceNm) return { eur: high.baseEur, status: 'verified' };
-    if (distanceNm === low.distanceNm) return { eur: low.baseEur, status: 'verified' };
+    if (distanceNm === high.distanceNm) {
+      return { eur: high.baseEur, status: 'verified', maxErrorEur: 0 };
+    }
+    if (distanceNm === low.distanceNm) {
+      return { eur: low.baseEur, status: 'verified', maxErrorEur: 0 };
+    }
 
-    const ratio = (distanceNm - low.distanceNm) / (high.distanceNm - low.distanceNm);
-    return { eur: low.baseEur + ratio * (high.baseEur - low.baseEur), status: 'needs-review' };
+    const width = high.distanceNm - low.distanceNm;
+    const ratio = (distanceNm - low.distanceNm) / width;
+    return {
+      eur: low.baseEur + ratio * (high.baseEur - low.baseEur),
+      status: 'needs-review',
+      maxErrorEur: (curvatureAround(anchors, i) * width ** 2) / 8,
+    };
   }
 
-  /* c8 ignore next - unreachable: the loop covers every interval. */
-  return { eur: last.baseEur, status: 'needs-review' };
+  /* c8 ignore next 2 - unreachable: the loop covers every interval. */
+  return { eur: last.baseEur, status: 'needs-review', maxErrorEur: Infinity };
 }
+
+/** True when an interpolated rate is far enough out to be worth mentioning. */
+export const freightNeedsMention = (base: FreightBase) =>
+  base.maxErrorEur >= FREIGHT_ERROR_THRESHOLD_EUR;
 
 /* -------------------------------------------------------------------------- */
 /* The calculation                                                            */
@@ -146,6 +224,11 @@ export interface PriceInput {
   distanceNm: number;
   vgmSolas: boolean;
   dangerousGoods?: boolean;
+  /**
+   * How much of the voyage the EU emissions scheme covers. Defaults to `full`.
+   * Ignored by `legacy` rules, which predate the distinction.
+   */
+  etsScope?: EtsScope;
   /** Defaults to `corrected`. Only the test suite asks for `legacy`. */
   rules?: PricingRules;
 }
@@ -155,6 +238,8 @@ export interface PriceBreakdown {
   seaFreightBaseFeuEur: number;
   /** Set when the base was interpolated rather than taken from an anchor. */
   seaFreightStatus: QuoteVerificationStatus;
+  /** How far that interpolation can be out. Zero at a published anchor. */
+  seaFreightMaxErrorEur: number;
   /** Every line of the quotation. The total is their sum and nothing else. */
   charges: QuotationCharge[];
   totalEur: number;
@@ -219,7 +304,11 @@ export function calculatePrice(input: PriceInput): PriceBreakdown {
   // LEGACY: the spreadsheet puts the bare FEU base in the total, so a 20-unit
   // booking pays one unit's freight and a 20' reefer pays a 40' dry's rate.
   const freight = legacy ? base.eur : base.eur * item.freightFactor * quantity;
-  add('sea-freight', 'Sea freight', freight, { perUnit: !legacy, status: base.status });
+  add('sea-freight', 'Sea freight', freight, {
+    perUnit: !legacy,
+    // Only flagged when the interpolation could actually move the figure.
+    ...(freightNeedsMention(base) ? { status: base.status } : {}),
+  });
 
   /* ---- terminal handling ------------------------------------------------ */
 
@@ -298,8 +387,17 @@ export function calculatePrice(input: PriceInput): PriceBreakdown {
   // The emissions figure already carries the quantity under the corrected
   // rules, so the surcharge must not apply it again.
   const tonnes = (legacy ? emissionsKgCo2e * quantity : emissionsKgCo2e) / 1000;
-  add('ets', 'Emissions trading (ETS)', tonnes * ETS_EUR_PER_TONNE + ETS_FIXED_COMPONENT_EUR, {
-    perUnit: !legacy,
+  const scope = legacy ? 1 : ETS_SCOPE[input.etsScope ?? 'full'];
+
+  add(
+    'ets',
+    legacy
+      ? 'Emissions trading (ETS)'
+      : `Emissions trading (ETS), ${scope === 1 ? 'full' : 'half'} scope`,
+    tonnes * ETS_EUR_PER_TONNE * scope,
+    { perUnit: !legacy },
+  );
+  add('ets-administration', 'ETS administration', ETS_ADMINISTRATION_EUR, {
     status: 'needs-review',
   });
 
@@ -309,6 +407,7 @@ export function calculatePrice(input: PriceInput): PriceBreakdown {
   return {
     seaFreightBaseFeuEur: base.eur,
     seaFreightStatus: base.status,
+    seaFreightMaxErrorEur: base.maxErrorEur,
     charges,
     totalEur: round2(charges.reduce((sum, charge) => sum + charge.amountEur, 0)),
     emissionsKgCo2e,
@@ -364,6 +463,8 @@ export function priceQuotation(
     distanceNm,
     vgmSolas: request.vgmSolas,
     dangerousGoods: request.dangerousGoods,
+    // Both ends inside the scheme means the whole voyage is covered.
+    etsScope: origin.inEuEts && destination.inEuEts ? 'full' : 'half',
   });
 
   const validFrom = new Date(now);
@@ -378,6 +479,7 @@ export function priceQuotation(
     transitDays: Math.round(journey.transitDays),
     seaFreightBaseFeuEur: breakdown.seaFreightBaseFeuEur,
     seaFreightStatus: breakdown.seaFreightStatus,
+    seaFreightMaxErrorEur: breakdown.seaFreightMaxErrorEur,
     charges: breakdown.charges,
     totalEur: breakdown.totalEur,
     emissionsKgCo2e: breakdown.emissionsKgCo2e,

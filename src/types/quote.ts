@@ -63,6 +63,12 @@ export interface Port {
   longitude: number | null;
   /** Annual throughput in TEU, as published in the workbook. */
   teu: number | null;
+  /**
+   * True when the port is in a country inside the EU Emissions Trading System.
+   * A voyage between two such ports is covered in full; one with a single end
+   * inside is covered at half.
+   */
+  inEuEts: boolean;
   portClass: PortClass | null;
   /** Index used to scale the freight rate table, 85 to 130. */
   baseIndex: number | null;
@@ -271,6 +277,8 @@ export interface Quotation {
   seaFreightBaseFeuEur: number;
   /** `needs-review` when that rate was interpolated rather than anchored. */
   seaFreightStatus: QuoteVerificationStatus;
+  /** How far that interpolation can be out, in euros. Zero at an anchor. */
+  seaFreightMaxErrorEur: number;
   /** Every line of the quotation. The total is their sum and nothing else. */
   charges: QuotationCharge[];
   totalEur: number;

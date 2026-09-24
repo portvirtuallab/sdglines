@@ -235,15 +235,16 @@ export const equipment: Equipment[] = [
     "family": "roll-trailer",
     "freightFactor": 1.48,
     "maxPayloadKg": 28000,
-    "linearMetres": 6.096,
-    "teuEquivalent": 1,
+    "linearMetres": 13.716,
+    "teuEquivalent": 2.25,
     "emissionsTonnesPerTeu": 606.6666667,
     "requiresPlug": false,
     "meta": {
-      "source": "workbook",
+      "source": "corrected",
       "status": "verified",
       "sourceSheet": "BOOKINGS!Tariffs",
-      "lastReviewed": "2026-09-24"
+      "lastReviewed": "2026-09-24",
+      "note": "The workbook records 6.096 linear metres, which is the length of a twenty-foot unit. 45 feet is 13.716 m, which is what the 45-foot flatrack and the 45-foot high cube both carry in the same table."
     }
   },
   {

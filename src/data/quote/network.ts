@@ -23,6 +23,7 @@ export const ports: Port[] = [
     "latitude": 24.45,
     "longitude": 54.3827,
     "teu": 7800000,
+    "inEuEts": false,
     "portClass": "B",
     "baseIndex": 110,
     "services": [
@@ -57,6 +58,7 @@ export const ports: Port[] = [
     "latitude": 36.7528,
     "longitude": 3.0422,
     "teu": 1553000,
+    "inEuEts": false,
     "portClass": "C",
     "baseIndex": 120,
     "services": [
@@ -91,6 +93,7 @@ export const ports: Port[] = [
     "latitude": 51.2194,
     "longitude": 4.4025,
     "teu": 12020000,
+    "inEuEts": true,
     "portClass": "A",
     "baseIndex": 90,
     "services": [
@@ -125,6 +128,7 @@ export const ports: Port[] = [
     "latitude": 29.526,
     "longitude": 35.0075,
     "teu": 1200000,
+    "inEuEts": false,
     "portClass": "C",
     "baseIndex": 110,
     "services": [
@@ -169,6 +173,7 @@ export const ports: Port[] = [
     "latitude": 42.099444,
     "longitude": 19.074444,
     "teu": 750000,
+    "inEuEts": false,
     "portClass": "D",
     "baseIndex": 120,
     "services": [
@@ -203,6 +208,7 @@ export const ports: Port[] = [
     "latitude": 41.3793,
     "longitude": 2.1885,
     "teu": 3500000,
+    "inEuEts": true,
     "portClass": "C",
     "baseIndex": 100,
     "services": [
@@ -257,6 +263,7 @@ export const ports: Port[] = [
     "latitude": 41.1171,
     "longitude": 16.8719,
     "teu": 82000,
+    "inEuEts": true,
     "portClass": "D",
     "baseIndex": 120,
     "services": [
@@ -291,6 +298,7 @@ export const ports: Port[] = [
     "latitude": 33.8959,
     "longitude": 35.4789,
     "teu": 1229100,
+    "inEuEts": false,
     "portClass": "C",
     "baseIndex": 110,
     "services": [
@@ -325,6 +333,7 @@ export const ports: Port[] = [
     "latitude": 35.1796,
     "longitude": 129.0756,
     "teu": 21000000,
+    "inEuEts": false,
     "portClass": "A",
     "baseIndex": 95,
     "services": [
@@ -359,6 +368,7 @@ export const ports: Port[] = [
     "latitude": 33.6136,
     "longitude": -7.6198,
     "teu": 350000,
+    "inEuEts": false,
     "portClass": "D",
     "baseIndex": 100,
     "services": [
@@ -393,6 +403,7 @@ export const ports: Port[] = [
     "latitude": 42.0892,
     "longitude": 11.7915,
     "teu": 112000,
+    "inEuEts": true,
     "portClass": "D",
     "baseIndex": 110,
     "services": [
@@ -427,6 +438,7 @@ export const ports: Port[] = [
     "latitude": 31.4198,
     "longitude": 31.8115,
     "teu": 3300000,
+    "inEuEts": false,
     "portClass": "C",
     "baseIndex": 115,
     "services": [
@@ -461,6 +473,7 @@ export const ports: Port[] = [
     "latitude": 41.3167,
     "longitude": 19.45,
     "teu": 180000,
+    "inEuEts": false,
     "portClass": "D",
     "baseIndex": 120,
     "services": [
@@ -495,6 +508,7 @@ export const ports: Port[] = [
     "latitude": 51.9638,
     "longitude": 1.3519,
     "teu": 3700000,
+    "inEuEts": false,
     "portClass": "C",
     "baseIndex": 90,
     "services": [
@@ -529,6 +543,7 @@ export const ports: Port[] = [
     "latitude": 44.4072,
     "longitude": 8.9339,
     "teu": 2557000,
+    "inEuEts": true,
     "portClass": "C",
     "baseIndex": 100,
     "services": [
@@ -563,6 +578,7 @@ export const ports: Port[] = [
     "latitude": 53.5511,
     "longitude": 9.9937,
     "teu": 8715000,
+    "inEuEts": true,
     "portClass": "B",
     "baseIndex": 90,
     "services": [
@@ -597,6 +613,7 @@ export const ports: Port[] = [
     "latitude": 38.457,
     "longitude": 27.15267,
     "teu": 1967946,
+    "inEuEts": false,
     "portClass": "C",
     "baseIndex": 110,
     "services": [
@@ -631,6 +648,7 @@ export const ports: Port[] = [
     "latitude": 21.4858,
     "longitude": 39.1925,
     "teu": 4883000,
+    "inEuEts": false,
     "portClass": "C",
     "baseIndex": 110,
     "services": [
@@ -665,6 +683,7 @@ export const ports: Port[] = [
     "latitude": 28.1317,
     "longitude": -15.43,
     "teu": 1053000,
+    "inEuEts": true,
     "portClass": "C",
     "baseIndex": 100,
     "services": [
@@ -699,6 +718,7 @@ export const ports: Port[] = [
     "latitude": 49.4944,
     "longitude": 0.1077,
     "teu": 3019000,
+    "inEuEts": true,
     "portClass": "C",
     "baseIndex": 100,
     "services": [
@@ -733,6 +753,7 @@ export const ports: Port[] = [
     "latitude": 38.7028,
     "longitude": -9.196,
     "teu": 1200000,
+    "inEuEts": true,
     "portClass": "C",
     "baseIndex": 110,
     "services": [
@@ -767,6 +788,7 @@ export const ports: Port[] = [
     "latitude": 43.2965,
     "longitude": 5.3698,
     "teu": 1500000,
+    "inEuEts": true,
     "portClass": "C",
     "baseIndex": 105,
     "services": [
@@ -801,6 +823,7 @@ export const ports: Port[] = [
     "latitude": 32.4003,
     "longitude": 15.1267,
     "teu": 213000,
+    "inEuEts": false,
     "portClass": "D",
     "baseIndex": 130,
     "services": [
@@ -835,6 +858,7 @@ export const ports: Port[] = [
     "latitude": 18.9636,
     "longitude": 72.8258,
     "teu": 10000000,
+    "inEuEts": false,
     "portClass": "B",
     "baseIndex": 110,
     "services": [
@@ -869,6 +893,7 @@ export const ports: Port[] = [
     "latitude": 18.097,
     "longitude": -15.9915,
     "teu": 84000,
+    "inEuEts": false,
     "portClass": "D",
     "baseIndex": 130,
     "services": [
@@ -900,9 +925,10 @@ export const ports: Port[] = [
     "locode": "DZORN",
     "country": "Algeria",
     "region": "West Med",
-    "latitude": null,
-    "longitude": null,
+    "latitude": 35.71,
+    "longitude": -0.64,
     "teu": 278342,
+    "inEuEts": false,
     "portClass": "D",
     "baseIndex": 130,
     "services": [
@@ -920,11 +946,11 @@ export const ports: Port[] = [
       }
     ],
     "meta": {
-      "source": "corrected",
+      "source": "simulation-design",
       "status": "needs-review",
       "sourceSheet": "GENERAL!TABLES",
       "lastReviewed": "2026-09-24",
-      "note": "Coordinates are column-shifted in GENERAL!TABLES; both were dropped."
+      "note": "Coordinates supplied on 2026-09-23. The workbook row is column-shifted - it carries 271 in the latitude cell and nothing in the longitude - so the port could not be placed on the map. These are the real position of the Port of Oran, which is a geographic fact rather than a simulation choice."
     }
   },
   {
@@ -938,6 +964,7 @@ export const ports: Port[] = [
     "latitude": 38.1112,
     "longitude": 13.3549,
     "teu": 120000,
+    "inEuEts": true,
     "portClass": "D",
     "baseIndex": 110,
     "services": [
@@ -972,6 +999,7 @@ export const ports: Port[] = [
     "latitude": null,
     "longitude": null,
     "teu": 457449,
+    "inEuEts": true,
     "portClass": "D",
     "baseIndex": 100,
     "services": [
@@ -1007,6 +1035,7 @@ export const ports: Port[] = [
     "latitude": 37.9417,
     "longitude": 23.6533,
     "teu": 5311810,
+    "inEuEts": true,
     "portClass": "B",
     "baseIndex": 100,
     "services": [
@@ -1041,6 +1070,7 @@ export const ports: Port[] = [
     "latitude": 31.2656,
     "longitude": 32.3019,
     "teu": 4764583,
+    "inEuEts": false,
     "portClass": "C",
     "baseIndex": 115,
     "services": [
@@ -1075,6 +1105,7 @@ export const ports: Port[] = [
     "latitude": 36.7709,
     "longitude": 10.3285,
     "teu": 7900000,
+    "inEuEts": false,
     "portClass": "B",
     "baseIndex": 130,
     "services": [
@@ -1109,6 +1140,7 @@ export const ports: Port[] = [
     "latitude": 51.9225,
     "longitude": 4.47917,
     "teu": 15300000,
+    "inEuEts": true,
     "portClass": "A",
     "baseIndex": 90,
     "services": [
@@ -1143,6 +1175,7 @@ export const ports: Port[] = [
     "latitude": 17.0151,
     "longitude": 54.0924,
     "teu": 4510000,
+    "inEuEts": false,
     "portClass": "C",
     "baseIndex": 120,
     "services": [
@@ -1177,6 +1210,7 @@ export const ports: Port[] = [
     "latitude": 35.88462,
     "longitude": -5.50072,
     "teu": 7174000,
+    "inEuEts": false,
     "portClass": "B",
     "baseIndex": 90,
     "services": [
@@ -1211,6 +1245,7 @@ export const ports: Port[] = [
     "latitude": 39.4699,
     "longitude": -0.3753,
     "teu": 5604478,
+    "inEuEts": true,
     "portClass": "B",
     "baseIndex": 100,
     "services": [
@@ -1245,6 +1280,7 @@ export const ports: Port[] = [
     "latitude": 35.898,
     "longitude": 14.5147,
     "teu": 200000,
+    "inEuEts": true,
     "portClass": "D",
     "baseIndex": 115,
     "services": [
@@ -1279,6 +1315,7 @@ export const ports: Port[] = [
     "latitude": 22.5728,
     "longitude": 114.2689,
     "teu": 16000000,
+    "inEuEts": false,
     "portClass": "A",
     "baseIndex": 85,
     "services": [

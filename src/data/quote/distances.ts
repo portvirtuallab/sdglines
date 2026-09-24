@@ -44,7 +44,7 @@ export const distancesNm: Record<string, Record<string, number>> = {
     "rades": 645,
     "damietta": 1898,
     "beirut": 1896,
-    "oran": 279,
+    "oran": 362,
     "palma": 163,
     "busan": 10000,
     "yantian": 8386
@@ -284,7 +284,7 @@ export const distancesNm: Record<string, Record<string, number>> = {
     "hamburg": 7387,
     "felixstowe": 7018,
     "le-havre": 6855,
-    "jeddah": 2542,
+    "jeddah": 2452,
     "mumbai": 1416,
     "salalah": 1080,
     "aqaba": 3023,
