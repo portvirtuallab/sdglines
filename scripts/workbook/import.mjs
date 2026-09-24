@@ -1247,20 +1247,11 @@ async function main() {
     }));
 
   const fixtureDir = path.join(ROOT, 'tests/fixtures');
-  fs.mkdirSync(fixtureDir, { recursive: true });
-  fs.writeFileSync(
-    path.join(fixtureDir, 'worked-quotations.json'),
-    `${JSON.stringify(corpus, null, 2)}\n`,
-    'utf8',
-  );
+  await emitJson(path.join(fixtureDir, 'worked-quotations.json'), corpus);
   written.push('tests/fixtures/worked-quotations.json');
 
   const routes = importPublishedRoutes(bookings, portIds, serviceIds);
-  fs.writeFileSync(
-    path.join(fixtureDir, 'published-routes.json'),
-    `${JSON.stringify(routes, null, 2)}\n`,
-    'utf8',
-  );
+  await emitJson(path.join(fixtureDir, 'published-routes.json'), routes);
   written.push('tests/fixtures/published-routes.json');
 
   written.push(
