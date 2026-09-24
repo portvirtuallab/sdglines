@@ -140,6 +140,11 @@ export const tariffs: Tariffs = {
     "5": 0.11645,
     "6": 0.11645
   },
+  "emissionsIntensity": {
+    "dryKgPerTeuNm": 85,
+    "refrigeratedKgPerTeuNm": 140
+  },
+  "fleetMeanSpeedKnots": 17.6954,
   "fixedSurcharges": {
     "documentation": {
       "A": 54,

@@ -577,6 +577,86 @@ function importEquipment(bookings) {
   return equipment;
 }
 
+/**
+ * Recover the emissions intensity of the fleet, in kg CO2e per TEU slot per
+ * nautical mile.
+ *
+ * The workbook gives a per-unit figure for all 16 unit types, and eight of them
+ * cannot be intensities: a 20-foot flatrack is recorded at 765 against 85 for a
+ * 20-foot dry box of the same size and greater weight, and the vehicles,
+ * roll trailer and project rows sit between 227 and 607. Three of the sixteen
+ * are in the band the industry reports - 85 for dry, 140 for refrigerated, 68
+ * for a semi-trailer - and 85 kg per TEU per nautical mile is about 46 g per
+ * TEU-km, which is where a reasonably efficient container ship sits.
+ *
+ * So the two credible container figures become the intensity of the whole
+ * fleet, and every unit type's emissions follow from the slots it occupies:
+ * unrefrigerated at the dry rate, refrigerated at the reefer rate. Nothing is
+ * taken from outside the workbook; the eight implausible rows are simply not
+ * used by the corrected rules. Legacy rules keep every raw figure, because they
+ * have to reproduce what was published.
+ */
+function recoverEmissionsIntensity(equipment) {
+  const dry = equipment.find((item) => item.name === '20 feet Container (Dry Cargo)');
+  const reefer = equipment.find((item) => item.name === '20 feet Reefer');
+
+  if (!dry?.emissionsTonnesPerTeu || !reefer?.emissionsTonnesPerTeu) {
+    problem('The two 20-foot container rows are missing, so the fleet emissions intensity is unknown');
+    return null;
+  }
+
+  // Both are single-TEU units, so their per-unit figure is already per slot.
+  const intensity = {
+    dryKgPerTeuNm: dry.emissionsTonnesPerTeu,
+    refrigeratedKgPerTeuNm: reefer.emissionsTonnesPerTeu,
+  };
+
+  const implausible = equipment.filter((item) => {
+    if (!item.emissionsTonnesPerTeu || !item.teuEquivalent) return false;
+    const perSlot = item.emissionsTonnesPerTeu / item.teuEquivalent;
+    return perSlot > intensity.refrigeratedKgPerTeuNm * 1.5;
+  });
+
+  if (implausible.length) {
+    problem(
+      `${implausible.length} unit types carry an emissions figure that cannot be an intensity: ` +
+        implausible
+          .map(
+            (item) =>
+              `${item.name} at ${(item.emissionsTonnesPerTeu / item.teuEquivalent).toFixed(0)} per TEU`,
+          )
+          .join(', ') +
+        `. The corrected rules use the fleet intensity instead; legacy rules still use these.`,
+    );
+  }
+
+  return intensity;
+}
+
+/**
+ * The speed the network actually sails at, weighted by how far each rotation
+ * runs.
+ *
+ * Used to normalise the per-service emissions factor, so that a service at the
+ * network's own average speed neither gains nor loses. A simple mean would let
+ * the 978-mile Palma shuttle pull the baseline down and quietly raise the
+ * emissions of every ocean service against it.
+ */
+function recoverFleetMeanSpeed(services) {
+  let distance = 0;
+  let weighted = 0;
+  for (const service of services) {
+    if (!service.speedKnots || !service.totalDistanceNm) continue;
+    distance += service.totalDistanceNm;
+    weighted += service.totalDistanceNm * service.speedKnots;
+  }
+  if (!distance) {
+    problem('No service has both a speed and a distance, so the fleet mean speed is unknown');
+    return null;
+  }
+  return round(weighted / distance, 4);
+}
+
 /* -------------------------------------------------------------------------- */
 /* Terminal handling                                                          */
 /* -------------------------------------------------------------------------- */
@@ -1039,6 +1119,9 @@ function main() {
   const bunkerRecovery = importBunkerRecovery(bookings);
   const distances = importDistances(general, portIds);
 
+  const emissionsIntensity = recoverEmissionsIntensity(equipment);
+  const fleetMeanSpeedKnots = recoverFleetMeanSpeed(services);
+
   const worked = readWorkedQuotations(bookings);
   const freightAnchors = recoverFreightAnchors(worked);
   const { fixedSurcharges, perUnitSurcharges } = recoverClassSurcharges(worked);
@@ -1076,6 +1159,8 @@ function main() {
           bunkerRecovery,
           plugInEur,
           truckEmissionsPerNm,
+          emissionsIntensity,
+          fleetMeanSpeedKnots,
           fixedSurcharges,
           perUnitSurcharges,
           portAdditionalRate: 0.2,

@@ -34,6 +34,12 @@ Changes that affect how the site is used in a training exercise are also summari
   the lane. Both are collapsed by default and both are priced by the same engine as the quotation,
   so they cannot disagree with it.
 
+- Emissions follow the slots a unit occupies and the speed of the vessels carrying it. A 40' box
+  now emits twice a 20' rather than the same, a refrigerated unit more than a dry one of equal size,
+  and a voyage on the 10-knot Palma shuttle about a third of what the same miles cost on an 18-knot
+  ocean service. Fuel burnt per mile rises with the square of speed, which is the standard first
+  approximation and the only one the workbook's data supports.
+
 ### Removed
 
 - The PBKDF2 check of the Port Virtual Lab code. A four-digit code checked in a browser cannot be an
@@ -50,6 +56,10 @@ Changes that affect how the site is used in a training exercise are also summari
   published, so ranking on time alone made transshipment look better than it is.
 - The quotation breakdown states, for every line, whether it follows the container or the shipment,
   and says when a freight rate was interpolated rather than published.
+- The import reports emissions figures that cannot be intensities. Eight of the sixteen unit types
+  carry one: a 20' flatrack is recorded at nine times a 20' dry container of the same size. The
+  corrected rules price emissions from the fleet intensity instead, which is derived from the two
+  container rows that are credible.
 - The import checks that a unit type which names its own length actually is that long. It is not:
   the workbook gives the 45-foot roll trailer 6.096 linear metres, which is a 20-foot unit, and both
   the freight rate and the TEU equivalent follow that figure.

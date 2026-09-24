@@ -279,6 +279,27 @@ that has to change.
 
 ---
 
+## 19. Eight emissions figures that cannot be intensities
+
+**Status:** worked around, not fixed at source.
+
+`BOOKINGS!Tariffs` gives a per-unit emissions figure for every unit type. Three are credible - 85
+for a dry container, 140 for a reefer, 68 for a semi-trailer, all in the band the industry reports.
+The other eight run from 227 to 765 per TEU. A twenty-foot flatrack at 765 would emit nine times a
+dry box of the same size while being lighter and emptier.
+
+Like the roll trailer's linear metres, this looks like a column holding something other than what
+its header says.
+
+**Currently:** the corrected rules ignore all sixteen and price emissions from the fleet intensity -
+the two container figures - times the slots each unit occupies. Legacy rules still use the raw
+figures, because they have to reproduce what was published.
+
+**Needed:** either confirmation that the fleet-intensity approach is what SDG Lines wants, or the
+figures the column was meant to hold.
+
+---
+
 ## Answered items
 
 ### 11. Four arithmetic defects in the live quotation spreadsheet

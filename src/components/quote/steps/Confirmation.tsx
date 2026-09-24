@@ -157,6 +157,16 @@ export function Confirmation({
     freightIsUncertain || quotation.charges.some((charge) => charge.status === 'needs-review');
   const blocked = quotation.charges.filter((charge) => charge.status === 'blocked');
 
+  // The power a hull needs goes with the cube of its speed and the time at sea
+  // with the inverse, so fuel per mile goes with the square. A learner reading
+  // a slow feeder against a fast ocean service should see why they differ.
+  const vesselFactor = quotation.vesselEmissionsFactor;
+  const difference = Math.round(Math.abs(vesselFactor - 1) * 100);
+  const vesselComparison =
+    difference < 2
+      ? 'The vessels carrying this shipment sail at about the network average speed, so their emissions per mile are typical of the fleet.'
+      : `The vessels carrying this shipment sail ${vesselFactor > 1 ? 'faster' : 'slower'} than the network average, which puts their emissions per mile about ${difference} % ${vesselFactor > 1 ? 'above' : 'below'} it. Fuel burnt per mile rises with the square of speed.`;
+
   return (
     <div className="space-y-8">
       <div className="rounded-xl border border-eco-300 bg-eco-50 p-6">
@@ -338,7 +348,7 @@ export function Confirmation({
             {number.format(quotation.emissionsKgCo2e)} kg CO<sub>2</sub>e
           </strong>{' '}
           over {number.format(quotation.distanceNm)} nautical miles, using the emissions factor the
-          operational data records for this unit type.
+          fleet's intensity for the slots this unit occupies.
           {quotation.co2SavedKgCo2e != null && quotation.co2SavedKgCo2e > 0 && (
             <>
               {' '}
@@ -350,6 +360,9 @@ export function Confirmation({
               .
             </>
           )}
+        </p>
+        <p className="mt-3 text-sm leading-relaxed text-navy-600">
+          {vesselComparison}
         </p>
       </section>
 

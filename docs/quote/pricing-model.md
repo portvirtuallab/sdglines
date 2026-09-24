@@ -142,13 +142,72 @@ guessing.
 ## 7. Emissions
 
 ```
-emissionsKgCo2e = emissionFactor(equipment) / 1000 * distanceNm * quantity
+emissions = intensity(refrigerated) / 1000
+          * teuEquivalent * distanceNm * quantity * vesselFactor
 ```
 
-`emissionFactor` is the `Emissions (tn / Teu)` column: 85 for dry equipment, 140
-for reefers, 68 for semi-trailers. The road comparison uses a second per-unit
-factor recovered the same way (0.11645 dry, 0.1918 reefer), and `co2Saved` is
-the difference.
+### Why not the workbook's own column
+
+`BOOKINGS!Tariffs` gives a per-unit emissions figure for all sixteen unit types.
+Eight of them cannot be intensities:
+
+| Unit | TEU | Workbook figure | Per TEU |
+| --- | --- | --- | --- |
+| 20' dry container | 1 | 85 | 85 |
+| 20' reefer | 1 | 140 | 140 |
+| Semi-trailer | 2.23 | 68 | 30 |
+| **20' flatrack** | 1 | **765** | **765** |
+| **Vehicles** | 1 | **255** | **255** |
+| **45' roll trailer** | 2.25 | **607** | **270** |
+
+A twenty-foot flatrack would emit nine times a dry box of the same size, while
+being lighter and emptier. The three credible rows sit where the industry
+reports container shipping: 85 kg per TEU per nautical mile is about 46 g per
+TEU-km, which is a reasonably efficient container ship.
+
+So the two container figures become the intensity of the whole fleet - 85 for
+anything unrefrigerated, 140 for anything refrigerated - and every unit type's
+emissions follow from the slots it occupies. Nothing is taken from outside the
+workbook; the eight implausible rows are simply not used. Legacy rules keep
+every raw figure, because they have to reproduce what was published.
+
+That also fixes a quieter fault: the workbook gave a 40' container the same
+figure as a 20', so a box occupying two slots emitted what one did.
+
+### The vessel
+
+The real scheme counts **fuel burned**, not distance. Fuel needs a consumption
+curve per vessel, which the workbook does not carry. What it does carry is a
+design speed per service, and the standard first approximation is that the power
+a hull needs goes with the cube of its speed while the time at sea goes with the
+inverse - so fuel per mile goes with the **square** of the speed.
+
+```
+vesselFactor = Σ(legDistance × (serviceSpeed / fleetMean)²) / Σ(legDistance)
+```
+
+`fleetMean` is 17.6954 knots, the network's speed weighted by rotation distance
+rather than a simple average, so that the 978-mile Palma shuttle cannot drag the
+baseline down and quietly raise every ocean service against it.
+
+| Service | Speed | Factor |
+| --- | --- | --- |
+| Westmed | 18.133 kn | 1.050 |
+| EurAsia | 18.090 kn | 1.045 |
+| Eastmed | 17.925 kn | 1.026 |
+| Optimed | 16.862 kn | 0.908 |
+| Gimnesias | 10.186 kn | 0.331 |
+
+Averaged over the legs by the distance each carries the cargo, so a short feeder
+leg onto a long ocean voyage barely moves the figure.
+
+This is a model, not a measurement, and the page says which way the vessels
+differ from the average rather than presenting the number as fact.
+
+### The road comparison
+
+Uses a second per-unit factor recovered the same way (0.11645 dry, 0.1918
+reefer), and `co2Saved` is the difference.
 
 ## 8. ETS
 
@@ -232,6 +291,6 @@ linear metres, the length of a twenty-foot unit. The importer now reports that.
 - **Two distances that disagree with themselves.** `GENERAL!Distance NM` is not
   symmetric for Barcelona-Oran (279 against 362 NM) or Jeddah-Abu Dhabi (2 452
   against 2 542 NM), so the direction a learner quotes in changes the price.
-- **The 45-foot roll trailer's length.** Recorded as 6.096 linear metres, which
-  is a twenty-foot unit. Both its freight rate and its TEU equivalent follow
-  that figure, so the correction will move its price.
+- **The eight implausible emissions figures.** Corrected rules route around
+  them, but the workbook cells are still wrong and legacy rules still use them.
+  Replacing them needs someone who knows what the column was meant to hold.

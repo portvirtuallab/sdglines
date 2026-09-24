@@ -28,7 +28,8 @@
  * tie-breaker, and it agrees with every routing the workbook publishes.
  */
 
-import { ports, services } from './network';
+import { tariffs } from '@/data/quote/tariffs';
+import { getService, ports, services } from './network';
 import type { QuotedLeg, Service, ServiceLeg } from '@/types/quote';
 
 /** The most vessels a single quotation may use. */
@@ -210,6 +211,40 @@ export function reachableFrom(originPortId: string): Set<string> {
 const reachableCache = new Map<string, Set<string>>();
 
 const round = (value: number) => Math.round(value * 1e6) / 1e6;
+
+/**
+ * How hard the vessels on a journey are working, against the network average.
+ *
+ * The power a hull needs goes roughly with the cube of its speed, and the time
+ * it spends at sea with the inverse, so the fuel it burns per mile - and with
+ * it the CO2 - goes with the square of the speed. A service at the network's
+ * own distance-weighted average speed therefore comes out at 1; the 10-knot
+ * Palma shuttle at about a third; the 18-knot ocean services a few per cent
+ * above.
+ *
+ * Averaged over the legs by the distance each one carries the cargo, because a
+ * short feeder leg onto a long ocean voyage should barely move the figure.
+ *
+ * This is a model, not a measurement. The real scheme counts fuel burned, which
+ * needs a consumption curve per vessel that the workbook does not carry. What
+ * it does carry is a speed per service, and the square law is the standard
+ * first approximation. Returns 1 when there is nothing to work from.
+ */
+export function vesselEmissionsFactor(journey: Journey): number {
+  const mean = tariffs.fleetMeanSpeedKnots;
+  if (!mean) return 1;
+
+  let distance = 0;
+  let weighted = 0;
+  for (const leg of journey.legs) {
+    const speed = getService(leg.serviceId)?.speedKnots;
+    if (!speed || !leg.distanceNm) continue;
+    distance += leg.distanceNm;
+    weighted += leg.distanceNm * (speed / mean) ** 2;
+  }
+
+  return distance ? round(weighted / distance) : 1;
+}
 
 function dedupe(journeys: Journey[]): Journey[] {
   const seen = new Map<string, Journey>();

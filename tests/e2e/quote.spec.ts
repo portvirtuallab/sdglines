@@ -78,7 +78,7 @@ test.describe('producing a quotation', () => {
     await expect(charges).toContainText('€304.00');
     await expect(charges).toContainText('€60.80');
     await expect(charges).toContainText('€58.39');
-    await expect(charges).toContainText('€1,914.15');
+    await expect(charges).toContainText('€1,913.25');
 
     // Spain to Egypt leaves the EU emissions scheme, so half the voyage is
     // covered and the line says which scope was applied.

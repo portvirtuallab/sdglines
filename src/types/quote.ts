@@ -198,6 +198,22 @@ export interface Tariffs {
    * equipment id, used only for the comparison shown beside the sea figure.
    */
   truckEmissionsPerNm: Record<number, number>;
+  /**
+   * The fleet's emissions in kg CO2e per TEU slot per nautical mile, taken from
+   * the two 20-foot container rows, which are the only ones whose figure is
+   * credible as an intensity. Corrected rules price every unit type from this
+   * and the slots it occupies.
+   */
+  emissionsIntensity: {
+    dryKgPerTeuNm: number;
+    refrigeratedKgPerTeuNm: number;
+  } | null;
+  /**
+   * The speed the network sails at, weighted by rotation distance. Used to
+   * normalise a service's emissions so that one at the network average neither
+   * gains nor loses.
+   */
+  fleetMeanSpeedKnots: number | null;
   /** Charged once per quotation. */
   fixedSurcharges: {
     documentation: ByPortClass;
@@ -273,6 +289,11 @@ export interface Quotation {
   /** Direct origin-to-destination distance, which is what the price uses. */
   distanceNm: number;
   transitDays: number;
+  /**
+   * How the vessels actually used compare with the network average, from the
+   * square of their service speed. 1 means the voyage sails at the average.
+   */
+  vesselEmissionsFactor: number;
   /** The FEU reference rate for the lane, before equipment and quantity. */
   seaFreightBaseFeuEur: number;
   /** `needs-review` when that rate was interpolated rather than anchored. */

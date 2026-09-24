@@ -305,6 +305,63 @@ describe('corrected rules', () => {
     expect(half.charges.find((entry) => entry.key === 'ets')?.label).toContain('half scope');
   });
 
+  it('scales the emissions with the slots the unit occupies', () => {
+    const twenty = calculatePrice({ ...LANE, equipmentId: DRY_20, quantity: 1 });
+    const forty = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1 });
+
+    // A 40' box is two TEU slots, so it emits twice a 20'. The workbook gave
+    // both the same figure, which is what this replaces.
+    expect(forty.emissionsKgCo2e).toBeCloseTo(twenty.emissionsKgCo2e * 2, 6);
+  });
+
+  it('emits more for a refrigerated unit than a dry one of the same size', () => {
+    const dry = calculatePrice({ ...LANE, equipmentId: DRY_20, quantity: 1 });
+    const reefer = calculatePrice({ ...LANE, equipmentId: REEFER_20, quantity: 1 });
+
+    const intensity = tariffs.emissionsIntensity!;
+    expect(reefer.emissionsKgCo2e / dry.emissionsKgCo2e).toBeCloseTo(
+      intensity.refrigeratedKgPerTeuNm / intensity.dryKgPerTeuNm,
+      6,
+    );
+  });
+
+  it('no longer has a flatrack out-emitting a dry box of the same size', () => {
+    // The workbook records the 20' flatrack at 765 against 85 for a 20' dry
+    // container: nine times the emissions for an emptier, lighter unit. The
+    // corrected rules price both from the fleet intensity and the slot.
+    const FLATRACK_20 = 9;
+    const dry = calculatePrice({ ...LANE, equipmentId: DRY_20, quantity: 1 });
+    const flatrack = calculatePrice({ ...LANE, equipmentId: FLATRACK_20, quantity: 1 });
+
+    expect(flatrack.emissionsKgCo2e).toBeCloseTo(dry.emissionsKgCo2e, 6);
+
+    // And the legacy rules still reproduce the figure that was published.
+    const legacy = calculatePrice({ ...LANE, equipmentId: FLATRACK_20, quantity: 1, rules: 'legacy' });
+    expect(legacy.emissionsKgCo2e).toBeCloseTo((765 / 1000) * LANE.distanceNm, 6);
+  });
+
+  it('emits in proportion to how hard the vessels are working', () => {
+    const average = calculatePrice({ ...LANE, equipmentId: DRY_20, quantity: 1 });
+    const slow = calculatePrice({
+      ...LANE,
+      equipmentId: DRY_20,
+      quantity: 1,
+      vesselEmissionsFactor: 0.5,
+    });
+
+    expect(slow.emissionsKgCo2e).toBeCloseTo(average.emissionsKgCo2e / 2, 6);
+    // And the legacy rules ignore it, because the workbook had no such idea.
+    const legacy = calculatePrice({
+      ...LANE,
+      equipmentId: DRY_20,
+      quantity: 1,
+      vesselEmissionsFactor: 0.5,
+      rules: 'legacy',
+    });
+    const legacyPlain = calculatePrice({ ...LANE, equipmentId: DRY_20, quantity: 1, rules: 'legacy' });
+    expect(legacy.emissionsKgCo2e).toBe(legacyPlain.emissionsKgCo2e);
+  });
+
   it('covers a voyage in full by default', () => {
     const chosen = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1 });
     const full = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1, etsScope: 'full' });

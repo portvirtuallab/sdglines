@@ -30,7 +30,7 @@ import type {
   QuotationRequest,
   QuoteVerificationStatus,
 } from '@/types/quote';
-import type { Journey } from './routing';
+import { vesselEmissionsFactor, type Journey } from './routing';
 
 /** Bunker recovery steps up by 7 % for every class the origin sits below A. */
 const BRAF_CLASS_STEP = 1.07;
@@ -211,6 +211,34 @@ export function seaFreightBaseFeu(distanceNm: number): FreightBase {
 export const freightNeedsMention = (base: FreightBase) =>
   base.maxErrorEur >= FREIGHT_ERROR_THRESHOLD_EUR;
 
+/**
+ * Emissions for a shipment, in kilograms of CO2 equivalent.
+ *
+ * Intensity times slots times units times how hard the vessels are working.
+ * Falls back to the workbook's own per-unit figure when the intensity could not
+ * be recovered, so a broken import degrades to the old behaviour rather than to
+ * zero.
+ */
+function correctedEmissions(
+  item: { teuEquivalent: number | null; requiresPlug: boolean; emissionsTonnesPerTeu: number | null },
+  distanceNm: number,
+  quantity: number,
+  vesselFactor: number,
+): number {
+  const intensity = tariffs.emissionsIntensity;
+  if (!intensity || item.teuEquivalent == null) {
+    return item.emissionsTonnesPerTeu == null
+      ? 0
+      : (item.emissionsTonnesPerTeu / 1000) * distanceNm * quantity;
+  }
+
+  const perTeuNm = item.requiresPlug
+    ? intensity.refrigeratedKgPerTeuNm
+    : intensity.dryKgPerTeuNm;
+
+  return (perTeuNm / 1000) * item.teuEquivalent * distanceNm * quantity * vesselFactor;
+}
+
 /* -------------------------------------------------------------------------- */
 /* The calculation                                                            */
 /* -------------------------------------------------------------------------- */
@@ -229,6 +257,11 @@ export interface PriceInput {
    * Ignored by `legacy` rules, which predate the distinction.
    */
   etsScope?: EtsScope;
+  /**
+   * How the vessels carrying the cargo compare with the network average, from
+   * `vesselEmissionsFactor`. Defaults to 1, the average. Ignored by `legacy`.
+   */
+  vesselEmissionsFactor?: number;
   /** Defaults to `corrected`. Only the test suite asks for `legacy`. */
   rules?: PricingRules;
 }
@@ -378,11 +411,18 @@ export function calculatePrice(input: PriceInput): PriceBreakdown {
 
   /* ---- emissions -------------------------------------------------------- */
 
-  // CORRECTED: twenty containers emit twenty containers' worth.
-  // LEGACY: the quantity is left out.
-  const perUnitEmissions =
-    item.emissionsTonnesPerTeu == null ? 0 : (item.emissionsTonnesPerTeu / 1000) * distanceNm;
-  const emissionsKgCo2e = legacy ? perUnitEmissions : perUnitEmissions * quantity;
+  // LEGACY: the workbook's own per-unit figure, quantity left out.
+  //
+  // CORRECTED: the fleet intensity times the slots the unit occupies, times the
+  // quantity, times how hard the vessels carrying it are actually working.
+  // Eight of the workbook's sixteen per-unit figures cannot be intensities - a
+  // 20' flatrack is recorded at nine times a 20' dry box of the same size - so
+  // the corrected rules price every type from the two that are credible.
+  const emissionsKgCo2e = legacy
+    ? item.emissionsTonnesPerTeu == null
+      ? 0
+      : (item.emissionsTonnesPerTeu / 1000) * distanceNm
+    : correctedEmissions(item, distanceNm, quantity, input.vesselEmissionsFactor ?? 1);
 
   // The emissions figure already carries the quantity under the corrected
   // rules, so the surcharge must not apply it again.
@@ -456,6 +496,8 @@ export function priceQuotation(
   }
 
   const quantity = Math.max(1, Math.trunc(request.quantity));
+  const vesselFactor = vesselEmissionsFactor(journey);
+
   const breakdown = calculatePrice({
     portClass: origin.portClass,
     equipmentId: request.equipmentId,
@@ -465,6 +507,7 @@ export function priceQuotation(
     dangerousGoods: request.dangerousGoods,
     // Both ends inside the scheme means the whole voyage is covered.
     etsScope: origin.inEuEts && destination.inEuEts ? 'full' : 'half',
+    vesselEmissionsFactor: vesselFactor,
   });
 
   const validFrom = new Date(now);
@@ -477,6 +520,7 @@ export function priceQuotation(
     legs: journey.legs,
     distanceNm,
     transitDays: Math.round(journey.transitDays),
+    vesselEmissionsFactor: vesselFactor,
     seaFreightBaseFeuEur: breakdown.seaFreightBaseFeuEur,
     seaFreightStatus: breakdown.seaFreightStatus,
     seaFreightMaxErrorEur: breakdown.seaFreightMaxErrorEur,
