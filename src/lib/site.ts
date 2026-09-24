@@ -232,7 +232,7 @@ export const PRIMARY_NAV: NavSection[] = [
 
 /** Actions that stay reachable from every page. */
 export const UTILITY_NAV = {
-  quote: { label: 'Request a quote', href: '/quote' },
+  quote: { label: 'Request a quote', href: '/request-a-quote' },
   arrivalCharges: { label: 'Arrival charges', href: '/resources/arrival-charges' },
   search: { label: 'Search', href: '/search' },
   pvl: { label: 'Access PVL.ONE', href: SITE.pvlUrl, external: true },
@@ -242,7 +242,7 @@ export const FOOTER_NAV: { heading: string; links: NavChild[] }[] = [
   {
     heading: 'Operations',
     links: [
-      { label: 'Request a quotation', href: '/quote' },
+      { label: 'Request a quotation', href: '/request-a-quote' },
       { label: 'Arrival charges', href: '/resources/arrival-charges' },
       { label: 'Track a shipment', href: '/resources/tracking' },
       { label: 'Documentation', href: '/resources/documentation' },

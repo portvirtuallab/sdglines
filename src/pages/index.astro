@@ -55,7 +55,7 @@ const quickActions = [
   {
     label: 'Request a quotation',
     description: 'Build a simulated quotation for a shipment in your exercise.',
-    href: '/quote',
+    href: '/request-a-quote',
     icon: 'quote',
   },
 ] as const;
@@ -193,7 +193,7 @@ const structuredData = JSON.stringify({
           </a>
 
           <a
-            href={url('/quote')}
+            href={url('/request-a-quote')}
             class="tap-target inline-flex items-center rounded-lg border border-navy-400/70 bg-navy-900/75 px-6 text-base font-semibold text-white backdrop-blur-sm transition-colors duration-(--duration-fast) hover:border-navy-300 hover:bg-navy-900"
           >
             Request a simulated quotation
@@ -617,7 +617,7 @@ const structuredData = JSON.stringify({
         </p>
         <div class="mt-7 flex flex-wrap gap-3">
           <a
-            href={url('/quote')}
+            href={url('/request-a-quote')}
             class="tap-target inline-flex items-center rounded-lg bg-signal-500 px-6 text-base font-semibold text-navy-950 hover:bg-signal-400"
           >
             Request a simulated quotation

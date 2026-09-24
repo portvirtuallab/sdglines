@@ -92,6 +92,7 @@ path, which matches the GitHub Pages deployment.
 | `npm test`                 | Vitest unit and content integrity tests                             |
 | `npm run validate:content` | Content integrity only — run this after editing data                |
 | `npm run test:e2e`         | Playwright journeys and accessibility, against the production build |
+| `npm run import:workbook`  | Rebuild the quotation data from the operational Excel workbooks      |
 
 ---
 
@@ -190,8 +191,9 @@ on every pull request. Manual checks and known limitations:
 
 - No analytics, no trackers, no cookies set by this site.
 - Fonts are self-hosted, so displaying a page discloses nothing to a third party.
-- The quotation form runs entirely in the browser and transmits nothing. It does not ask for a name,
-  an e-mail address or a company, because the simulation does not use them.
+- The quotation tool runs entirely in the browser and transmits nothing. It asks for a name, an
+  e-mail address and an organisation, because they appear on the quotation it produces, and for
+  nothing beyond what the exercise uses. Closing the tab discards all of it.
 - Map tiles are requested from OpenStreetMap only on `/ports/map`, and only when that page is
   opened.
 - No secrets are committed. Deployment uses the GitHub Pages OIDC token and needs no stored
@@ -248,6 +250,10 @@ Open an issue using one of the templates in `.github/ISSUE_TEMPLATE/`, or write 
 | [`docs/custom-domain.md`](docs/custom-domain.md)   | DNS procedure for www.sdglines.com                             |
 | [`docs/rollback.md`](docs/rollback.md)             | How to undo a deployment or a domain move                      |
 | [`docs/forms.md`](docs/forms.md)                   | How to connect a real backend to the quotation form            |
+| [`docs/quote/architecture.md`](docs/quote/architecture.md) | How the quotation tool is put together                |
+| [`docs/quote/workbook-audit.md`](docs/quote/workbook-audit.md) | What the operational workbooks contain            |
+| [`docs/quote/pricing-model.md`](docs/quote/pricing-model.md) | Every pricing rule and where it came from          |
+| [`docs/quote/pin-validation.md`](docs/quote/pin-validation.md) | How PIN codes are handled, and what that buys    |
 | [`docs/open-questions.md`](docs/open-questions.md) | Everything awaiting the product owner                          |
 | [`docs/post-launch.md`](docs/post-launch.md)       | The first thirty days                                          |
 
