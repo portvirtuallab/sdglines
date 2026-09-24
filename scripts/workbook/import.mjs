@@ -30,6 +30,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import prettier from 'prettier';
 import { openWorkbook, num, str } from './xlsx.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -55,7 +56,10 @@ const TEXT_CORRECTIONS = new Map([
   ['AImed Al-Mansour', 'Ahmed Al-Mansour'],
   ['AImed Ben Ali', 'Ahmed Ben Ali'],
   ['MAImoud Abdel-Moneim', 'Mahmoud Abdel-Moneim'],
-  ['JawAIarlal Nehru Port Container Terminal (Nhava Sheva)', 'Jawaharlal Nehru Port Container Terminal (Nhava Sheva)'],
+  [
+    'JawAIarlal Nehru Port Container Terminal (Nhava Sheva)',
+    'Jawaharlal Nehru Port Container Terminal (Nhava Sheva)',
+  ],
   ['Sailportlogistics.com ALGIERSia', 'Sailportlogistics.com Algeria'],
 ]);
 
@@ -239,7 +243,9 @@ function problem(message) {
 const INVISIBLE = new Set([0x200b, 0x200c, 0x200d, 0xfeff]);
 function cleanLocode(value) {
   if (value == null) return null;
-  const cleaned = [...value].filter((character) => !INVISIBLE.has(character.codePointAt(0))).join('');
+  const cleaned = [...value]
+    .filter((character) => !INVISIBLE.has(character.codePointAt(0)))
+    .join('');
   return cleaned === '' ? null : cleaned;
 }
 
@@ -278,7 +284,9 @@ function importPorts(general) {
     if (!name || value == null) continue;
     const existing = baseIndex.get(name);
     if (existing != null && existing !== value) {
-      problem(`Port ${name} has two different base indices in GENERAL!Tariffs: ${existing} and ${value}`);
+      problem(
+        `Port ${name} has two different base indices in GENERAL!Tariffs: ${existing} and ${value}`,
+      );
     }
     baseIndex.set(name, value);
   }
@@ -478,12 +486,11 @@ function importVessels(general, serviceIds) {
         status: serviceId && speed != null ? 'verified' : 'needs-review',
         sourceSheet: 'GENERAL!VESSELS',
         lastReviewed: TODAY,
-        note:
-          !serviceId
-            ? 'The workbook assigns no service, so this vessel cannot be scheduled.'
-            : speed == null
-              ? 'The workbook gives no service speed.'
-              : undefined,
+        note: !serviceId
+          ? 'The workbook assigns no service, so this vessel cannot be scheduled.'
+          : speed == null
+            ? 'The workbook gives no service speed.'
+            : undefined,
       },
     });
   }
@@ -601,7 +608,9 @@ function recoverEmissionsIntensity(equipment) {
   const reefer = equipment.find((item) => item.name === '20 feet Reefer');
 
   if (!dry?.emissionsTonnesPerTeu || !reefer?.emissionsTonnesPerTeu) {
-    problem('The two 20-foot container rows are missing, so the fleet emissions intensity is unknown');
+    problem(
+      'The two 20-foot container rows are missing, so the fleet emissions intensity is unknown',
+    );
     return null;
   }
 
@@ -902,7 +911,10 @@ function recoverClassSurcharges(worked) {
     for (const row of worked) {
       if (!row.portClass || row[field] == null) continue;
       const value = round(scale ? row[field] / row.quantity : row[field], 4);
-      (byClass[row.portClass] ??= new Map()).set(value, (byClass[row.portClass].get(value) ?? 0) + 1);
+      (byClass[row.portClass] ??= new Map()).set(
+        value,
+        (byClass[row.portClass].get(value) ?? 0) + 1,
+      );
     }
 
     const table = {};
@@ -1042,7 +1054,8 @@ function importPublishedRoutes(bookings, portIds, serviceIds) {
   }
 
   return [...seen.values()].sort(
-    (a, b) => a.originId.localeCompare(b.originId) || a.destinationId.localeCompare(b.destinationId),
+    (a, b) =>
+      a.originId.localeCompare(b.originId) || a.destinationId.localeCompare(b.destinationId),
   );
 }
 
@@ -1085,10 +1098,30 @@ const BANNER = (sources) => `/**
  */
 `;
 
-function emit(file, contents) {
+/**
+ * Write a generated file, formatted the way the repository formats everything
+ * else.
+ *
+ * Not cosmetic: `npm run format:check` runs in CI, so an unformatted generated
+ * file fails the build. Formatting here rather than expecting whoever runs the
+ * import to remember `npm run format` afterwards keeps that from being a trap
+ * someone falls into once a year.
+ */
+async function emit(file, contents) {
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(path.join(OUT_DIR, file), contents, 'utf8');
+  const target = path.join(OUT_DIR, file);
+  const options = await prettier.resolveConfig(target);
+  const formatted = await prettier.format(contents, { ...options, filepath: target });
+  fs.writeFileSync(target, formatted, 'utf8');
   return `src/data/quote/${file}`;
+}
+
+/** The same, for the JSON fixtures the test suite reads. */
+async function emitJson(target, value) {
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  const options = await prettier.resolveConfig(target);
+  const formatted = await prettier.format(JSON.stringify(value), { ...options, filepath: target });
+  fs.writeFileSync(target, formatted, 'utf8');
 }
 
 const json = (value) => JSON.stringify(value, null, 2);
@@ -1097,7 +1130,7 @@ const json = (value) => JSON.stringify(value, null, 2);
 /* Main                                                                       */
 /* -------------------------------------------------------------------------- */
 
-function main() {
+async function main() {
   const args = parseArgs(process.argv.slice(2));
   const general = openWorkbook(args.general);
   const bookings = openWorkbook(args.bookings);
@@ -1130,7 +1163,7 @@ function main() {
   const written = [];
 
   written.push(
-    emit(
+    await emit(
       'network.ts',
       BANNER('GENERAL!TABLES, GENERAL!SERVICES, GENERAL!VESSELS') +
         `import type { Port, Service, Vessel } from '@/types/quote';\n\n` +
@@ -1141,7 +1174,7 @@ function main() {
   );
 
   written.push(
-    emit(
+    await emit(
       'equipment.ts',
       BANNER('BOOKINGS!Tariffs') +
         `import type { Equipment } from '@/types/quote';\n\n` +
@@ -1150,7 +1183,7 @@ function main() {
   );
 
   written.push(
-    emit(
+    await emit(
       'tariffs.ts',
       BANNER('BOOKINGS!Tariffs, plus values recovered from 405 worked quotations') +
         `import type { Tariffs } from '@/types/quote';\n\n` +
@@ -1231,7 +1264,7 @@ function main() {
   written.push('tests/fixtures/published-routes.json');
 
   written.push(
-    emit(
+    await emit(
       'distances.ts',
       BANNER('GENERAL!Distance NM') +
         `/** Direct port-to-port distance in nautical miles, which is what the price uses. */\n` +
@@ -1243,10 +1276,16 @@ function main() {
 
   console.log(`Imported on ${TODAY}`);
   console.log(`  ports        ${ports.length}`);
-  console.log(`  services     ${services.length} (${services.reduce((n, s) => n + s.legs.length, 0)} legs)`);
-  console.log(`  vessels      ${vessels.length} (${vessels.filter((v) => v.serviceId).length} assigned)`);
+  console.log(
+    `  services     ${services.length} (${services.reduce((n, s) => n + s.legs.length, 0)} legs)`,
+  );
+  console.log(
+    `  vessels      ${vessels.length} (${vessels.filter((v) => v.serviceId).length} assigned)`,
+  );
   console.log(`  equipment    ${equipment.length}`);
-  console.log(`  distances    ${Object.values(distances).reduce((n, t) => n + Object.keys(t).length, 0)} pairs`);
+  console.log(
+    `  distances    ${Object.values(distances).reduce((n, t) => n + Object.keys(t).length, 0)} pairs`,
+  );
   console.log(`  worked rows  ${worked.length}`);
   console.log(`  freight anchors ${freightAnchors.length}`);
 
@@ -1265,4 +1304,4 @@ function main() {
   }
 }
 
-main();
+await main();

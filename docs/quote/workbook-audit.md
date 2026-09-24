@@ -10,10 +10,10 @@ them, what the website must take from them, and what cannot be trusted yet.
 
 ## A. Files
 
-| Ref | File | Sheets | Role |
-| --- | --- | --- | --- |
-| `GENERAL` | `SDGLINESV2(GENERAL_DATA).xlsx` | 65 | Network configuration: ports, services, vessels, distances, freight tariffs |
-| `BOOKINGS` | `SDG Lines - Bookings_V3_FORM (Responses).xlsx` | 11 | The live Google Form quotation process: field list, routing engine output, surcharge tables, 1382 historical quotations |
+| Ref        | File                                            | Sheets | Role                                                                                                                    |
+| ---------- | ----------------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `GENERAL`  | `SDGLINESV2(GENERAL_DATA).xlsx`                 | 65     | Network configuration: ports, services, vessels, distances, freight tariffs                                             |
+| `BOOKINGS` | `SDG Lines - Bookings_V3_FORM (Responses).xlsx` | 11     | The live Google Form quotation process: field list, routing engine output, surcharge tables, 1382 historical quotations |
 
 ## B. Sheets that matter to the quotation tool
 
@@ -38,13 +38,13 @@ Five rotations, each a block of consecutive legs with `SERVICE`, `ORIGIN`,
 `DESTINATION`, `NM`, `TT` (days), `Time in Port`, and a per-service design speed
 in the block header:
 
-| Service | Legs | Total NM | Round trip |
-| --- | --- | --- | --- |
-| Westmed | 8 | 3 994 | 14.30 days at 18.13 kn |
-| Eastmed | 11 | 5 400 | 15.34 days at 17.93 kn |
-| Optimed | 14 | 6 610 | 21.00 days at 16.86 kn |
-| EurAsia | 18 | 24 998 | 62.10 days at 18.09 kn |
-| Gimnesias | 6 | 978 | Barcelona-Palma shuttle at 10.19 kn |
+| Service   | Legs | Total NM | Round trip                          |
+| --------- | ---- | -------- | ----------------------------------- |
+| Westmed   | 8    | 3 994    | 14.30 days at 18.13 kn              |
+| Eastmed   | 11   | 5 400    | 15.34 days at 17.93 kn              |
+| Optimed   | 14   | 6 610    | 21.00 days at 16.86 kn              |
+| EurAsia   | 18   | 24 998   | 62.10 days at 18.09 kn              |
+| Gimnesias | 6    | 978      | Barcelona-Palma shuttle at 10.19 kn |
 
 `BOOKINGS!BoundTable` restates the same legs keyed `SERVICE+ORIGIN`, which is
 how the form resolves the next port. The two agree leg for leg.
@@ -139,18 +139,18 @@ scales with the number of legs.
 
 ## D. Problems found
 
-| # | Finding | Impact | Proposed handling |
-| --- | --- | --- | --- |
-| 1 | The Google Sheets formulas were exported as `__xludf.DUMMYFUNCTION("COMPUTED_VALUE")`. Only cached results survive. | The exact arithmetic for the surcharges, distance and emissions is not recoverable by reading the file. | Reconstruct from the tariff tables and validate against the 21 110 worked rows; anything that cannot be reproduced is raised rather than invented. |
-| 2 | Shared strings are corrupted by a bad find-and-replace: `Ahmed` reads `AImed`, `Mahmoud` reads `MAImoud`, `Jawaharlal` reads `JawAIarlal`, `Aglaonike` reads `AglAIonike`. | Agent names and one vessel name are wrong wherever they appear. | Corrected on import, listed explicitly so the fix is auditable. |
-| 3 | `TABLES` rows for `ORAN` and `PALMA` are column-shifted: Oran has `271` in latitude and no longitude; Palma has the maps link in the latitude cell. | Two ports cannot be placed on a map. | Import marks them `needs-review`; the map omits them until corrected. |
-| 4 | `PALMA` is missing from `GENERAL!Tariffs` and from the port class table, although Gimnesias calls there and the worked rows quote it. | No freight coefficient and no port class for a served port. | `needs-review`; quoting Palma is blocked until a base index and class are supplied. |
-| 5 | `ORAN`'s country reads `Algiers` (a city) and its agent `Sailportlogistics.com ALGIERSia` - the string `Algeria` was overwritten. | Wrong country in the directory. | Corrected on import with a note. |
-| 6 | Four vessels have no service and one has no speed. | They cannot be scheduled. | Excluded from the quotation engine, kept in the fleet data as unassigned. |
-| 7 | `GENERAL!TABLES` surcharge columns (`CAF`, `BAF`, `BC`, `CS`, `B/L`, `T3`, `WRS`, `WS`) are entirely empty. | Per-port surcharges cannot be derived from this sheet. | Values taken from the `BOOKINGS!Tariffs` fixed block instead. |
-| 8 | `BOOKINGS!Verification` holds 34 four-digit Port Virtual PIN codes in clear. | These are access credentials, and the repository is public. | **Never committed.** See `docs/quote/pin-validation.md`. |
-| 9 | The existing site's 36 ports were built from the legacy website, not from this workbook; naming and coverage differ. | Two competing port lists. | The workbook wins for every operational field, per the source precedence rule. |
-| 10 | `Distance KM` in the worked rows does not match the sum of the rotation legs. | The distance behind the freight figure is not yet explained. | Open: reconciled against the `Distance NM` matrices before the pricing engine is trusted. |
+| #   | Finding                                                                                                                                                                    | Impact                                                                                                  | Proposed handling                                                                                                                                  |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | The Google Sheets formulas were exported as `__xludf.DUMMYFUNCTION("COMPUTED_VALUE")`. Only cached results survive.                                                        | The exact arithmetic for the surcharges, distance and emissions is not recoverable by reading the file. | Reconstruct from the tariff tables and validate against the 21 110 worked rows; anything that cannot be reproduced is raised rather than invented. |
+| 2   | Shared strings are corrupted by a bad find-and-replace: `Ahmed` reads `AImed`, `Mahmoud` reads `MAImoud`, `Jawaharlal` reads `JawAIarlal`, `Aglaonike` reads `AglAIonike`. | Agent names and one vessel name are wrong wherever they appear.                                         | Corrected on import, listed explicitly so the fix is auditable.                                                                                    |
+| 3   | `TABLES` rows for `ORAN` and `PALMA` are column-shifted: Oran has `271` in latitude and no longitude; Palma has the maps link in the latitude cell.                        | Two ports cannot be placed on a map.                                                                    | Import marks them `needs-review`; the map omits them until corrected.                                                                              |
+| 4   | `PALMA` is missing from `GENERAL!Tariffs` and from the port class table, although Gimnesias calls there and the worked rows quote it.                                      | No freight coefficient and no port class for a served port.                                             | `needs-review`; quoting Palma is blocked until a base index and class are supplied.                                                                |
+| 5   | `ORAN`'s country reads `Algiers` (a city) and its agent `Sailportlogistics.com ALGIERSia` - the string `Algeria` was overwritten.                                          | Wrong country in the directory.                                                                         | Corrected on import with a note.                                                                                                                   |
+| 6   | Four vessels have no service and one has no speed.                                                                                                                         | They cannot be scheduled.                                                                               | Excluded from the quotation engine, kept in the fleet data as unassigned.                                                                          |
+| 7   | `GENERAL!TABLES` surcharge columns (`CAF`, `BAF`, `BC`, `CS`, `B/L`, `T3`, `WRS`, `WS`) are entirely empty.                                                                | Per-port surcharges cannot be derived from this sheet.                                                  | Values taken from the `BOOKINGS!Tariffs` fixed block instead.                                                                                      |
+| 8   | `BOOKINGS!Verification` holds 34 four-digit Port Virtual PIN codes in clear.                                                                                               | These are access credentials, and the repository is public.                                             | **Never committed.** See `docs/quote/pin-validation.md`.                                                                                           |
+| 9   | The existing site's 36 ports were built from the legacy website, not from this workbook; naming and coverage differ.                                                       | Two competing port lists.                                                                               | The workbook wins for every operational field, per the source precedence rule.                                                                     |
+| 10  | `Distance KM` in the worked rows does not match the sum of the rotation legs.                                                                                              | The distance behind the freight figure is not yet explained.                                            | Open: reconciled against the `Distance NM` matrices before the pricing engine is trusted.                                                          |
 
 ## E. What the workbook does not contain
 

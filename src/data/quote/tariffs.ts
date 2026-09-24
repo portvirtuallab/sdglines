@@ -12,355 +12,355 @@
 import type { Tariffs } from '@/types/quote';
 
 export const tariffs: Tariffs = {
-  "terminalHandling": {
-    "1": {
-      "A": 240,
-      "B": 259,
-      "C": 279,
-      "D": 302
+  terminalHandling: {
+    '1': {
+      A: 240,
+      B: 259,
+      C: 279,
+      D: 302,
     },
-    "2": {
-      "A": 240,
-      "B": 259,
-      "C": 279,
-      "D": 302
+    '2': {
+      A: 240,
+      B: 259,
+      C: 279,
+      D: 302,
     },
-    "3": {
-      "A": 260,
-      "B": 280,
-      "C": 304,
-      "D": 330
+    '3': {
+      A: 260,
+      B: 280,
+      C: 304,
+      D: 330,
     },
-    "4": {
-      "A": 288,
-      "B": 311,
-      "C": 336,
-      "D": 363
+    '4': {
+      A: 288,
+      B: 311,
+      C: 336,
+      D: 363,
     },
-    "5": {
-      "A": 288,
-      "B": 311,
-      "C": 336,
-      "D": 363
+    '5': {
+      A: 288,
+      B: 311,
+      C: 336,
+      D: 363,
     },
-    "6": {
-      "A": 264,
-      "B": 285,
-      "C": 308,
-      "D": 334
+    '6': {
+      A: 264,
+      B: 285,
+      C: 308,
+      D: 334,
     },
-    "7": {
-      "A": 316,
-      "B": 341,
-      "C": 369,
-      "D": 400
+    '7': {
+      A: 316,
+      B: 341,
+      C: 369,
+      D: 400,
     },
-    "8": {
-      "A": 340,
-      "B": 367,
-      "C": 397,
-      "D": 429
+    '8': {
+      A: 340,
+      B: 367,
+      C: 397,
+      D: 429,
     },
-    "9": {
-      "A": 360,
-      "B": 388,
-      "C": 421,
-      "D": 456
+    '9': {
+      A: 360,
+      B: 388,
+      C: 421,
+      D: 456,
     },
-    "10": {
-      "A": 340,
-      "B": 367,
-      "C": 397,
-      "D": 429
+    '10': {
+      A: 340,
+      B: 367,
+      C: 397,
+      D: 429,
     },
-    "11": {
-      "A": 385,
-      "B": 415,
-      "C": 449,
-      "D": 486
+    '11': {
+      A: 385,
+      B: 415,
+      C: 449,
+      D: 486,
     },
-    "12": {
-      "A": 400,
-      "B": 432,
-      "C": 466,
-      "D": 504
+    '12': {
+      A: 400,
+      B: 432,
+      C: 466,
+      D: 504,
     },
-    "13": {
-      "A": 415,
-      "B": 448,
-      "C": 485,
-      "D": 525
+    '13': {
+      A: 415,
+      B: 448,
+      C: 485,
+      D: 525,
     },
-    "14": {
-      "A": 445,
-      "B": 481,
-      "C": 521,
-      "D": 564
+    '14': {
+      A: 445,
+      B: 481,
+      C: 521,
+      D: 564,
     },
-    "15": {
-      "A": 215,
-      "B": 222,
-      "C": 240,
-      "D": 250
+    '15': {
+      A: 215,
+      B: 222,
+      C: 240,
+      D: 250,
     },
-    "16": {
-      "A": 357,
-      "B": 370,
-      "C": 385,
-      "D": 450
-    }
+    '16': {
+      A: 357,
+      B: 370,
+      C: 385,
+      D: 450,
+    },
   },
-  "bunkerRecovery": {
-    "1": 43,
-    "2": 86,
-    "3": 51,
-    "4": 77,
-    "5": 43,
-    "6": 43,
-    "7": 43,
-    "8": 51,
-    "9": 43,
-    "10": 86,
-    "11": 43,
-    "12": 43,
-    "13": 52,
-    "14": 57,
-    "15": 15,
-    "16": 57
+  bunkerRecovery: {
+    '1': 43,
+    '2': 86,
+    '3': 51,
+    '4': 77,
+    '5': 43,
+    '6': 43,
+    '7': 43,
+    '8': 51,
+    '9': 43,
+    '10': 86,
+    '11': 43,
+    '12': 43,
+    '13': 52,
+    '14': 57,
+    '15': 15,
+    '16': 57,
   },
-  "plugInEur": {
-    "3": 50,
-    "4": 58
+  plugInEur: {
+    '3': 50,
+    '4': 58,
   },
-  "truckEmissionsPerNm": {
-    "1": 0.11645,
-    "2": 0.11645,
-    "3": 0.1918,
-    "4": 0.1918,
-    "5": 0.11645,
-    "6": 0.11645
+  truckEmissionsPerNm: {
+    '1': 0.11645,
+    '2': 0.11645,
+    '3': 0.1918,
+    '4': 0.1918,
+    '5': 0.11645,
+    '6': 0.11645,
   },
-  "emissionsIntensity": {
-    "dryKgPerTeuNm": 85,
-    "refrigeratedKgPerTeuNm": 140
+  emissionsIntensity: {
+    dryKgPerTeuNm: 85,
+    refrigeratedKgPerTeuNm: 140,
   },
-  "fleetMeanSpeedKnots": 17.6954,
-  "fixedSurcharges": {
-    "documentation": {
-      "A": 54,
-      "B": 66,
-      "C": 72,
-      "D": 78
+  fleetMeanSpeedKnots: 17.6954,
+  fixedSurcharges: {
+    documentation: {
+      A: 54,
+      B: 66,
+      C: 72,
+      D: 78,
     },
-    "logisticManagement": {
-      "A": 8,
-      "B": 10,
-      "C": 12,
-      "D": 14
+    logisticManagement: {
+      A: 8,
+      B: 10,
+      C: 12,
+      D: 14,
     },
-    "customsClearance": {
-      "A": 35,
-      "B": 40,
-      "C": 45,
-      "D": 50
+    customsClearance: {
+      A: 35,
+      B: 40,
+      C: 45,
+      D: 50,
     },
-    "amsManifest": {
-      "A": 30,
-      "B": 35,
-      "C": 40,
-      "D": 45
-    }
+    amsManifest: {
+      A: 30,
+      B: 35,
+      C: 40,
+      D: 45,
+    },
   },
-  "perUnitSurcharges": {
-    "portTaxes": {
-      "A": 20,
-      "B": 35,
-      "C": 40,
-      "D": 45
+  perUnitSurcharges: {
+    portTaxes: {
+      A: 20,
+      B: 35,
+      C: 40,
+      D: 45,
     },
-    "vgmSolas": {
-      "A": 25,
-      "B": 30,
-      "C": 35,
-      "D": 40
+    vgmSolas: {
+      A: 25,
+      B: 30,
+      C: 35,
+      D: 40,
     },
-    "isps": {
-      "A": 15,
-      "B": 20,
-      "C": 25,
-      "D": 30
+    isps: {
+      A: 15,
+      B: 20,
+      C: 25,
+      D: 30,
     },
-    "control": {
-      "A": 20,
-      "B": 25,
-      "C": 30,
-      "D": 35
+    control: {
+      A: 20,
+      B: 25,
+      C: 30,
+      D: 35,
     },
-    "seal": {
-      "A": 10,
-      "B": 11,
-      "C": 12,
-      "D": 15
+    seal: {
+      A: 10,
+      B: 11,
+      C: 12,
+      D: 15,
     },
-    "dangerousGoods": {
-      "C": 65,
-      "D": 70,
-      "B": 60,
-      "A": 55
-    }
+    dangerousGoods: {
+      C: 65,
+      D: 70,
+      B: 60,
+      A: 55,
+    },
   },
-  "portAdditionalRate": 0.2,
-  "freightAnchors": [
+  portAdditionalRate: 0.2,
+  freightAnchors: [
     {
-      "distanceNm": 163,
-      "baseEur": 664.2978
+      distanceNm: 163,
+      baseEur: 664.2978,
     },
     {
-      "distanceNm": 279,
-      "baseEur": 688.8702
+      distanceNm: 279,
+      baseEur: 688.8702,
     },
     {
-      "distanceNm": 352,
-      "baseEur": 704.2591
+      distanceNm: 352,
+      baseEur: 704.2591,
     },
     {
-      "distanceNm": 516,
-      "baseEur": 731.604
+      distanceNm: 516,
+      baseEur: 731.604,
     },
     {
-      "distanceNm": 539,
-      "baseEur": 735.2664
+      distanceNm: 539,
+      baseEur: 735.2664,
     },
     {
-      "distanceNm": 626,
-      "baseEur": 748.8012
+      distanceNm: 626,
+      baseEur: 748.8012,
     },
     {
-      "distanceNm": 645,
-      "baseEur": 751.6947
+      distanceNm: 645,
+      baseEur: 751.6947,
     },
     {
-      "distanceNm": 652,
-      "baseEur": 752.7554
+      distanceNm: 652,
+      baseEur: 752.7554,
     },
     {
-      "distanceNm": 702,
-      "baseEur": 760.2523
+      distanceNm: 702,
+      baseEur: 760.2523,
     },
     {
-      "distanceNm": 1042,
-      "baseEur": 808.0999
+      distanceNm: 1042,
+      baseEur: 808.0999,
     },
     {
-      "distanceNm": 1316,
-      "baseEur": 843.5346
+      distanceNm: 1316,
+      baseEur: 843.5346,
     },
     {
-      "distanceNm": 1543,
-      "baseEur": 871.2498
+      distanceNm: 1543,
+      baseEur: 871.2498,
     },
     {
-      "distanceNm": 1545,
-      "baseEur": 871.4882
+      distanceNm: 1545,
+      baseEur: 871.4882,
     },
     {
-      "distanceNm": 1621,
-      "baseEur": 880.4755
+      distanceNm: 1621,
+      baseEur: 880.4755,
     },
     {
-      "distanceNm": 1668,
-      "baseEur": 885.9665
+      distanceNm: 1668,
+      baseEur: 885.9665,
     },
     {
-      "distanceNm": 1829,
-      "baseEur": 904.4098
+      distanceNm: 1829,
+      baseEur: 904.4098,
     },
     {
-      "distanceNm": 1842,
-      "baseEur": 905.8752
+      distanceNm: 1842,
+      baseEur: 905.8752,
     },
     {
-      "distanceNm": 1896,
-      "baseEur": 911.9263
+      distanceNm: 1896,
+      baseEur: 911.9263,
     },
     {
-      "distanceNm": 1897,
-      "baseEur": 912.0378
+      distanceNm: 1897,
+      baseEur: 912.0378,
     },
     {
-      "distanceNm": 1898,
-      "baseEur": 912.1493
+      distanceNm: 1898,
+      baseEur: 912.1493,
     },
     {
-      "distanceNm": 2274,
-      "baseEur": 952.7609
+      distanceNm: 2274,
+      baseEur: 952.7609,
     },
     {
-      "distanceNm": 2282,
-      "baseEur": 953.5983
+      distanceNm: 2282,
+      baseEur: 953.5983,
     },
     {
-      "distanceNm": 2403,
-      "baseEur": 966.1385
+      distanceNm: 2403,
+      baseEur: 966.1385,
     },
     {
-      "distanceNm": 2544,
-      "baseEur": 980.4654
+      distanceNm: 2544,
+      baseEur: 980.4654,
     },
     {
-      "distanceNm": 2701,
-      "baseEur": 996.0757
+      distanceNm: 2701,
+      baseEur: 996.0757,
     },
     {
-      "distanceNm": 2935,
-      "baseEur": 1018.7156
+      distanceNm: 2935,
+      baseEur: 1018.7156,
     },
     {
-      "distanceNm": 4030,
-      "baseEur": 1137.3633
+      distanceNm: 4030,
+      baseEur: 1137.3633,
     },
     {
-      "distanceNm": 5117,
-      "baseEur": 1274.2751
+      distanceNm: 5117,
+      baseEur: 1274.2751,
     },
     {
-      "distanceNm": 5153,
-      "baseEur": 1278.8094
+      distanceNm: 5153,
+      baseEur: 1278.8094,
     },
     {
-      "distanceNm": 5216,
-      "baseEur": 1286.7445
+      distanceNm: 5216,
+      baseEur: 1286.7445,
     },
     {
-      "distanceNm": 5813,
-      "baseEur": 1361.939
+      distanceNm: 5813,
+      baseEur: 1361.939,
     },
     {
-      "distanceNm": 7778,
-      "baseEur": 1609.4383
+      distanceNm: 7778,
+      baseEur: 1609.4383,
     },
     {
-      "distanceNm": 8386,
-      "baseEur": 1686.0182
+      distanceNm: 8386,
+      baseEur: 1686.0182,
     },
     {
-      "distanceNm": 8667,
-      "baseEur": 1721.4113
+      distanceNm: 8667,
+      baseEur: 1721.4113,
     },
     {
-      "distanceNm": 8852,
-      "baseEur": 1744.7127
+      distanceNm: 8852,
+      baseEur: 1744.7127,
     },
     {
-      "distanceNm": 10000,
-      "baseEur": 1889.3078
-    }
+      distanceNm: 10000,
+      baseEur: 1889.3078,
+    },
   ],
-  "meta": {
-    "source": "recovered",
-    "status": "needs-review",
-    "sourceSheet": "BOOKINGS!Tariffs, BOOKINGS!Studio, BOOKINGS!Form responses 1",
-    "lastReviewed": "2026-09-24",
-    "note": "Handling comes from the tariff table. The surcharge tables and the freight curve were recovered from the worked quotations because the spreadsheet formulas did not survive the export. See docs/quote/pricing-model.md."
-  }
+  meta: {
+    source: 'recovered',
+    status: 'needs-review',
+    sourceSheet: 'BOOKINGS!Tariffs, BOOKINGS!Studio, BOOKINGS!Form responses 1',
+    lastReviewed: '2026-09-24',
+    note: 'Handling comes from the tariff table. The surcharge tables and the freight curve were recovered from the worked quotations because the spreadsheet formulas did not survive the export. See docs/quote/pricing-model.md.',
+  },
 };

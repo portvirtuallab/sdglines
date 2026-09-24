@@ -26,14 +26,14 @@ Three reasons, in order of weight:
 
 Six steps:
 
-| Step | Asks for |
-| --- | --- |
-| 01 Route | Port of origin, port of destination, desired departure date |
-| 02 Cargo & equipment | Dangerous goods (and UN number, proper shipping name, IMO class, packing group if so), type of service, unit type, number of units |
-| 03 Additional services | VGM SOLAS |
-| 04 Contact | Name, e-mail, company or institution, country, and optionally department, position and city; Port Virtual Lab activity code; privacy acknowledgement |
-| 05 Review | Nothing. Every section can be edited from here |
-| 06 Confirmation | Nothing. The quotation, its breakdown and its reference |
+| Step                   | Asks for                                                                                                                                             |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 01 Route               | Port of origin, port of destination, desired departure date                                                                                          |
+| 02 Cargo & equipment   | Dangerous goods (and UN number, proper shipping name, IMO class, packing group if so), type of service, unit type, number of units                   |
+| 03 Additional services | VGM SOLAS                                                                                                                                            |
+| 04 Contact             | Name, e-mail, company or institution, country, and optionally department, position and city; Port Virtual Lab activity code; privacy acknowledgement |
+| 05 Review              | Nothing. Every section can be edited from here                                                                                                       |
+| 06 Confirmation        | Nothing. The quotation, its breakdown and its reference                                                                                              |
 
 The contact details appear on the quotation the learner receives, which is why they are asked for -
 the previous form asked for the same ones. **No telephone number and no address**, because nothing

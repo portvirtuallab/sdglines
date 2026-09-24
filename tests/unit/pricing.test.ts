@@ -129,7 +129,11 @@ describe('sea freight base', () => {
 /* -------------------------------------------------------------------------- */
 
 describe.each([
-  ['sea freight', (r: WorkedQuotation) => r.totalFreight, (p: ReturnType<typeof replayLegacy>) => charge(p, 'sea-freight')],
+  [
+    'sea freight',
+    (r: WorkedQuotation) => r.totalFreight,
+    (p: ReturnType<typeof replayLegacy>) => charge(p, 'sea-freight'),
+  ],
   ['terminal handling', (r) => r.terminalHandlingTotal, (p) => charge(p, 'terminal-handling')],
   ['port additional', (r) => r.portAdditional, (p) => charge(p, 'port-additional')],
   ['port taxes', (r) => r.portTaxes, (p) => charge(p, 'port-taxes')],
@@ -218,12 +222,15 @@ describe('legacy rules: the total', () => {
   });
 
   it('is exact on the 180 quotations that carry that component', () => {
-    expect(differences.filter(({ difference }) => Math.abs(difference) < TOLERANCE).length).toBe(180);
+    expect(differences.filter(({ difference }) => Math.abs(difference) < TOLERANCE).length).toBe(
+      180,
+    );
   });
 
   it('leaves exactly the 22 known exceptions', () => {
     expect(
-      differences.filter(({ difference }) => Math.abs(difference - 20) < EXCEPTION_TOLERANCE).length,
+      differences.filter(({ difference }) => Math.abs(difference - 20) < EXCEPTION_TOLERANCE)
+        .length,
     ).toBe(22);
   });
 });
@@ -336,7 +343,12 @@ describe('corrected rules', () => {
     expect(flatrack.emissionsKgCo2e).toBeCloseTo(dry.emissionsKgCo2e, 6);
 
     // And the legacy rules still reproduce the figure that was published.
-    const legacy = calculatePrice({ ...LANE, equipmentId: FLATRACK_20, quantity: 1, rules: 'legacy' });
+    const legacy = calculatePrice({
+      ...LANE,
+      equipmentId: FLATRACK_20,
+      quantity: 1,
+      rules: 'legacy',
+    });
     expect(legacy.emissionsKgCo2e).toBeCloseTo((765 / 1000) * LANE.distanceNm, 6);
   });
 
@@ -358,7 +370,12 @@ describe('corrected rules', () => {
       vesselEmissionsFactor: 0.5,
       rules: 'legacy',
     });
-    const legacyPlain = calculatePrice({ ...LANE, equipmentId: DRY_20, quantity: 1, rules: 'legacy' });
+    const legacyPlain = calculatePrice({
+      ...LANE,
+      equipmentId: DRY_20,
+      quantity: 1,
+      rules: 'legacy',
+    });
     expect(legacy.emissionsKgCo2e).toBe(legacyPlain.emissionsKgCo2e);
   });
 
@@ -379,7 +396,9 @@ describe('corrected rules', () => {
 
   it('labels every line as per unit or per shipment', () => {
     const quotation = calculatePrice({ ...LANE, equipmentId: REEFER_20, quantity: 3 });
-    const perShipment = quotation.charges.filter((entry) => !entry.perUnit).map((entry) => entry.key);
+    const perShipment = quotation.charges
+      .filter((entry) => !entry.perUnit)
+      .map((entry) => entry.key);
     expect(perShipment.sort()).toEqual(
       ['customs-clearance', 'documentation', 'ets-administration', 'logistic-management'].sort(),
     );
@@ -396,7 +415,12 @@ describe('corrected rules', () => {
   it('costs more per container than the spreadsheet did, and says so', () => {
     // The point of the correction: twenty containers used to cost barely more
     // than one, because only the handling scaled.
-    const legacy = calculatePrice({ ...LANE, equipmentId: REEFER_20, quantity: 20, rules: 'legacy' });
+    const legacy = calculatePrice({
+      ...LANE,
+      equipmentId: REEFER_20,
+      quantity: 20,
+      rules: 'legacy',
+    });
     const corrected = calculatePrice({ ...LANE, equipmentId: REEFER_20, quantity: 20 });
 
     expect(corrected.totalEur).toBeGreaterThan(legacy.totalEur);
@@ -415,13 +439,17 @@ describe('corrected rules', () => {
 
 describe('when it cannot price something', () => {
   it('refuses a unit type that is not in the tariff', () => {
-    expect(() => calculatePrice({ ...LANE, equipmentId: 999, quantity: 1 })).toThrow(QuotationError);
+    expect(() => calculatePrice({ ...LANE, equipmentId: 999, quantity: 1 })).toThrow(
+      QuotationError,
+    );
   });
 
   it('treats a fractional or negative quantity as one unit', () => {
     const one = calculatePrice({ ...LANE, equipmentId: DRY_40, quantity: 1 });
     for (const quantity of [0, -3, 0.4, 1.9]) {
-      expect(calculatePrice({ ...LANE, equipmentId: DRY_40, quantity }).totalEur).toBe(one.totalEur);
+      expect(calculatePrice({ ...LANE, equipmentId: DRY_40, quantity }).totalEur).toBe(
+        one.totalEur,
+      );
     }
   });
 

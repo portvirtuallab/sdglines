@@ -62,10 +62,7 @@ export function unzip(file) {
     const data = buffer.subarray(dataStart, dataStart + compressedSize);
 
     if (!name.endsWith('/')) {
-      entries.set(
-        name,
-        method === 0 ? Buffer.from(data) : zlib.inflateRawSync(data),
-      );
+      entries.set(name, method === 0 ? Buffer.from(data) : zlib.inflateRawSync(data));
     }
 
     offset += 46 + nameLength + extraLength + commentLength;
