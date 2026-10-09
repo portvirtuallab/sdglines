@@ -98,6 +98,43 @@ Changes that affect how the site is used in a training exercise are also summari
 - Accessibility test suite: axe-core across 18 templates on desktop and mobile.
 - Redirects covering all 80 legacy addresses that moved.
 
+### Added (home page sections, October 2026)
+
+- Value strip under the hero: four claims about the site itself, each verifiable by using it. This
+  is where a commercial carrier puts a wall of partner logos; SDG Lines has no partners to show and
+  borrowing real ones would imply an association that does not exist.
+- "Who this site is for": three audiences - students, trainers, institutions - each with its own
+  starting points. The project brief defined these audiences and the site had never addressed them
+  separately.
+- Frequently asked questions, answering what trainers currently have to answer out loud. Built from
+  native disclosure elements, so every answer is in the HTML and opens with no JavaScript, and
+  emitted as FAQPage structured data so a search result can carry the correct answer about whether
+  SDG Lines is a real company.
+- "What changed recently": a preview of the three most recent updates. Where a commercial site puts
+  a blog, this puts a changelog, because a blog on a simulation goes stale - the previous site's
+  most recent article was six years old.
+- Network reach figures: ports, countries, regions and total calls, counted from the data that
+  renders the pages so they cannot drift from what the site shows.
+
+### Changed (October 2026)
+
+- The updates page is now built from structured entries rather than prose. Each carries a date, a
+  kind and a note telling trainers what to check in an exercise written before it.
+- The task count on the home page is derived from the list rather than written out. It said seven
+  where there were six.
+
+### Deliberately not adopted
+
+Reviewed against a commercial freight platform and rejected, with reasons:
+
+- **Carrier and airline logo walls.** Real carrier marks on a simulated carrier's site.
+- **Industry association logos.** SDG Lines holds no accreditations; displaying any would be
+  fabrication.
+- **Customer testimonials.** Removed in the rebuild for the same reason they were not re-added.
+- **Cookie consent banner.** This site sets no cookies. A banner would imply otherwise.
+- **Sign-in and registration.** There are no accounts, and the site is deliberately open.
+- **An AI capabilities section.** Nothing to claim.
+
 ### Changed
 
 - Routes and cargo services separated. Routes answers where; Services answers what.

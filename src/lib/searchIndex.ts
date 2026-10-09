@@ -192,6 +192,20 @@ export const searchIndex: SearchEntry[] = [
   },
   {
     type: 'Page',
+    title: 'Updates',
+    subtitle: 'What changed in the simulation, and when',
+    href: '/resources/news',
+    keywords: normalise('news updates changes changelog what changed release correction'),
+  },
+  {
+    type: 'Page',
+    title: 'Questions people actually ask',
+    subtitle: 'Is this real, where are the rates, why does it say to be confirmed',
+    href: '/#questions',
+    keywords: normalise('faq questions help real company account rates price tracking confirm'),
+  },
+  {
+    type: 'Page',
     title: 'Agency network',
     subtitle: 'Local offices across the network',
     href: '/ports/agencies',

@@ -771,62 +771,6 @@ export const prosePages: ProsePage[] = [
 
   /* ---------------------------------------------------------------------- */
   {
-    slug: 'news',
-    group: 'resources',
-    title: 'News and updates',
-    eyebrow: 'Resources',
-    intro: 'What has changed in the simulation, and when.',
-    description:
-      'Changes to the SDG Lines simulation and website, so that trainers can tell whether an exercise written earlier still matches the site.',
-    sections: [
-      {
-        id: 'purpose',
-        heading: 'What this page is for',
-        blocks: [
-          {
-            type: 'paragraph',
-            text: 'A trainer who wrote an exercise six months ago needs to know whether the site still says what it said then. This page records changes to the simulation itself: routes, ports, vessels, equipment and charges.',
-          },
-          {
-            type: 'paragraph',
-            text: 'It is not a news feed about the shipping industry. The previous website carried three articles dated October 2020 under this heading, which by 2026 told a visitor mainly that nobody was maintaining it.',
-          },
-        ],
-      },
-      {
-        id: 'changes',
-        heading: 'September 2026: the site was rebuilt',
-        blocks: [
-          {
-            type: 'paragraph',
-            text: 'The website was redesigned and rebuilt from the audited content of the previous site. Trainers with exercises written against the old site should check the following.',
-          },
-          {
-            type: 'list',
-            items: [
-              'Addresses changed. Routes now live under /routes, ports under /ports and vessels under /fleet. Old links redirect where the destination is unambiguous.',
-              'Route rotations are published for the first time. They are proposals awaiting confirmation and are labelled as such on each route page.',
-              'Equipment now carries internal dimensions, tare weights and payloads, which the previous site did not publish.',
-              'Arrival charges are published as a catalogue of charge types. No amounts are published; the tariff is set by the trainer.',
-              'The customer testimonials were removed. They named individuals who do not exist and read as genuine social proof for a company that carries no cargo.',
-              'Two vessel names were corrected: Carolina Herschel to Caroline Herschel, and Merce Rodoreda to Mercè Rodoreda. Both are pending confirmation.',
-              'Port name spellings were corrected: Pireaus to Piraeus, Valleta to Valletta, Felixtowe to Felixstowe, Abu Dahbi to Abu Dhabi, Algier to Algiers and Danietta to Damietta.',
-            ],
-          },
-          {
-            type: 'links',
-            items: [
-              { label: 'How content is reviewed', href: '/about/quality' },
-              { label: 'About SDG Lines', href: '/about' },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-
-  /* ---------------------------------------------------------------------- */
-  {
     slug: 'tracking',
     group: 'resources',
     title: 'Track a shipment',

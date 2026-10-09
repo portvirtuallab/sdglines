@@ -111,3 +111,44 @@ a dead link after a rollback.
 
 Neither is a reason not to roll back a genuinely broken site. Both are reasons to verify the preview
 thoroughly first.
+
+---
+
+## 4. Going back to a previous design
+
+Design versions are tagged, so an earlier look can be restored without
+reconstructing it.
+
+| Tag        | Branch            | What it is                                                             |
+| ---------- | ----------------- | ---------------------------------------------------------------------- |
+| `v1-brand` | `design/v1-brand` | The brand rebuild of September 2026, before the home page section work |
+
+**To see a tagged version without changing anything:**
+
+```bash
+git checkout v1-brand
+npm ci && npm run dev
+```
+
+**To restore one as the live preview:**
+
+```bash
+git checkout main
+git revert --no-commit v1-brand..HEAD
+git commit -m "revert: restore the v1-brand design"
+git push
+```
+
+This keeps the history rather than rewriting it, so the discarded version stays
+available and the decision is visible to whoever looks next.
+
+**Before restoring, be clear about what is being rolled back.** A design version
+and a content version are not the same thing. Reverting to `v1-brand` also
+reverts any content added since: check the updates page for what landed in
+between, and cherry-pick the content commits forward if they should survive.
+
+**Tag a new version before starting significant design work**, not after:
+
+```bash
+git tag -a v2-sections -m "Version 2: ..." && git push origin v2-sections
+```

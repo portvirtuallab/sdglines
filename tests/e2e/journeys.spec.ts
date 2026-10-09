@@ -159,3 +159,95 @@ test.describe('navigation', () => {
     await expect(page.getByRole('heading', { level: 1 })).toContainText('not on the chart');
   });
 });
+
+test.describe('the home page sections', () => {
+  test('answers the question of whether SDG Lines is real, without JavaScript', async ({
+    browser,
+  }) => {
+    // The FAQ is built from <details>, so the answers are in the HTML and open
+    // without a script. That matters twice over: for a visitor with scripts
+    // disabled, and for a search engine reading the page.
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+
+    await page.goto(path('/'));
+
+    const question = page.getByText('Is SDG Lines a real shipping company?');
+    await expect(question).toBeVisible();
+
+    // The answer is in the HTML even while collapsed, which is what lets a
+    // search engine read it.
+    const answer = page.getByText('No. SDG Lines is an educational simulation', { exact: false });
+    await expect(answer).toBeAttached();
+    await expect(answer).toBeHidden();
+
+    // And <details> opens natively, with no script running.
+    await question.click();
+    await expect(answer).toBeVisible();
+
+    await context.close();
+  });
+
+  test('publishes the FAQ as structured data', async ({ page }) => {
+    await page.goto(path('/'));
+
+    const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
+    const parsed = blocks.flatMap((block) => {
+      const value = JSON.parse(block);
+      return Array.isArray(value) ? value : [value];
+    });
+
+    const faqPage = parsed.find((entry) => entry['@type'] === 'FAQPage');
+    expect(faqPage, 'the home page should emit FAQPage structured data').toBeTruthy();
+    expect(faqPage.mainEntity.length).toBeGreaterThan(4);
+
+    // Nothing in the structured data may describe SDG Lines as a real carrier.
+    const organisation = parsed.find((entry) => entry['@type'] === 'EducationalOrganization');
+    expect(
+      organisation,
+      'the operator should be typed as an educational organisation',
+    ).toBeTruthy();
+  });
+
+  test('routes each audience to its own starting point', async ({ page }) => {
+    await page.goto(path('/'));
+
+    const audiences = page.getByRole('heading', { name: 'Who this site is for' });
+    await expect(audiences).toBeVisible();
+
+    await expect(
+      page.getByRole('heading', { name: 'Students and course participants' }),
+    ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Trainers and teachers' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Institutions evaluating Port Virtual Lab' }),
+    ).toBeVisible();
+
+    await page.getByRole('link', { name: 'How the content is verified' }).click();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Quality');
+  });
+
+  test('previews recent changes and reaches the full list', async ({ page }) => {
+    await page.goto(path('/'));
+
+    await expect(page.getByRole('heading', { name: 'What changed recently' })).toBeVisible();
+
+    await page.getByRole('link', { name: 'All updates' }).click();
+    await expect(page.getByRole('heading', { level: 1, name: 'Updates' })).toBeVisible();
+
+    // Every entry has to tell a trainer what to check in an older exercise.
+    await expect(page.getByText('For trainers:').first()).toBeVisible();
+  });
+
+  test('states the reach of the network from the data itself', async ({ page }) => {
+    await page.goto(path('/'));
+
+    const network = page.locator('[data-network-reach]');
+    await expect(network.getByText('Countries', { exact: true })).toBeVisible();
+    await expect(network.getByText('Regions', { exact: true })).toBeVisible();
+
+    // The figures are counted from the same data the pages render, so they
+    // cannot drift from what the rest of the site shows.
+    await expect(network.getByText('Ports of call', { exact: true })).toBeVisible();
+  });
+});
