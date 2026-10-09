@@ -261,7 +261,11 @@ export function Confirmation({
           </tbody>
           <tfoot>
             <tr className="bg-navy-800 text-white">
-              <th scope="row" colSpan={2} className="px-5 py-4 text-left font-display font-semibold">
+              <th
+                scope="row"
+                colSpan={2}
+                className="px-5 py-4 text-left font-display font-semibold"
+              >
                 Total
               </th>
               <td className="px-5 py-4 text-right font-mono text-lg font-semibold">
@@ -361,9 +365,7 @@ export function Confirmation({
             </>
           )}
         </p>
-        <p className="mt-3 text-sm leading-relaxed text-navy-600">
-          {vesselComparison}
-        </p>
+        <p className="mt-3 text-sm leading-relaxed text-navy-600">{vesselComparison}</p>
       </section>
 
       <div className="flex flex-wrap gap-3 border-t border-navy-100 pt-6">

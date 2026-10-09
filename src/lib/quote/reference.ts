@@ -51,7 +51,7 @@ export function quotationReference(request: QuotationRequest, at: Date = new Dat
   let code = '';
   for (let i = 0; i < 6; i++) {
     code += ALPHABET[value % ALPHABET.length];
-    value = Math.floor(value / ALPHABET.length) + hash(`${seed}${i}`) % 997;
+    value = Math.floor(value / ALPHABET.length) + (hash(`${seed}${i}`) % 997);
   }
 
   return `SDGL-Q-${code}`;

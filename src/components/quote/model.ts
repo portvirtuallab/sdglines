@@ -172,7 +172,10 @@ export function validateStep(step: StepId, draft: QuoteDraft): FieldError[] {
     if (!draft.quantity.trim()) {
       errors.push({ field: 'quantity', message: 'Say how many units you are shipping.' });
     } else if (!Number.isInteger(quantity) || quantity < 1) {
-      errors.push({ field: 'quantity', message: 'The number of units is a whole number, one or more.' });
+      errors.push({
+        field: 'quantity',
+        message: 'The number of units is a whole number, one or more.',
+      });
     } else if (quantity > MAX_UNITS) {
       errors.push({
         field: 'quantity',

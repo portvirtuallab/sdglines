@@ -24,13 +24,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  STEPS,
-  emptyDraft,
-  validateStep,
-  type FieldError,
-  type QuoteDraft,
-} from './model';
+import { STEPS, emptyDraft, validateStep, type FieldError, type QuoteDraft } from './model';
 import { equipment as allEquipment, quotablePorts } from '@/lib/quote/network';
 import { bestJourney, reachableFrom, type Journey } from '@/lib/quote/routing';
 import { priceQuotation } from '@/lib/quote/pricing';

@@ -249,7 +249,9 @@ export function vesselEmissionsFactor(journey: Journey): number {
 function dedupe(journeys: Journey[]): Journey[] {
   const seen = new Map<string, Journey>();
   for (const journey of journeys) {
-    const key = journey.legs.map((leg) => `${leg.serviceId}:${leg.fromPortId}>${leg.toPortId}`).join('|');
+    const key = journey.legs
+      .map((leg) => `${leg.serviceId}:${leg.fromPortId}>${leg.toPortId}`)
+      .join('|');
     const existing = seen.get(key);
     if (!existing || journey.transitDays < existing.transitDays) seen.set(key, journey);
   }

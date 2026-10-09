@@ -92,7 +92,7 @@ path, which matches the GitHub Pages deployment.
 | `npm test`                 | Vitest unit and content integrity tests                             |
 | `npm run validate:content` | Content integrity only — run this after editing data                |
 | `npm run test:e2e`         | Playwright journeys and accessibility, against the production build |
-| `npm run import:workbook`  | Rebuild the quotation data from the operational Excel workbooks      |
+| `npm run import:workbook`  | Rebuild the quotation data from the operational Excel workbooks     |
 
 ---
 
@@ -237,25 +237,25 @@ Open an issue using one of the templates in `.github/ISSUE_TEMPLATE/`, or write 
 
 ## Documentation
 
-| Document                                           | Contents                                                       |
-| -------------------------------------------------- | -------------------------------------------------------------- |
-| [`docs/audit.md`](docs/audit.md)                   | What the previous website contained and what was wrong with it |
-| [`docs/migration.md`](docs/migration.md)           | Every legacy URL, its new home and the decision taken          |
-| [`docs/architecture.md`](docs/architecture.md)     | Stack decisions and the reasoning behind them                  |
-| [`docs/content-model.md`](docs/content-model.md)   | Every content type, field by field                             |
-| [`docs/design-system.md`](docs/design-system.md)   | Colour, type, spacing, motion, with measured contrast ratios   |
-| [`docs/accessibility.md`](docs/accessibility.md)   | Conformance, testing and known limitations                     |
-| [`docs/testing.md`](docs/testing.md)               | What is tested, how, and what is deliberately not              |
-| [`docs/deployment.md`](docs/deployment.md)         | Build, deploy and verify                                       |
-| [`docs/custom-domain.md`](docs/custom-domain.md)   | DNS procedure for www.sdglines.com                             |
-| [`docs/rollback.md`](docs/rollback.md)             | How to undo a deployment or a domain move                      |
-| [`docs/forms.md`](docs/forms.md)                   | How to connect a real backend to the quotation form            |
-| [`docs/quote/architecture.md`](docs/quote/architecture.md) | How the quotation tool is put together                |
-| [`docs/quote/workbook-audit.md`](docs/quote/workbook-audit.md) | What the operational workbooks contain            |
-| [`docs/quote/pricing-model.md`](docs/quote/pricing-model.md) | Every pricing rule and where it came from          |
-| [`docs/quote/pin-validation.md`](docs/quote/pin-validation.md) | How PIN codes are handled, and what that buys    |
-| [`docs/open-questions.md`](docs/open-questions.md) | Everything awaiting the product owner                          |
-| [`docs/post-launch.md`](docs/post-launch.md)       | The first thirty days                                          |
+| Document                                                       | Contents                                                       |
+| -------------------------------------------------------------- | -------------------------------------------------------------- |
+| [`docs/audit.md`](docs/audit.md)                               | What the previous website contained and what was wrong with it |
+| [`docs/migration.md`](docs/migration.md)                       | Every legacy URL, its new home and the decision taken          |
+| [`docs/architecture.md`](docs/architecture.md)                 | Stack decisions and the reasoning behind them                  |
+| [`docs/content-model.md`](docs/content-model.md)               | Every content type, field by field                             |
+| [`docs/design-system.md`](docs/design-system.md)               | Colour, type, spacing, motion, with measured contrast ratios   |
+| [`docs/accessibility.md`](docs/accessibility.md)               | Conformance, testing and known limitations                     |
+| [`docs/testing.md`](docs/testing.md)                           | What is tested, how, and what is deliberately not              |
+| [`docs/deployment.md`](docs/deployment.md)                     | Build, deploy and verify                                       |
+| [`docs/custom-domain.md`](docs/custom-domain.md)               | DNS procedure for www.sdglines.com                             |
+| [`docs/rollback.md`](docs/rollback.md)                         | How to undo a deployment or a domain move                      |
+| [`docs/forms.md`](docs/forms.md)                               | How to connect a real backend to the quotation form            |
+| [`docs/quote/architecture.md`](docs/quote/architecture.md)     | How the quotation tool is put together                         |
+| [`docs/quote/workbook-audit.md`](docs/quote/workbook-audit.md) | What the operational workbooks contain                         |
+| [`docs/quote/pricing-model.md`](docs/quote/pricing-model.md)   | Every pricing rule and where it came from                      |
+| [`docs/quote/pin-validation.md`](docs/quote/pin-validation.md) | How PIN codes are handled, and what that buys                  |
+| [`docs/open-questions.md`](docs/open-questions.md)             | Everything awaiting the product owner                          |
+| [`docs/post-launch.md`](docs/post-launch.md)                   | The first thirty days                                          |
 
 ---
 

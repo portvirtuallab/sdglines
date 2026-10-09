@@ -47,9 +47,7 @@ export function ReviewStep({
         ['Equipment', item ? `${item.name} × ${draft.quantity}` : '-'],
         [
           'Dangerous goods',
-          draft.dangerousGoods === 'yes'
-            ? `Yes — UN ${draft.unNumber}, ${draft.imoClass}`
-            : 'No',
+          draft.dangerousGoods === 'yes' ? `Yes — UN ${draft.unNumber}, ${draft.imoClass}` : 'No',
         ],
       ],
     },

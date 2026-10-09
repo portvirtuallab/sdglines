@@ -142,13 +142,7 @@ export interface Vessel {
 
 /** The families the quotation form offers before narrowing to a unit type. */
 export type EquipmentFamily =
-  | 'container'
-  | 'reefer'
-  | 'flat-rack'
-  | 'roll-trailer'
-  | 'semi-trailer'
-  | 'vehicles'
-  | 'project';
+  'container' | 'reefer' | 'flat-rack' | 'roll-trailer' | 'semi-trailer' | 'vehicles' | 'project';
 
 export interface Equipment {
   /** The workbook's numeric id, which every tariff table keys on. */

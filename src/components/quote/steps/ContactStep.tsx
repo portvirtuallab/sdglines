@@ -34,8 +34,8 @@ export function ContactStep({ draft, set, errorFor }: StepProps) {
     <>
       <p className="text-sm leading-relaxed text-navy-700">
         These details go on the quotation you are about to produce and nowhere else. The form does
-        not send them anywhere: the page has no server to send them to, and closing the tab
-        discards them.
+        not send them anywhere: the page has no server to send them to, and closing the tab discards
+        them.
       </p>
 
       <div className="grid gap-6 sm:grid-cols-2">

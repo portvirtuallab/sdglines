@@ -126,9 +126,7 @@ export function openWorkbook(file) {
       if (cache.has(name)) return cache.get(name);
       const part = index.get(name);
       if (!part) {
-        throw new Error(
-          `Sheet "${name}" is not in ${file}. Available: ${sheetNames.join(', ')}`,
-        );
+        throw new Error(`Sheet "${name}" is not in ${file}. Available: ${sheetNames.join(', ')}`);
       }
       const rows = parseSheet(text(part) ?? '', shared);
       cache.set(name, rows);

@@ -13,10 +13,10 @@ tariff tables, and each rule records how many of those cases it reproduces.
 
 `src/lib/quote/pricing.ts` implements both.
 
-| Rules | Used by | What it is |
-| --- | --- | --- |
-| `corrected` | the website | What SDG Lines charges. The four arithmetic faults below are fixed |
-| `legacy` | the test suite only | The live spreadsheet's own arithmetic, faults included |
+| Rules       | Used by             | What it is                                                         |
+| ----------- | ------------------- | ------------------------------------------------------------------ |
+| `corrected` | the website         | What SDG Lines charges. The four arithmetic faults below are fixed |
+| `legacy`    | the test suite only | The live spreadsheet's own arithmetic, faults included             |
 
 `legacy` is not dead code. It is the only evidence that the reverse-engineering
 was right: it replays all 202 historical quotations and reproduces every charge
@@ -26,12 +26,12 @@ built on those tables can be trusted either. Delete it and that check goes.
 
 ## 2. Inputs the price depends on
 
-| Input | Where it comes from |
-| --- | --- |
-| `distanceNm` | `GENERAL!Distance NM`, the **direct** origin-destination cell |
-| `equipment` | one of the 16 types in `BOOKINGS!Tariffs` |
-| `portClass` | `CLASS` (A-D) of the **port of origin**, from `GENERAL!TABLES` |
-| `quantity` | number of units requested |
+| Input        | Where it comes from                                            |
+| ------------ | -------------------------------------------------------------- |
+| `distanceNm` | `GENERAL!Distance NM`, the **direct** origin-destination cell  |
+| `equipment`  | one of the 16 types in `BOOKINGS!Tariffs`                      |
+| `portClass`  | `CLASS` (A-D) of the **port of origin**, from `GENERAL!TABLES` |
+| `quantity`   | number of units requested                                      |
 
 The routed path determines the vessel, the ETD/ETA and the transit time. It does
 not affect the price.
@@ -77,16 +77,16 @@ prints that beside the amount.
 
 ### Per container
 
-| Charge | Rule |
-| --- | --- |
-| Sea freight | `base × equipmentFactor × quantity` |
-| Terminal handling | `thcTable[equipment][class] × quantity` |
-| Port additional | `0.2 × thc × quantity` |
-| Port taxes, VGM, ISPS, control, seal | `table[class] × quantity` |
-| Dangerous goods (IMO) | `table[class] × quantity`, only when declared |
-| Reefer plug-in | `plugIn[equipment] × quantity` |
-| Bunker recovery (BRAF) | `brafBase[equipment] × 1.07^classIndex × quantity` |
-| Emissions and ETS | scaled with the quantity |
+| Charge                               | Rule                                               |
+| ------------------------------------ | -------------------------------------------------- |
+| Sea freight                          | `base × equipmentFactor × quantity`                |
+| Terminal handling                    | `thcTable[equipment][class] × quantity`            |
+| Port additional                      | `0.2 × thc × quantity`                             |
+| Port taxes, VGM, ISPS, control, seal | `table[class] × quantity`                          |
+| Dangerous goods (IMO)                | `table[class] × quantity`, only when declared      |
+| Reefer plug-in                       | `plugIn[equipment] × quantity`                     |
+| Bunker recovery (BRAF)               | `brafBase[equipment] × 1.07^classIndex × quantity` |
+| Emissions and ETS                    | scaled with the quantity                           |
 
 `equipmentFactor` is column D of the `BOOKINGS!Tariffs` equipment block: 0.80 for
 a 20' dry, 1.00 for a 40' dry (the FEU reference), 1.15 for a 45' HC, 1.25 for a
@@ -98,11 +98,11 @@ sits below A. Verified exactly: A = 1, B = 1.07, C = 1.1449, D = 1.225043.
 
 ### Per shipment
 
-| Charge | Rule |
-| --- | --- |
-| Documentation | `table[class]` |
+| Charge              | Rule           |
+| ------------------- | -------------- |
+| Documentation       | `table[class]` |
 | Logistic management | `table[class]` |
-| Customs clearance | `table[class]` |
+| Customs clearance   | `table[class]` |
 
 One bill of lading, one booking, one customs declaration, however many
 containers are on it.
@@ -122,17 +122,17 @@ recovered from the worked quotations by the importer, which accepts a value only
 when every row of a class agrees on it and reports a disagreement rather than
 averaging:
 
-| Surcharge | A | B | C | D |
-| --- | --- | --- | --- | --- |
-| Documentation | 54 | 66 | 72 | 78 |
-| Logistic management | 8 | 10 | 12 | 14 |
-| Customs clearance | 35 | 40 | 45 | 50 |
-| Port taxes | 20 | 35 | 40 | 45 |
-| VGM SOLAS | 25 | 30 | 35 | 40 |
-| ISPS | 15 | 20 | 25 | 30 |
-| Control | 20 | 25 | 30 | 35 |
-| Seal | 10 | 11 | 12 | 15 |
-| Dangerous goods (IMO) | — | — | 65 | 70 |
+| Surcharge             | A   | B   | C   | D   |
+| --------------------- | --- | --- | --- | --- |
+| Documentation         | 54  | 66  | 72  | 78  |
+| Logistic management   | 8   | 10  | 12  | 14  |
+| Customs clearance     | 35  | 40  | 45  | 50  |
+| Port taxes            | 20  | 35  | 40  | 45  |
+| VGM SOLAS             | 25  | 30  | 35  | 40  |
+| ISPS                  | 15  | 20  | 25  | 30  |
+| Control               | 20  | 25  | 30  | 35  |
+| Seal                  | 10  | 11  | 12  | 15  |
+| Dangerous goods (IMO) | —   | —   | 65  | 70  |
 
 The two missing IMO rates are genuine gaps: no worked quotation ever carried
 dangerous goods from a class A or B port. A quotation that needs one shows the
@@ -151,14 +151,14 @@ emissions = intensity(refrigerated) / 1000
 `BOOKINGS!Tariffs` gives a per-unit emissions figure for all sixteen unit types.
 Eight of them cannot be intensities:
 
-| Unit | TEU | Workbook figure | Per TEU |
-| --- | --- | --- | --- |
-| 20' dry container | 1 | 85 | 85 |
-| 20' reefer | 1 | 140 | 140 |
-| Semi-trailer | 2.23 | 68 | 30 |
-| **20' flatrack** | 1 | **765** | **765** |
-| **Vehicles** | 1 | **255** | **255** |
-| **45' roll trailer** | 2.25 | **607** | **270** |
+| Unit                 | TEU  | Workbook figure | Per TEU |
+| -------------------- | ---- | --------------- | ------- |
+| 20' dry container    | 1    | 85              | 85      |
+| 20' reefer           | 1    | 140             | 140     |
+| Semi-trailer         | 2.23 | 68              | 30      |
+| **20' flatrack**     | 1    | **765**         | **765** |
+| **Vehicles**         | 1    | **255**         | **255** |
+| **45' roll trailer** | 2.25 | **607**         | **270** |
 
 A twenty-foot flatrack would emit nine times a dry box of the same size, while
 being lighter and emptier. The three credible rows sit where the industry
@@ -190,13 +190,13 @@ vesselFactor = Σ(legDistance × (serviceSpeed / fleetMean)²) / Σ(legDistance)
 rather than a simple average, so that the 978-mile Palma shuttle cannot drag the
 baseline down and quietly raise every ocean service against it.
 
-| Service | Speed | Factor |
-| --- | --- | --- |
-| Westmed | 18.133 kn | 1.050 |
-| EurAsia | 18.090 kn | 1.045 |
-| Eastmed | 17.925 kn | 1.026 |
-| Optimed | 16.862 kn | 0.908 |
-| Gimnesias | 10.186 kn | 0.331 |
+| Service   | Speed     | Factor |
+| --------- | --------- | ------ |
+| Westmed   | 18.133 kn | 1.050  |
+| EurAsia   | 18.090 kn | 1.045  |
+| Eastmed   | 17.925 kn | 1.026  |
+| Optimed   | 16.862 kn | 0.908  |
+| Gimnesias | 10.186 kn | 0.331  |
 
 Averaged over the legs by the distance each carries the cargo, so a short feeder
 leg onto a long ocean voyage barely moves the figure.
@@ -232,21 +232,21 @@ reproduced all four deliberately, because the brief asked for parity to the cent
 On 2026-09-23 the product owner instructed that the freight and every
 cargo-handling charge must follow the number of containers, and they were fixed.
 
-| # | Defect | Effect | Now |
-| --- | --- | --- | --- |
-| A | `TOTAL FREIGHT = base`, so the sea freight was charged **once** however many units were booked | A 20-container booking paid one container's freight | Fixed: `× quantity` |
-| B | `PORT ADDITIONAL = 0.2 × thc × quantity²` | At 25 units it was 25 times too large | Fixed: linear in quantity |
-| C | Emissions ignored the quantity | The CO2 figure understated a multi-unit shipment | Fixed: `× quantity` |
-| D | The equipment factor was computed into a `Freight` column the total then ignored | A 20' reefer was charged a 40' dry's freight | Fixed: the factor is applied |
+| #   | Defect                                                                                         | Effect                                              | Now                          |
+| --- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------- | ---------------------------- |
+| A   | `TOTAL FREIGHT = base`, so the sea freight was charged **once** however many units were booked | A 20-container booking paid one container's freight | Fixed: `× quantity`          |
+| B   | `PORT ADDITIONAL = 0.2 × thc × quantity²`                                                      | At 25 units it was 25 times too large               | Fixed: linear in quantity    |
+| C   | Emissions ignored the quantity                                                                 | The CO2 figure understated a multi-unit shipment    | Fixed: `× quantity`          |
+| D   | The equipment factor was computed into a `Freight` column the total then ignored               | A 20' reefer was charged a 40' dry's freight        | Fixed: the factor is applied |
 
 Two of these were large and pulled in opposite directions, which is why the
 error was not obvious from the totals. Twenty 20' reefers Barcelona to Damietta:
 
-| | Legacy | Corrected |
-| --- | --- | --- |
-| Sea freight | 912.15 | 22 803.73 |
-| Port additional | 24 320.00 | 1 216.00 |
-| Total | 34 800.63 | 35 647.62 |
+|                 | Legacy    | Corrected |
+| --------------- | --------- | --------- |
+| Sea freight     | 912.15    | 22 803.73 |
+| Port additional | 24 320.00 | 1 216.00  |
+| Total           | 34 800.63 | 35 647.62 |
 
 The totals differ by 2 %. The composition does not resemble itself at all: the
 old quotation was almost two thirds a port surcharge that should have been
