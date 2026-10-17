@@ -3,498 +3,261 @@
     "originId": "antwerp",
     "destinationId": "nouakchott",
     "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "tanger-med"
-      },
-      {
-        "serviceId": "westmed",
-        "toPortId": "nouakchott"
-      }
+      { "serviceId": "eurasia", "toPortId": "tanger-med" },
+      { "serviceId": "westmed", "toPortId": "nouakchott" }
     ]
   },
   {
     "originId": "aqaba",
     "destinationId": "marseille",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "marseille"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "marseille" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "abu-dhabi",
-    "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "abu-dhabi"
-      }
-    ]
+    "legs": [{ "serviceId": "eurasia", "toPortId": "abu-dhabi" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "algiers",
-    "legs": [
-      {
-        "serviceId": "westmed",
-        "toPortId": "algiers"
-      }
-    ]
+    "legs": [{ "serviceId": "westmed", "toPortId": "algiers" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "aqaba",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "aqaba"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "aqaba" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "beirut",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "beirut"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "beirut" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "busan",
-    "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "busan"
-      }
-    ]
+    "legs": [{ "serviceId": "eurasia", "toPortId": "busan" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "casablanca",
-    "legs": [
-      {
-        "serviceId": "westmed",
-        "toPortId": "casablanca"
-      }
-    ]
+    "legs": [{ "serviceId": "westmed", "toPortId": "casablanca" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "civitavecchia",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "civitavecchia"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "civitavecchia" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "damietta",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "damietta"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "damietta" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "genova",
-    "legs": [
-      {
-        "serviceId": "eastmed",
-        "toPortId": "genova"
-      }
-    ]
+    "legs": [{ "serviceId": "eastmed", "toPortId": "genova" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "izmir",
-    "legs": [
-      {
-        "serviceId": "eastmed",
-        "toPortId": "izmir"
-      }
-    ]
+    "legs": [{ "serviceId": "eastmed", "toPortId": "izmir" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "jeddah",
-    "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "jeddah"
-      }
-    ]
+    "legs": [{ "serviceId": "eurasia", "toPortId": "jeddah" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "misurata",
-    "legs": [
-      {
-        "serviceId": "eastmed",
-        "toPortId": "misurata"
-      }
-    ]
+    "legs": [{ "serviceId": "eastmed", "toPortId": "misurata" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "mumbai",
-    "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "mumbai"
-      }
-    ]
+    "legs": [{ "serviceId": "eurasia", "toPortId": "mumbai" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "nouakchott",
-    "legs": [
-      {
-        "serviceId": "westmed",
-        "toPortId": "nouakchott"
-      }
-    ]
+    "legs": [{ "serviceId": "westmed", "toPortId": "nouakchott" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "palma",
-    "legs": [
-      {
-        "serviceId": "gimnesias",
-        "toPortId": "palma"
-      }
-    ]
+    "legs": [{ "serviceId": "gimnesias", "toPortId": "palma" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "rades",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "rades"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "rades" }]
   },
   {
     "originId": "barcelona",
     "destinationId": "tanger-med",
-    "legs": [
-      {
-        "serviceId": "westmed",
-        "toPortId": "tanger-med"
-      }
-    ]
+    "legs": [{ "serviceId": "westmed", "toPortId": "tanger-med" }]
   },
   {
     "originId": "bari",
     "destinationId": "mumbai",
     "legs": [
-      {
-        "serviceId": "eastmed",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "eurasia",
-        "toPortId": "mumbai"
-      }
+      { "serviceId": "eastmed", "toPortId": "barcelona" },
+      { "serviceId": "eurasia", "toPortId": "mumbai" }
     ]
   },
   {
     "originId": "beirut",
     "destinationId": "barcelona",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "barcelona"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "barcelona" }]
   },
   {
     "originId": "casablanca",
     "destinationId": "barcelona",
-    "legs": [
-      {
-        "serviceId": "westmed",
-        "toPortId": "barcelona"
-      }
-    ]
+    "legs": [{ "serviceId": "westmed", "toPortId": "barcelona" }]
   },
   {
     "originId": "civitavecchia",
     "destinationId": "beirut",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "beirut"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "beirut" }]
   },
   {
     "originId": "damietta",
     "destinationId": "civitavecchia",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "civitavecchia"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "civitavecchia" }]
   },
   {
     "originId": "damietta",
     "destinationId": "valencia",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "valencia"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "valencia" }]
   },
   {
     "originId": "izmir",
     "destinationId": "barcelona",
-    "legs": [
-      {
-        "serviceId": "eastmed",
-        "toPortId": "barcelona"
-      }
-    ]
+    "legs": [{ "serviceId": "eastmed", "toPortId": "barcelona" }]
   },
   {
     "originId": "jeddah",
     "destinationId": "lisbon",
     "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "eurasia",
-        "toPortId": "lisbon"
-      }
+      { "serviceId": "eurasia", "toPortId": "barcelona" },
+      { "serviceId": "eurasia", "toPortId": "lisbon" }
     ]
   },
   {
     "originId": "lisbon",
     "destinationId": "abu-dhabi",
-    "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "abu-dhabi"
-      }
-    ]
+    "legs": [{ "serviceId": "eurasia", "toPortId": "abu-dhabi" }]
   },
   {
     "originId": "lisbon",
     "destinationId": "jeddah",
-    "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "jeddah"
-      }
-    ]
+    "legs": [{ "serviceId": "eurasia", "toPortId": "jeddah" }]
   },
   {
     "originId": "marseille",
     "destinationId": "rades",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "rades"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "rades" }]
   },
   {
     "originId": "nouakchott",
     "destinationId": "barcelona",
-    "legs": [
-      {
-        "serviceId": "westmed",
-        "toPortId": "barcelona"
-      }
-    ]
+    "legs": [{ "serviceId": "westmed", "toPortId": "barcelona" }]
   },
   {
     "originId": "nouakchott",
     "destinationId": "civitavecchia",
     "legs": [
-      {
-        "serviceId": "westmed",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "optimed",
-        "toPortId": "civitavecchia"
-      }
+      { "serviceId": "westmed", "toPortId": "barcelona" },
+      { "serviceId": "optimed", "toPortId": "civitavecchia" }
     ]
   },
   {
     "originId": "palermo",
     "destinationId": "yantian",
     "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "eurasia",
-        "toPortId": "yantian"
-      }
+      { "serviceId": "eurasia", "toPortId": "barcelona" },
+      { "serviceId": "eurasia", "toPortId": "yantian" }
     ]
   },
   {
     "originId": "palma",
     "destinationId": "barcelona",
-    "legs": [
-      {
-        "serviceId": "gimnesias",
-        "toPortId": "barcelona"
-      }
-    ]
+    "legs": [{ "serviceId": "gimnesias", "toPortId": "barcelona" }]
   },
   {
     "originId": "palma",
     "destinationId": "mumbai",
     "legs": [
-      {
-        "serviceId": "gimnesias",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "eurasia",
-        "toPortId": "mumbai"
-      }
+      { "serviceId": "gimnesias", "toPortId": "barcelona" },
+      { "serviceId": "eurasia", "toPortId": "mumbai" }
     ]
   },
   {
     "originId": "piraeus",
     "destinationId": "casablanca",
     "legs": [
-      {
-        "serviceId": "eastmed",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "westmed",
-        "toPortId": "casablanca"
-      }
+      { "serviceId": "eastmed", "toPortId": "barcelona" },
+      { "serviceId": "westmed", "toPortId": "casablanca" }
     ]
   },
   {
     "originId": "port-said",
     "destinationId": "civitavecchia",
     "legs": [
-      {
-        "serviceId": "eastmed",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "optimed",
-        "toPortId": "civitavecchia"
-      }
+      { "serviceId": "eastmed", "toPortId": "barcelona" },
+      { "serviceId": "optimed", "toPortId": "civitavecchia" }
     ]
   },
   {
     "originId": "port-said",
     "destinationId": "genova",
     "legs": [
-      {
-        "serviceId": "eastmed",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "eastmed",
-        "toPortId": "genova"
-      }
+      { "serviceId": "eastmed", "toPortId": "barcelona" },
+      { "serviceId": "eastmed", "toPortId": "genova" }
     ]
   },
   {
     "originId": "rades",
     "destinationId": "valencia",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "valencia"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "valencia" }]
   },
   {
     "originId": "valencia",
     "destinationId": "aqaba",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "aqaba"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "aqaba" }]
   },
   {
     "originId": "valencia",
     "destinationId": "casablanca",
     "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "westmed",
-        "toPortId": "casablanca"
-      }
+      { "serviceId": "optimed", "toPortId": "barcelona" },
+      { "serviceId": "westmed", "toPortId": "casablanca" }
     ]
   },
   {
     "originId": "valencia",
     "destinationId": "damietta",
-    "legs": [
-      {
-        "serviceId": "optimed",
-        "toPortId": "damietta"
-      }
-    ]
+    "legs": [{ "serviceId": "optimed", "toPortId": "damietta" }]
   },
   {
     "originId": "yantian",
     "destinationId": "barcelona",
-    "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "barcelona"
-      }
-    ]
+    "legs": [{ "serviceId": "eurasia", "toPortId": "barcelona" }]
   },
   {
     "originId": "yantian",
     "destinationId": "casablanca",
     "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "westmed",
-        "toPortId": "casablanca"
-      }
+      { "serviceId": "eurasia", "toPortId": "barcelona" },
+      { "serviceId": "westmed", "toPortId": "casablanca" }
     ]
   },
   {
     "originId": "yantian",
     "destinationId": "tanger-med",
     "legs": [
-      {
-        "serviceId": "eurasia",
-        "toPortId": "barcelona"
-      },
-      {
-        "serviceId": "westmed",
-        "toPortId": "tanger-med"
-      }
+      { "serviceId": "eurasia", "toPortId": "barcelona" },
+      { "serviceId": "westmed", "toPortId": "tanger-med" }
     ]
   }
 ]

@@ -30,6 +30,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import prettier from 'prettier';
 import { openWorkbook, num, str } from './xlsx.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -1097,10 +1098,30 @@ const BANNER = (sources) => `/**
  */
 `;
 
-function emit(file, contents) {
+/**
+ * Write a generated file, formatted the way the repository formats everything
+ * else.
+ *
+ * Not cosmetic: `npm run format:check` runs in CI, so an unformatted generated
+ * file fails the build. Formatting here rather than expecting whoever runs the
+ * import to remember `npm run format` afterwards keeps that from being a trap
+ * someone falls into once a year.
+ */
+async function emit(file, contents) {
   fs.mkdirSync(OUT_DIR, { recursive: true });
-  fs.writeFileSync(path.join(OUT_DIR, file), contents, 'utf8');
+  const target = path.join(OUT_DIR, file);
+  const options = await prettier.resolveConfig(target);
+  const formatted = await prettier.format(contents, { ...options, filepath: target });
+  fs.writeFileSync(target, formatted, 'utf8');
   return `src/data/quote/${file}`;
+}
+
+/** The same, for the JSON fixtures the test suite reads. */
+async function emitJson(target, value) {
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  const options = await prettier.resolveConfig(target);
+  const formatted = await prettier.format(JSON.stringify(value), { ...options, filepath: target });
+  fs.writeFileSync(target, formatted, 'utf8');
 }
 
 const json = (value) => JSON.stringify(value, null, 2);
@@ -1109,7 +1130,7 @@ const json = (value) => JSON.stringify(value, null, 2);
 /* Main                                                                       */
 /* -------------------------------------------------------------------------- */
 
-function main() {
+async function main() {
   const args = parseArgs(process.argv.slice(2));
   const general = openWorkbook(args.general);
   const bookings = openWorkbook(args.bookings);
@@ -1142,7 +1163,7 @@ function main() {
   const written = [];
 
   written.push(
-    emit(
+    await emit(
       'network.ts',
       BANNER('GENERAL!TABLES, GENERAL!SERVICES, GENERAL!VESSELS') +
         `import type { Port, Service, Vessel } from '@/types/quote';\n\n` +
@@ -1153,7 +1174,7 @@ function main() {
   );
 
   written.push(
-    emit(
+    await emit(
       'equipment.ts',
       BANNER('BOOKINGS!Tariffs') +
         `import type { Equipment } from '@/types/quote';\n\n` +
@@ -1162,7 +1183,7 @@ function main() {
   );
 
   written.push(
-    emit(
+    await emit(
       'tariffs.ts',
       BANNER('BOOKINGS!Tariffs, plus values recovered from 405 worked quotations') +
         `import type { Tariffs } from '@/types/quote';\n\n` +
@@ -1226,24 +1247,15 @@ function main() {
     }));
 
   const fixtureDir = path.join(ROOT, 'tests/fixtures');
-  fs.mkdirSync(fixtureDir, { recursive: true });
-  fs.writeFileSync(
-    path.join(fixtureDir, 'worked-quotations.json'),
-    `${JSON.stringify(corpus, null, 2)}\n`,
-    'utf8',
-  );
+  await emitJson(path.join(fixtureDir, 'worked-quotations.json'), corpus);
   written.push('tests/fixtures/worked-quotations.json');
 
   const routes = importPublishedRoutes(bookings, portIds, serviceIds);
-  fs.writeFileSync(
-    path.join(fixtureDir, 'published-routes.json'),
-    `${JSON.stringify(routes, null, 2)}\n`,
-    'utf8',
-  );
+  await emitJson(path.join(fixtureDir, 'published-routes.json'), routes);
   written.push('tests/fixtures/published-routes.json');
 
   written.push(
-    emit(
+    await emit(
       'distances.ts',
       BANNER('GENERAL!Distance NM') +
         `/** Direct port-to-port distance in nautical miles, which is what the price uses. */\n` +
@@ -1283,4 +1295,4 @@ function main() {
   }
 }
 
-main();
+await main();
