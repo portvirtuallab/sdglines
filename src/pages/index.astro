@@ -617,7 +617,9 @@ const structuredData = JSON.stringify([
                     {vessel.vesselType} &middot; IMO {vessel.imo}
                   </p>
                   <p class="mt-4 text-sm leading-relaxed text-navy-100">
-                    {vessel.namesake.field}, {vessel.namesake.lifespan}
+                    {vessel.namesake
+                      ? `${vessel.namesake.field}, ${vessel.namesake.lifespan}`
+                      : 'Name to be announced'}
                   </p>
                   <p class="mt-auto pt-4 text-sm font-medium text-sea-300" aria-hidden="true">
                     Technical data &rarr;

@@ -392,6 +392,186 @@ export const vessels: Vessel[] = [
         'Published on the legacy site at the URL /teano while the fleet table reads "Theano of Crotone". Canonical spelling used here is Theano.',
     },
   },
+
+  /* ---------------------------------------------------------------- *
+   * The American fleet. Eight hulls, no names.
+   *
+   * The number is computed rather than proposed: a weekly departure
+   * from every port needs the round-trip cycle rounded up to whole
+   * weeks, which gives 2 + 1 + 5. The brief suggested 3 + 2 + 5.
+   *
+   * The names are the operator’s to choose, so namesake is null and
+   * not a placeholder biography. The id never changes, so naming a
+   * ship later touches its name and nothing else.
+   * ---------------------------------------------------------------- */
+  {
+    id: 'am-atl-01',
+    slug: 'am-atl-01',
+    name: 'AM-ATL 01 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'am-atl',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the American network. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
+  {
+    id: 'am-atl-02',
+    slug: 'am-atl-02',
+    name: 'AM-ATL 02 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'am-atl',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the American network. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
+  {
+    id: 'am-pac-01',
+    slug: 'am-pac-01',
+    name: 'AM-PAC 01 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'am-pac',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the American network. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
+  {
+    id: 'am-int-01',
+    slug: 'am-int-01',
+    name: 'AM-INT 01 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'am-int',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the American network. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
+  {
+    id: 'am-int-02',
+    slug: 'am-int-02',
+    name: 'AM-INT 02 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'am-int',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the American network. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
+  {
+    id: 'am-int-03',
+    slug: 'am-int-03',
+    name: 'AM-INT 03 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'am-int',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the American network. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
+  {
+    id: 'am-int-04',
+    slug: 'am-int-04',
+    name: 'AM-INT 04 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'am-int',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the American network. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
+  {
+    id: 'am-int-05',
+    slug: 'am-int-05',
+    name: 'AM-INT 05 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'am-int',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the American network. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
 ];
 
 /** Look up a vessel by its stable id. */

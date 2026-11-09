@@ -48,12 +48,18 @@ const nextVessel = vessels[fleetIndex + 1];
 
 <BaseLayout
   title={vessel.name}
-  description={`${vessel.name}, ${VESSEL_TYPE_LABELS[vessel.vesselType]} of the SDG Lines fleet, IMO ${vessel.imo}. Named after ${vessel.namesake.fullName}, ${vessel.namesake.field.toLowerCase()}.`}
+  description={`${vessel.name}, ${VESSEL_TYPE_LABELS[vessel.vesselType]} of the SDG Lines fleet${
+    vessel.namesake
+      ? `, IMO ${vessel.imo}. Named after ${vessel.namesake.fullName}, ${vessel.namesake.field.toLowerCase()}.`
+      : '. The name of this ship has not been chosen yet.'
+  }`}
 >
   <PageHeader
     eyebrow={VESSEL_TYPE_LABELS[vessel.vesselType]}
     title={vessel.name}
-    intro={`Named after ${vessel.namesake.fullName}, ${vessel.namesake.lifespan}.`}
+    intro={vessel.namesake
+      ? `Named after ${vessel.namesake.fullName}, ${vessel.namesake.lifespan}.`
+      : 'This ship is in the register and on the schedule. Its name has not been chosen yet.'}
     tone="dark"
     breadcrumbs={[{ label: 'Fleet', href: '/fleet' }, { label: vessel.name }]}
   >
@@ -86,13 +92,32 @@ const nextVessel = vessels[fleetIndex + 1];
       <div class="min-w-0">
         <!-- Namesake -->
         <section aria-labelledby="namesake-heading">
-          <h2 id="namesake-heading" class="text-2xl">{vessel.namesake.fullName}</h2>
-          <p class="mt-1 font-mono text-sm text-navy-500">
-            {vessel.namesake.field} &middot; {vessel.namesake.lifespan}
-          </p>
-          <p class="mt-4 text-[1.0625rem] leading-relaxed text-navy-700">
-            {vessel.namesake.biography}
-          </p>
+          {
+            vessel.namesake ? (
+              <Fragment>
+                <h2 id="namesake-heading" class="text-2xl">
+                  {vessel.namesake.fullName}
+                </h2>
+                <p class="mt-1 font-mono text-sm text-navy-500">
+                  {vessel.namesake.field} &middot; {vessel.namesake.lifespan}
+                </p>
+                <p class="mt-4 text-[1.0625rem] leading-relaxed text-navy-700">
+                  {vessel.namesake.biography}
+                </p>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <h2 id="namesake-heading" class="text-2xl">
+                  Awaiting her name
+                </h2>
+                <p class="mt-4 text-[1.0625rem] leading-relaxed text-navy-700">
+                  Every ship in the SDG Lines fleet carries the name of a woman in science. This one
+                  is on the register and on the schedule, but her name has not been chosen yet. It
+                  will be announced by the operator.
+                </p>
+              </Fragment>
+            )
+          }
           <a
             href={url('/fleet/spirit')}
             class="mt-4 inline-flex text-sm font-semibold text-sea-700 hover:underline underline-offset-4"

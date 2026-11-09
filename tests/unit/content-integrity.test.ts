@@ -36,10 +36,32 @@ describe('identifiers and slugs', () => {
   });
 
   it('gives every vessel a unique id, IMO, MMSI and call sign', () => {
+    // An id is ours to assign, so every vessel has one and they are all distinct.
     expect(new Set(vessels.map((v) => v.id)).size).toBe(vessels.length);
-    expect(new Set(vessels.map((v) => v.imo)).size).toBe(vessels.length);
-    expect(new Set(vessels.map((v) => v.mmsi)).size).toBe(vessels.length);
-    expect(new Set(vessels.map((v) => v.callSign)).size).toBe(vessels.length);
+
+    // An IMO number, an MMSI and a call sign are issued to a ship, not chosen
+    // by us. The American hulls are on the register before they have any, and
+    // they all read Pending until the operator supplies them. Uniqueness is
+    // still required of every identifier that HAS been assigned - duplicating
+    // one would be a real error - so the pending ones are excluded here and
+    // held to a different rule below.
+    const assigned = (value: string) => value !== 'Pending';
+    for (const field of ['imo', 'mmsi', 'callSign'] as const) {
+      const values = vessels.map((v) => v[field]).filter(assigned);
+      expect(new Set(values).size, `two vessels share a ${field}`).toBe(values.length);
+    }
+  });
+
+  it('only leaves an identifier pending on a vessel that says it is unconfirmed', () => {
+    // So that Pending cannot become a permanent hiding place: a ship without
+    // its numbers must be flagged for review, and will fail this the day
+    // somebody marks it verified without filling them in.
+    for (const vessel of vessels.filter((v) => v.imo === 'Pending')) {
+      expect(
+        vessel.meta.status,
+        `${vessel.name} has no IMO number but is not marked for review`,
+      ).not.toBe('verified');
+    }
   });
 
   it('gives every equipment record a unique id and slug', () => {

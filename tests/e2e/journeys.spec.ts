@@ -1,5 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { path } from './helpers';
+import { ports } from '../../src/data/ports';
+
+/* The directory counts whatever is in the data. Writing the number into the
+   assertion meant that adding a port failed this test, which says nothing
+   about the directory and everything about the test. */
+const ALL_PORTS = `Showing all ${ports.length} ports`;
+const ONE_OF_ALL = `Showing 1 of ${ports.length} ports`;
 
 /**
  * The critical user journeys.
@@ -39,10 +46,10 @@ test.describe('finding a port', () => {
     await page.goto(path('/ports'));
 
     const status = page.getByRole('status');
-    await expect(status).toContainText('Showing all 36 ports');
+    await expect(status).toContainText(ALL_PORTS);
 
     await page.getByLabel('Search by port or country').fill('tunisia');
-    await expect(status).toContainText('Showing 1 of 36 ports');
+    await expect(status).toContainText(ONE_OF_ALL);
 
     await page.getByRole('link', { name: /Port of Rad/ }).click();
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Rad');
@@ -56,7 +63,7 @@ test.describe('finding a port', () => {
     await expect(page.getByText('No ports match those filters')).toBeVisible();
 
     await page.getByRole('button', { name: 'Clear all filters' }).click();
-    await expect(page.getByRole('status')).toContainText('Showing all 36 ports');
+    await expect(page.getByRole('status')).toContainText(ALL_PORTS);
   });
 
   test('works without JavaScript', async ({ browser }) => {

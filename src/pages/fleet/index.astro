@@ -98,7 +98,9 @@ const vesselTypes = [...new Set(vessels.map((v) => v.vesselType))];
                   </h3>
 
                   <p class="mt-1 text-sm text-navy-600">
-                    {vessel.namesake.field}, {vessel.namesake.lifespan}
+                    {vessel.namesake
+                      ? `${vessel.namesake.field}, ${vessel.namesake.lifespan}`
+                      : 'Name to be announced'}
                   </p>
 
                   <dl class="mt-5 space-y-1.5 border-t border-navy-100 pt-4 text-xs">

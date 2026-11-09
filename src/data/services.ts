@@ -233,6 +233,106 @@ export const services: Service[] = [
         'The Barcelona to Palma de Mallorca rotation is confirmed by the legacy Gimnesias page. No vessel is assigned to this service in the legacy fleet table, so the service currently has no published tonnage. Product owner to assign a vessel or confirm that the service is operated by a partner.',
     },
   },
+  /* ---------------------------------------------------------------- *
+   * The American network, November 2026.
+   *
+   * Transit days are computed from the leg distances at 18 knots with
+   * twelve hours a call. They are not estimates: americas/cycles.js in
+   * the quotation repository derives them from the same legs the
+   * quotation engine prices, so the timetable here and the transit time
+   * on a quotation cannot disagree.
+   * ---------------------------------------------------------------- */
+  {
+    id: 'am-atl',
+    slug: 'am-atl',
+    name: 'Atlantic Americas',
+    code: 'AM-ATL',
+    coverage: 'Caribbean to the North American Atlantic coast',
+    summary:
+      'Links Cartagena de Indias with New York and Halifax, carrying coffee and agricultural exports north and manufactured goods south.',
+    description: [
+      'Atlantic Americas is the shorter of the two Atlantic rotations and the one that feeds the Intercoastal service. Cartagena is the pivot: cargo arriving from the Pacific through the canal transfers here for New York and Halifax.',
+      'The rotation runs in one direction only, as a feeder loop does. Cartagena to New York is 1,980 nautical miles. Halifax back to New York means completing the loop through Cartagena, which is 4,400. A quotation shows that honestly rather than pretending the two are the same distance.',
+      'Two vessels hold a weekly departure from every port. The round trip is 5,000 nautical miles and takes 13.07 days including port time.',
+    ],
+    rotation: [
+      { portId: 'cartagena-de-indias', order: 1, transitDaysFromOrigin: 0 },
+      { portId: 'new-york-new-jersey', order: 2, transitDaysFromOrigin: 4.58 },
+      { portId: 'halifax', order: 3, transitDaysFromOrigin: 6.47 },
+    ],
+    frequency: 'Weekly',
+    vesselIds: ['am-atl-01', 'am-atl-02'],
+    capabilities: ['containers', 'reefer', 'dangerous-goods'],
+    mapColor: '#2f6f4e',
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Rotation proposed in the November 2026 brief. The distances, transit times and two-vessel deployment are computed rather than proposed: the brief suggested three vessels, which puts departures 4.36 days apart and cannot be published as a weekly timetable. Service name and animal identity await approval.',
+    },
+  },
+  {
+    id: 'am-pac',
+    slug: 'am-pac',
+    name: 'Pacific Americas',
+    code: 'AM-PAC',
+    coverage: 'United States and Canada on the Pacific coast',
+    summary:
+      'A short shuttle between Los Angeles and Vancouver for containerised general cargo, machinery, forest products and refrigerated cargo.',
+    description: [
+      'Pacific Americas is the shortest service on the network: 1,150 nautical miles each way, a round trip of 6.32 days including both calls.',
+      'It meets the rest of the network at Los Angeles and Vancouver, both of which the Intercoastal service also calls at, so cargo from the Atlantic coast reaches either port without a second vessel change.',
+      'One vessel holds a weekly departure from both ports. The brief proposed two, which would put departures 3.16 days apart: neither weekly nor twice weekly, and not a pattern that can be published.',
+    ],
+    rotation: [
+      { portId: 'los-angeles', order: 1, transitDaysFromOrigin: 0 },
+      { portId: 'vancouver', order: 2, transitDaysFromOrigin: 2.66 },
+    ],
+    frequency: 'Weekly',
+    vesselIds: ['am-pac-01'],
+    capabilities: ['containers', 'reefer', 'dangerous-goods'],
+    mapColor: '#b8860b',
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Rotation proposed in the November 2026 brief. One vessel is what a weekly service needs; the brief proposed two. Service name and animal identity await approval.',
+    },
+  },
+  {
+    id: 'am-int',
+    slug: 'am-int',
+    name: 'Intercoastal Americas',
+    code: 'AM-INT',
+    coverage: 'North American Atlantic and Pacific coasts through the Panama Canal',
+    summary:
+      'The long rotation: New York to Cartagena, through the Panama Canal to Los Angeles and Vancouver, and home the same way.',
+    description: [
+      'Intercoastal Americas is the backbone of the American network and the reason the other two services reach each other. The round trip is 12,708 nautical miles and 33.42 days, of which two days are canal passage and waiting.',
+      'The Panama Canal is a transit, not a call. A vessel works no cargo there, so it is not a port in the simulation and cannot be quoted to or from. Its passage and waiting time are carried on the legs that enter and leave it, which is where they belong.',
+      'Los Angeles is called twice, outbound and homebound, and works cargo on both occasions. That is what lets a shipment from Vancouver reach New York on a single vessel.',
+      'Five vessels hold a weekly departure. This is the one service where the proposed deployment and the computed cycle agree.',
+    ],
+    rotation: [
+      { portId: 'new-york-new-jersey', order: 1, transitDaysFromOrigin: 0 },
+      { portId: 'cartagena-de-indias', order: 2, transitDaysFromOrigin: 4.58 },
+      { portId: 'los-angeles', order: 3, transitDaysFromOrigin: 13.05 },
+      { portId: 'vancouver', order: 4, transitDaysFromOrigin: 16.21 },
+    ],
+    frequency: 'Weekly',
+    vesselIds: ['am-int-01', 'am-int-02', 'am-int-03', 'am-int-04', 'am-int-05'],
+    capabilities: ['containers', 'reefer', 'dangerous-goods'],
+    mapColor: '#7b4397',
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Rotation proposed in the November 2026 brief and confirmed at five vessels by the cycle calculation. The rotation above lists the first call at each port; Los Angeles and Cartagena are called again homebound. Service name and animal identity await approval.',
+    },
+  },
 ];
 
 export function getServiceById(id: string): Service | undefined {

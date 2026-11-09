@@ -24,6 +24,8 @@ import type { CargoCapability, Port, Region } from '@/types/content';
 const AUDIT_DATE = '2026-09-18';
 
 /** Capability sets used repeatedly, named so the intent is readable. */
+const CONTAINER_ONLY: CargoCapability[] = ['containers', 'reefer', 'dangerous-goods'];
+
 const FULL_SERVICE: CargoCapability[] = [
   'containers',
   'roro',
@@ -515,6 +517,91 @@ const seeds: PortSeed[] = [
     summary: 'The eastern terminus of the EurAsia service and its Far East transhipment point.',
     services: ['eurasia'],
     capabilities: FULL_SERVICE,
+  },
+  /* ---------------------------------------------------------------- *
+   * The American network, November 2026.
+   *
+   * Throughput figures are real and set the simulation's port category,
+   * which is what drives terminal handling and every other local charge.
+   * No agency representative is named: appointing one is the operator's
+   * decision, in the same way the vessel names are.
+   * ---------------------------------------------------------------- */
+  {
+    slug: 'cartagena-de-indias',
+    city: 'Cartagena de Indias',
+    country: 'Colombia',
+    countryCode: 'CO',
+    region: 'Caribbean',
+    locode: 'COCTG',
+    coordinates: [10.3997, -75.5144],
+    summary:
+      'The Caribbean pivot of the American network. Atlantic Americas and Intercoastal Americas both call here, which makes it the transhipment point between the Atlantic coast and anything moving through the Panama Canal.',
+    services: ['am-atl', 'am-int'],
+    capabilities: CONTAINER_ONLY,
+    annualThroughputTeu: 2_900_000,
+    reviewNote: 'Throughput from the port authority. Agency representative not yet appointed.',
+  },
+  {
+    slug: 'new-york-new-jersey',
+    city: 'New York / New Jersey',
+    country: 'United States',
+    countryCode: 'US',
+    region: 'North America East',
+    locode: 'USNYC',
+    coordinates: [40.684, -74.15],
+    summary:
+      'The northern end of the Atlantic Americas rotation and the Atlantic terminus of the Intercoastal service. Handled as one port complex; the New Jersey terminals carry their own codes.',
+    services: ['am-atl', 'am-int'],
+    capabilities: CONTAINER_ONLY,
+    annualThroughputTeu: 8_900_000,
+    reviewNote:
+      'Held as a single port record with USNYC. Terminal-specific LOCODEs, Port Newark among them, still to be validated with the operator.',
+  },
+  {
+    slug: 'halifax',
+    city: 'Halifax',
+    country: 'Canada',
+    countryCode: 'CA',
+    region: 'North America East',
+    locode: 'CAHAL',
+    coordinates: [44.6488, -63.5752],
+    summary:
+      'The most northerly call on the network and the turn of the Atlantic Americas rotation. Reached from New York in under two days; the return leg sails south to Cartagena.',
+    services: ['am-atl'],
+    capabilities: CONTAINER_ONLY,
+    annualThroughputTeu: 550_000,
+    reviewNote: 'Throughput from the port authority. Agency representative not yet appointed.',
+  },
+  {
+    slug: 'vancouver',
+    city: 'Vancouver',
+    country: 'Canada',
+    countryCode: 'CA',
+    region: 'North America West',
+    locode: 'CAVAN',
+    coordinates: [49.2888, -123.1111],
+    summary:
+      'The northern call of the Pacific Americas shuttle and the far end of the Intercoastal rotation. Forest products and refrigerated cargo move south from here.',
+    services: ['am-pac', 'am-int'],
+    capabilities: CONTAINER_ONLY,
+    annualThroughputTeu: 3_300_000,
+    reviewNote: 'Throughput from the port authority. Agency representative not yet appointed.',
+  },
+  {
+    slug: 'los-angeles',
+    city: 'Los Angeles',
+    country: 'United States',
+    countryCode: 'US',
+    region: 'North America West',
+    locode: 'USLAX',
+    coordinates: [33.7395, -118.261],
+    summary:
+      'The Pacific hub of the network. Both American Pacific services call here, and the Intercoastal rotation works cargo twice, outbound and homebound.',
+    services: ['am-pac', 'am-int'],
+    capabilities: CONTAINER_ONLY,
+    annualThroughputTeu: 8_600_000,
+    reviewNote:
+      'Throughput from the port authority. Long Beach, USLGB, is reserved as a possible additional call in a later phase.',
   },
 ];
 

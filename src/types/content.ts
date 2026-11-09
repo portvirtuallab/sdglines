@@ -66,7 +66,10 @@ export type Region =
   | 'Red Sea'
   | 'Arabian Gulf'
   | 'Indian Ocean'
-  | 'Far East';
+  | 'Far East'
+  | 'Caribbean'
+  | 'North America East'
+  | 'North America West';
 
 export type CargoCapability =
   | 'containers'
@@ -147,7 +150,7 @@ export interface Service extends ContentRecord {
 /* Vessels                                                                    */
 /* -------------------------------------------------------------------------- */
 
-export type VesselType = 'PCTC' | 'ConRo' | 'Autonomous electric cargo vessel';
+export type VesselType = 'PCTC' | 'ConRo' | 'Autonomous electric cargo vessel' | 'Container ship';
 
 export interface Namesake {
   fullName: string;
@@ -182,8 +185,16 @@ export interface Vessel extends ContentRecord {
   yearLaunched: number;
   /** Id of the service the vessel is deployed on, or null when unassigned. */
   serviceId: string | null;
-  /** The woman the vessel is named after. */
-  namesake: Namesake;
+  /**
+   * The woman the vessel is named after, or null while the name is pending.
+   *
+   * A vessel joins the register before it is named: the American ships exist
+   * as hulls with services and schedules, and their names are chosen by the
+   * operator. Modelling that as null rather than a placeholder namesake keeps
+   * the fleet pages honest - a ship with no name has nobody to be named after,
+   * and the pages say so instead of printing an invented biography.
+   */
+  namesake: Namesake | null;
   particulars: VesselParticulars;
 }
 

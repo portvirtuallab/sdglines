@@ -16,7 +16,12 @@ import { url } from '@/lib/site';
  * record. They are ordered by the period the person worked in rather than
  * alphabetically, because read in that order the fleet becomes a timeline.
  */
-const ordered = [...vessels].sort((a, b) => {
+const named = vessels.filter(
+  (vessel): vessel is typeof vessel & { namesake: NonNullable<typeof vessel.namesake> } =>
+    vessel.namesake !== null,
+);
+
+const ordered = [...named].sort((a, b) => {
   /** Pull the first year out of a lifespan string, treating BCE as negative. */
   const yearOf = (lifespan: string): number => {
     const match = lifespan.match(/(\d+)/);
@@ -26,7 +31,7 @@ const ordered = [...vessels].sort((a, b) => {
   return yearOf(a.namesake.lifespan) - yearOf(b.namesake.lifespan);
 });
 
-const fields = [...new Set(vessels.map((vessel) => vessel.namesake.field))].sort();
+const fields = [...new Set(named.map((vessel) => vessel.namesake.field))].sort();
 ---
 
 <BaseLayout

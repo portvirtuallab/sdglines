@@ -34,6 +34,7 @@ export const VESSEL_TYPE_LABELS: Record<VesselType, string> = {
   PCTC: 'Pure car and truck carrier',
   ConRo: 'Container and Ro-Ro vessel',
   'Autonomous electric cargo vessel': 'Autonomous electric cargo vessel',
+  'Container ship': 'Container ship',
 };
 
 export const EQUIPMENT_CATEGORY_LABELS: Record<EquipmentCategory, string> = {
