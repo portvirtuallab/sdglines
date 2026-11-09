@@ -17,6 +17,19 @@ export const SITE = {
   operator: 'Escola Europea - Intermodal Transport',
   operatorUrl: 'https://escolaeuropea.eu',
   pvlUrl: 'https://pvl.one',
+  /**
+   * The Quotation Desk, which is where quotations are actually produced.
+   *
+   * It is a separate application with its own repository, because it needs
+   * things this site cannot have: it reads live tariffs from a Google Sheet a
+   * trainer edits between sessions, it issues a real quotation number, and it
+   * files a PDF in Drive. This site is a static bundle with no server, so a
+   * quotation built here could never be any of those things.
+   *
+   * Both are served from the same GitHub Pages host, so the hand-off is an
+   * ordinary link and the learner stays inside the simulation.
+   */
+  quotationDeskUrl: 'https://portvirtuallab.github.io/sdg-lines-quotation/',
   contactEmail: 'info@escolaeuropea.eu',
   address: {
     street: 'Moll de Barcelona - Terminal Drassanes',
