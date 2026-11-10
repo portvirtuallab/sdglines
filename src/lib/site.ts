@@ -1,7 +1,10 @@
+import { services } from '@/data/services';
+import { vessels } from '@/data/vessels';
+
 /**
  * Site-wide constants and the navigation model.
  *
- * The legacy site put every route, every vessel and all 36 ports directly into
+ * The legacy site put every route, every vessel and every port directly into
  * the primary navigation, which produced a menu with more than seventy items.
  * The structure below is deliberately capped at seven sections; the long lists
  * live behind searchable directories instead.
@@ -102,21 +105,14 @@ export const PRIMARY_NAV: NavSection[] = [
   {
     label: 'Routes',
     href: '/routes',
-    children: [
-      {
-        label: 'Westmed',
-        href: '/routes/westmed',
-        description: 'Western Mediterranean and Maghreb',
-      },
-      { label: 'Eastmed', href: '/routes/eastmed', description: 'Aegean, Levant and Nile delta' },
-      {
-        label: 'Optimed',
-        href: '/routes/optimed',
-        description: 'Central Mediterranean and Adriatic',
-      },
-      { label: 'EurAsia', href: '/routes/eurasia', description: 'North Europe to the Far East' },
-      { label: 'Gimnesias', href: '/routes/gimnesias', description: 'Barcelona to the Balearics' },
-    ],
+    /* Built from the services themselves. Written by hand, this list said
+       five for as long as it took somebody to notice the three American
+       services were missing from the menu while having pages of their own. */
+    children: services.map((service) => ({
+      label: service.name,
+      href: `/routes/${service.slug}`,
+      description: service.coverage,
+    })),
   },
   {
     label: 'Fleet',
@@ -125,7 +121,7 @@ export const PRIMARY_NAV: NavSection[] = [
       {
         label: 'All vessels',
         href: '/fleet',
-        description: 'Search and filter the fourteen vessels',
+        description: `Search and filter the ${vessels.length} vessels`,
       },
       {
         label: 'The spirit of the vessels',

@@ -6,6 +6,7 @@ import { equipment } from '@/data/equipment';
 import { cargoServices } from '@/data/cargoServices';
 import { prosePages } from '@/data/pages';
 import { searchIndex } from '@/lib/searchIndex';
+import { PRIMARY_NAV } from '@/lib/site';
 
 /**
  * Content integrity.
@@ -283,6 +284,35 @@ describe('editorial rules', () => {
       expect(page.description.length, `${page.title} meta description is too long`).toBeLessThan(
         320,
       );
+    }
+  });
+});
+
+describe('the navigation reaches what exists', () => {
+  /* Three services were published with pages, rotations and vessels, and did
+     not appear in the Routes menu, because the menu was a list somebody typed
+     once. A visitor who did not already know the American services existed had
+     no way to find them from the header. */
+  it('offers every service in the Routes menu', () => {
+    const routes = PRIMARY_NAV.find((section) => section.label === 'Routes');
+    expect(routes, 'the header should have a Routes section').toBeTruthy();
+
+    const linked = new Set((routes?.children ?? []).map((child) => child.href));
+    for (const service of services) {
+      expect(linked, `${service.name} has a page but no menu entry`).toContain(
+        `/routes/${service.slug}`,
+      );
+    }
+  });
+
+  /* Every menu entry has to land somewhere real, which is the same rule read
+     from the other end. */
+  it('points every Routes menu entry at a service that exists', () => {
+    const routes = PRIMARY_NAV.find((section) => section.label === 'Routes');
+    const slugs = new Set(services.map((service) => service.slug));
+    for (const child of routes?.children ?? []) {
+      const slug = child.href.replace('/routes/', '');
+      expect(slugs, `the menu links to /routes/${slug}, which is not a service`).toContain(slug);
     }
   });
 });

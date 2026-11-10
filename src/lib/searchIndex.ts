@@ -151,7 +151,7 @@ export const searchIndex: SearchEntry[] = [
   {
     type: 'Page',
     title: 'Port directory',
-    subtitle: 'All 36 ports of call, searchable and filterable',
+    subtitle: `All ${ports.length} ports of call, searchable and filterable`,
     href: '/ports',
     keywords: normalise('ports directory list countries regions'),
   },
