@@ -54,11 +54,12 @@ const organisationJsonLd = JSON.stringify({
   email: SITE.contactEmail,
   address: {
     '@type': 'PostalAddress',
-    streetAddress: SITE.address.street,
+    streetAddress: `${SITE.address.street}, ${SITE.address.building}`,
     postalCode: SITE.address.postalCode,
     addressLocality: SITE.address.city,
     addressCountry: SITE.address.country,
   },
+  telephone: SITE.phone,
   department: {
     '@type': 'Organization',
     name: SITE.name,

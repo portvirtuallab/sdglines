@@ -375,7 +375,7 @@ export const prosePages: ProsePage[] = [
         blocks: [
           {
             type: 'paragraph',
-            text: 'This website is owned and operated by Escola Europea de Short Sea Shipping AEIE, Moll de Barcelona - Terminal Drassanes, 08039 Barcelona, Spain.',
+            text: 'This website is owned and operated by Escola Europea de Short Sea Shipping AEIE, Moll de Barcelona - Terminal Drassanes, Jardins de l’Areté 1, 08039 Barcelona, Spain.',
           },
           {
             type: 'paragraph',

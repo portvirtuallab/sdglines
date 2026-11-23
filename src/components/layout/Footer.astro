@@ -21,15 +21,33 @@ const year = new Date().getFullYear();
 
           <address class="mt-6 text-sm not-italic leading-relaxed">
             {SITE.address.street}<br />
+            {SITE.address.building}<br />
             {SITE.address.postalCode}
-            {SITE.address.city}, {SITE.address.country}<br />
-            <a
-              href={`mailto:${SITE.contactEmail}`}
-              class="mt-1 inline-block text-white underline decoration-navy-500 underline-offset-4 hover:decoration-white"
-            >
-              {SITE.contactEmail}
-            </a>
+            {SITE.address.city}, {SITE.address.country}
           </address>
+
+          <!-- Phone and e-mail are stacked links, so they need room between
+               them: at text-sm on a relaxed line height they land just under
+               the 24px WCAG 2.2 target size and, worse, directly adjacent.
+               The vertical padding gives each its own target. -->
+          <ul class="mt-3 space-y-1 text-sm">
+            <li>
+              <a
+                href={`tel:${SITE.phone.replace(/\s/g, '')}`}
+                class="inline-block py-1 text-white underline decoration-navy-500 underline-offset-4 hover:decoration-white"
+              >
+                {SITE.phone}
+              </a>
+            </li>
+            <li>
+              <a
+                href={`mailto:${SITE.contactEmail}`}
+                class="inline-block py-1 text-white underline decoration-navy-500 underline-offset-4 hover:decoration-white"
+              >
+                {SITE.contactEmail}
+              </a>
+            </li>
+          </ul>
 
           <a
             href={SITE.linkedIn}

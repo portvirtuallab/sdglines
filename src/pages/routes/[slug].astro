@@ -41,15 +41,31 @@ const deployedVessels = service.vesselIds
   .map((id) => getVesselById(id))
   .filter((vessel): vessel is NonNullable<typeof vessel> => Boolean(vessel));
 
-/** Bounds that comfortably contain every port on this rotation. */
+/**
+ * Bounds that contain every port on this rotation, with room for its labels.
+ *
+ * The padding is proportional rather than a flat six degrees. A fixed margin
+ * cannot suit both Gimnesias, which spans about two degrees between Barcelona
+ * and Palma, and the intercoastal American service, which spans fifty: six
+ * degrees swallowed the short rotation and left the long one adrift in empty
+ * sea. Each axis is padded by a share of its own span, with a floor so that a
+ * very short hop still has somewhere to put its labels.
+ *
+ * Longitude gets a wider share because the labels run horizontally.
+ */
 const lats = rotationPorts.map((entry) => entry.port.coordinates[0]);
 const lons = rotationPorts.map((entry) => entry.port.coordinates[1]);
-const padding = 6;
+
+const lonSpan = Math.max(...lons) - Math.min(...lons);
+const latSpan = Math.max(...lats) - Math.min(...lats);
+const lonPadding = Math.max(4, lonSpan * 0.18);
+const latPadding = Math.max(2.5, latSpan * 0.12);
+
 const bounds: [number, number, number, number] = [
-  Math.min(...lons) - padding,
-  Math.min(...lats) - padding,
-  Math.max(...lons) + padding,
-  Math.max(...lats) + padding,
+  Math.min(...lons) - lonPadding,
+  Math.min(...lats) - latPadding,
+  Math.max(...lons) + lonPadding,
+  Math.max(...lats) + latPadding,
 ];
 
 const countries = [...new Set(rotationPorts.map((entry) => entry.port.country))];

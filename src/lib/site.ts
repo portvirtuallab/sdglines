@@ -34,12 +34,24 @@ export const SITE = {
    */
   quotationDeskUrl: 'https://portvirtuallab.github.io/sdg-lines-quotation/',
   contactEmail: 'info@escolaeuropea.eu',
+  /**
+   * The Barcelona address, as Escola Europea publishes it on
+   * escolaeuropea.eu/contact-us. Verified against that page on 2026-11-23.
+   *
+   * The site previously carried only the first line, which was what the legacy
+   * sdglines.com footer had. The building line was missing, so the address was
+   * incomplete rather than wrong. Google's own listing for the centre renders
+   * these lines out of order; the operator's own page is the source used here.
+   */
   address: {
     street: 'Moll de Barcelona - Terminal Drassanes',
+    building: 'Jardins de l’Areté, 1',
     postalCode: '08039',
     city: 'Barcelona',
     country: 'Spain',
   },
+  /** As published on escolaeuropea.eu/contact-us. */
+  phone: '+34 93 298 60 70',
   linkedIn: 'https://www.linkedin.com/company/escola-europea-intermodal-transport/',
   /** Language of the published site. Additional locales are not yet enabled. */
   locale: 'en',

@@ -186,6 +186,22 @@ const accessibleDescription =
         drawnPorts.map((port) => {
           const [x, y] = project(port.coordinates);
           const isHub = port.serviceIds.length > 1;
+          const offset = isHub ? 16 : 12;
+
+          /**
+           * Which side of the point the label sits on.
+           *
+           * Labels used to be drawn to the right of every port with no check
+           * against the edge of the chart, so any port in the right-hand
+           * portion had its name run off the canvas: the Americas chart showed
+           * "New York /" and "Cartagena de l". Past roughly three quarters of
+           * the width there is not room for a name, so it flips to the left.
+           * The same applies at the very left edge, where a flipped label would
+           * run off the other side.
+           */
+          const flip = x > VIEW_W * 0.74 && x > 160;
+          const labelX = flip ? x - offset : x + offset;
+
           return (
             <g data-port={port.id}>
               <circle
@@ -209,8 +225,9 @@ const accessibleDescription =
               )}
               {showLabels && (
                 <text
-                  x={x + (isHub ? 16 : 12)}
+                  x={labelX}
                   y={y + 5}
+                  text-anchor={flip ? 'end' : 'start'}
                   font-family="Inter Variable, sans-serif"
                   font-size="15"
                   font-weight={isHub ? 600 : 500}
