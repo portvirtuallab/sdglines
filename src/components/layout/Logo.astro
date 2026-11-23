@@ -1,19 +1,23 @@
 ---
 import { Image } from 'astro:assets';
-import logo from '@/assets/sdg-lines-logo.png';
+import stacked from '@/assets/sdg-lines-logo.png';
+import horizontal from '@/assets/sdg-lines-logo-horizontal.png';
 
 /**
  * The SDG Lines logo.
  *
- * This is the real brand artwork, not a redrawing. It is served through Astro's
- * image pipeline so that it is emitted at the sizes actually used and with
- * explicit dimensions, which keeps it out of the layout shift budget.
+ * Both of these are the real brand artwork, taken from sdglines.com. Neither is
+ * redrawn or recoloured.
  *
- * One thing to know before using it on a dark surface: the mark contains a navy
- * swoosh (#203058) that disappears against the navy backgrounds used elsewhere
- * on this site. Rather than recolour the brand artwork, `plate` sets the logo on
- * a white panel, which is the conventional treatment and leaves the mark
- * untouched.
+ * Two lockups, because they do different jobs:
+ *
+ *   - `horizontal` is the one with the "Shipping Digital Game" tagline. It is
+ *     the right shape for a header: the stacked version is nearly square, so at
+ *     a legible width it forced the header taller than it needed to be.
+ *   - `stacked` is the square version, for places with height but not width.
+ *
+ * On a dark surface the mark's navy swoosh disappears, so `plate` sets the
+ * artwork on a white panel rather than recolouring it.
  */
 interface Props {
   /**
@@ -21,20 +25,29 @@ interface Props {
    * that already has visible text, to avoid announcing the destination twice.
    */
   alt?: string;
+  /** Which lockup to use. */
+  variant?: 'horizontal' | 'stacked';
   /** White backing panel, for use on the navy surfaces. */
   plate?: boolean;
   class?: string;
 }
 
-const { alt = 'SDG Lines, home', plate = false, class: className = '' } = Astro.props;
+const {
+  alt = 'SDG Lines, home',
+  variant = 'horizontal',
+  plate = false,
+  class: className = '',
+} = Astro.props;
+
+const source = variant === 'horizontal' ? horizontal : stacked;
 ---
 
 {
   plate ? (
-    <span class={`inline-flex items-center justify-center rounded-xl bg-white p-2.5 ${className}`}>
-      <Image src={logo} alt={alt} class="h-full w-auto" densities={[1, 2]} loading="eager" />
+    <span class={`inline-flex items-center justify-center rounded-xl bg-white p-3 ${className}`}>
+      <Image src={source} alt={alt} class="h-full w-auto" densities={[1, 2]} loading="eager" />
     </span>
   ) : (
-    <Image src={logo} alt={alt} class={className} densities={[1, 2]} loading="eager" />
+    <Image src={source} alt={alt} class={className} densities={[1, 2]} loading="eager" />
   )
 }

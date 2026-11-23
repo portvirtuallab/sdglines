@@ -139,7 +139,7 @@ export const prosePages: ProsePage[] = [
         blocks: [
           {
             type: 'paragraph',
-            text: 'SDG stands for Sustainable Development Goals: the seventeen goals adopted by the United Nations in 2015 as a shared agenda to 2030. Naming the simulated carrier after them was a deliberate choice, and it commits the simulation to something.',
+            text: 'SDG carries two readings, and both are the brand’s own. The logo spells it out as Shipping Digital Game, which is what the simulation is. The site has also always presented it as the Sustainable Development Goals, the seventeen goals adopted by the United Nations in 2015 as a shared agenda to 2030. Whichever was meant first, the second reading commits the simulation to something, and this page is about that.',
           },
           {
             type: 'paragraph',
