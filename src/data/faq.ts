@@ -49,8 +49,8 @@ export const faq: FaqItem[] = [
   {
     question: 'Does the quotation tool send my details anywhere?',
     answer:
-      'No. It runs entirely in your browser, works out the price and the reference there, and shows the result on the page. Nothing is transmitted or stored. It does ask for your name, e-mail address and the organisation you are taking part as, because those appear on the quotation itself, but that information never leaves your device.',
-    link: { label: 'How this site handles data', href: '/privacy' },
+      'Yes, and it is worth knowing the difference. This website collects nothing and has no form on it. Quotations are produced by the Quotation Desk, a separate application, and when you issue one there your name, e-mail address, organisation and the shipment are sent to a Google Apps Script endpoint and recorded, which is how it gives the quotation a number and a PDF. Use the name and address your exercise asks for rather than your own.',
+    link: { label: 'What is sent, and by what', href: '/privacy' },
   },
   {
     question: 'Can I track a shipment here?',

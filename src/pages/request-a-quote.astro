@@ -73,13 +73,28 @@ const equipmentCount = equipment.length;
             keep.
           </p>
 
+          <!-- The Desk is a different application at a different address, so
+               the link is signposted the way every other external link on this
+               site is. Leaving it silent would let someone issue a quotation
+               believing they were still on a site that collects nothing. -->
           <a
             class="mt-7 inline-flex items-center gap-2 rounded-lg bg-sea-700 px-6 py-3.5 font-semibold text-white transition hover:bg-sea-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sea-700"
             href={SITE.quotationDeskUrl}
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Open the Quotation Desk
             <span aria-hidden="true">&rarr;</span>
+            <span class="sr-only">(opens the Quotation Desk in a new tab)</span>
           </a>
+
+          <p class="mt-4 text-sm leading-relaxed text-navy-600">
+            The Quotation Desk is a separate application. Unlike this website, it records the
+            quotation you issue, including the name, e-mail address and organisation you give it.
+            <a class="font-medium text-sea-700 underline underline-offset-2" href={url('/privacy')}
+              >What that means</a
+            >.
+          </p>
 
           <ul class="mt-7 grid gap-x-8 gap-y-2.5 text-sm text-navy-700 sm:grid-cols-2">
             <li>Container, RORO and arrival charges</li>

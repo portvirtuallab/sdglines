@@ -37,6 +37,15 @@ const PAGES = [
 
 for (const page of PAGES) {
   test(`${page.name} has no detectable accessibility violations`, async ({ page: browserPage }) => {
+    // axe injects and runs a full rule set inside the page. On a loaded machine
+    // with several workers competing, that can pass the default 30 second
+    // timeout on the larger pages, and the run then reports a timeout as though
+    // it were a violation. A different page failed on each run while every one
+    // of them passed in isolation, which is the signature of that rather than of
+    // a real regression. These tests are genuinely slow; saying so is more
+    // honest than retrying until they are green.
+    test.slow();
+
     await browserPage.goto(path(page.path));
 
     const results = await new AxeBuilder({ page: browserPage })

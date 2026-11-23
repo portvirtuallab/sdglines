@@ -6,7 +6,8 @@ import { equipment } from '@/data/equipment';
 import { cargoServices } from '@/data/cargoServices';
 import { prosePages } from '@/data/pages';
 import { searchIndex } from '@/lib/searchIndex';
-import { PRIMARY_NAV } from '@/lib/site';
+import { PRIMARY_NAV, SITE } from '@/lib/site';
+import { faq } from '@/data/faq';
 
 /**
  * Content integrity.
@@ -314,5 +315,92 @@ describe('the navigation reaches what exists', () => {
       const slug = child.href.replace('/routes/', '');
       expect(slugs, `the menu links to /routes/${slug}, which is not a service`).toContain(slug);
     }
+  });
+});
+
+describe('what the site says about the Quotation Desk', () => {
+  /**
+   * Quotations used to be produced on this site, in the browser, sending
+   * nothing. They are now produced by the Quotation Desk, a separate
+   * application that POSTs the quotation - including name, e-mail address and
+   * organisation - to a Google Apps Script endpoint and records it.
+   *
+   * When that moved, the privacy page, the FAQ, the digitalisation page and the
+   * accessibility statement were all left describing the old arrangement. For a
+   * month this site told visitors their details never left their device while a
+   * page it linked to was recording them.
+   *
+   * Nothing caught it, because every one of those sentences is still perfectly
+   * grammatical and the tests only checked that pages rendered. These tests
+   * check the claim instead.
+   */
+  const quotationCopy = [
+    ...faq.map((item) => ({ where: `FAQ: ${item.question}`, text: item.answer })),
+    ...prosePages.flatMap((page) =>
+      page.sections.flatMap((section) =>
+        section.blocks.flatMap((block) => {
+          const text =
+            'text' in block
+              ? block.text
+              : 'items' in block && Array.isArray(block.items)
+                ? block.items
+                    .map((entry) =>
+                      typeof entry === 'string'
+                        ? entry
+                        : 'definition' in entry
+                          ? `${entry.term} ${entry.definition}`
+                          : '',
+                    )
+                    .join(' ')
+                : '';
+          return text ? [{ where: `${page.title} / ${section.heading}`, text }] : [];
+        }),
+      ),
+    ),
+  ];
+
+  /** Sentences that were true of the old in-page wizard and are false now. */
+  const FALSE_OF_THE_DESK = [
+    'nothing is transmitted or stored',
+    'never leaves your device',
+    'no request is sent to any server',
+    'sends nothing anywhere',
+    'nothing you type into a form on this site is transmitted',
+  ];
+
+  it('never claims the quotation stays on the visitor device', () => {
+    for (const entry of quotationCopy) {
+      const haystack = entry.text.toLowerCase();
+      if (!haystack.includes('quotation') && !haystack.includes('quote')) continue;
+
+      for (const claim of FALSE_OF_THE_DESK) {
+        expect(
+          haystack.includes(claim),
+          `"${entry.where}" says "${claim}" about the quotation. The Quotation Desk records it.`,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it('tells visitors the Quotation Desk records what they enter', () => {
+    const privacy = prosePages.find((page) => page.slug === 'privacy');
+    expect(privacy, 'there should be a privacy page').toBeTruthy();
+
+    const everything = privacy!.sections
+      .flatMap((section) => section.blocks.map((block) => ('text' in block ? block.text : '')))
+      .join(' ')
+      .toLowerCase();
+
+    expect(everything).toContain('quotation desk');
+    expect(
+      everything.includes('recorded') || everything.includes('records'),
+      'the privacy page should say the Quotation Desk records what is entered',
+    ).toBe(true);
+  });
+
+  it('points the hand-off at the Quotation Desk and nowhere else', () => {
+    // A relative path here would silently send learners to a page that no
+    // longer exists, because the wizard it used to open has been removed.
+    expect(SITE.quotationDeskUrl).toMatch(/^https:\/\//);
   });
 });

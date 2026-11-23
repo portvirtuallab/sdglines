@@ -230,7 +230,7 @@ export const prosePages: ProsePage[] = [
         blocks: [
           {
             type: 'paragraph',
-            text: 'This site has no user accounts, no database and no back office. The quotation form generates its reference in the browser and sends nothing anywhere. Tracking is illustrative rather than live.',
+            text: 'This site has no user accounts, no database and no back office. Anything that needs one lives elsewhere: quotations are produced by the Quotation Desk, a separate application, and shipment status during an exercise is held in Port Virtual Lab. Tracking here is illustrative rather than live.',
           },
           {
             type: 'paragraph',
@@ -440,22 +440,34 @@ export const prosePages: ProsePage[] = [
         blocks: [
           {
             type: 'callout',
-            heading: 'Nothing you type here leaves your device',
-            text: 'There are no accounts, no cookies set by this site, no analytics and no trackers. The quotation tool asks for a few contact details so that the quotation it produces is addressed to someone, but they stay in your browser: nothing you type into a form on this site is transmitted or stored anywhere.',
+            heading: 'This website collects nothing',
+            text: 'There are no accounts, no cookies set by this site, no analytics and no trackers. There is also no form on this website: the only one there used to be has moved to the Quotation Desk, which is a separate application with its own behaviour, described below.',
           },
         ],
       },
       {
         id: 'forms',
-        heading: 'Forms',
+        heading: 'The Quotation Desk',
         blocks: [
           {
             type: 'paragraph',
-            text: 'The quotation tool runs entirely in your browser. It works out the routing, prices the shipment, generates a quotation reference and shows the result on the page. No request is sent to any server, nothing is stored, and closing the tab discards everything you entered.',
+            text: 'Quotations are no longer produced on this website. The "Request a quote" page hands over to the Quotation Desk, a separate application at a different address, because a quotation needs things a static website cannot do: live tariffs, a quotation number that persists, and a PDF that still exists after the tab is closed.',
+          },
+          {
+            type: 'callout',
+            heading: 'The Quotation Desk does send and store what you enter',
+            text: 'It asks for your name, e-mail address and the company or institution you are taking part as, because those appear on the quotation. When you issue a quotation, those details and the shipment are sent to a Google Apps Script endpoint and recorded, so that the class has a quotation number to refer to afterwards. That is how it produces the PDF. Do not enter personal details you would not want recorded: use the name and address your exercise asks for.',
           },
           {
             type: 'paragraph',
-            text: 'It asks for your name, e-mail address and the company or institution you are taking part as, because those appear on the quotation you receive. It does not ask for a telephone number or an address, and no field is required that the exercise does not use. Please do not enter personal details in the free text fields.',
+            text: 'This matters because the two are easy to confuse. Nothing on this website transmits anything. The Quotation Desk does, and it is not covered by this page: it is a separate application, and questions about what it keeps and for how long go to Escola Europea.',
+          },
+          {
+            type: 'links',
+            items: [
+              { label: 'Where the quotation is produced', href: '/request-a-quote' },
+              { label: 'Contact Escola Europea', href: 'mailto:info@escolaeuropea.eu' },
+            ],
           },
         ],
       },
@@ -547,7 +559,7 @@ export const prosePages: ProsePage[] = [
             type: 'list',
             items: [
               'The interactive map uses a third party mapping library whose keyboard support is limited. The port directory provides the same information in an accessible form.',
-              'Automated checks cover a sample of pages rather than all of them. Manual keyboard and screen reader testing has been carried out on the home page, a route page, a port page, the equipment catalogue and the quotation form.',
+              'Automated checks cover a sample of pages rather than all of them. Manual keyboard and screen reader testing has been carried out on the home page, a route page, a port page, the equipment catalogue and the search. The Quotation Desk is a separate application and is not covered by this statement.',
             ],
           },
         ],
