@@ -68,7 +68,7 @@ const seeds: PortSeed[] = [
     coordinates: [41.3497, 2.1589],
     summary:
       'Home port of SDG Lines and the base of the Escola Europea training terminal at Moll de Barcelona. Every published service calls here.',
-    services: ['westmed', 'eastmed', 'optimed', 'eurasia', 'gimnesias'],
+    services: ['westmed', 'eastmed', 'optimed', 'eurasia', 'gimnesias', 'tatl'],
     capabilities: FULL_SERVICE,
     annualThroughputTeu: 3_000_000,
     contactName: 'Joan Mariné Rodriguez',
@@ -85,7 +85,7 @@ const seeds: PortSeed[] = [
     coordinates: [39.4425, -0.3156],
     summary:
       'The busiest container port on the Spanish Mediterranean coast and the western turning point of the EurAsia service.',
-    services: ['westmed', 'eurasia'],
+    services: ['westmed', 'eurasia', 'tatl'],
     capabilities: FULL_SERVICE,
   },
   {
@@ -353,7 +353,7 @@ const seeds: PortSeed[] = [
     coordinates: [35.8833, -5.5069],
     summary:
       'Transhipment hub at the Strait of Gibraltar, where Westmed cargo transfers between the Mediterranean and the Atlantic.',
-    services: ['westmed'],
+    services: ['westmed', 'tatl'],
     capabilities: FULL_SERVICE,
   },
   {
@@ -551,7 +551,7 @@ const seeds: PortSeed[] = [
     coordinates: [40.684, -74.15],
     summary:
       'The northern end of the Atlantic Americas rotation and the Atlantic terminus of the Intercoastal service. Handled as one port complex; the New Jersey terminals carry their own codes.',
-    services: ['am-atl', 'am-int'],
+    services: ['am-atl', 'am-int', 'tatl'],
     capabilities: CONTAINER_ONLY,
     annualThroughputTeu: 8_900_000,
     reviewNote:
@@ -567,7 +567,7 @@ const seeds: PortSeed[] = [
     coordinates: [44.6488, -63.5752],
     summary:
       'The most northerly call on the network and the turn of the Atlantic Americas rotation. Reached from New York in under two days; the return leg sails south to Cartagena.',
-    services: ['am-atl'],
+    services: ['am-atl', 'tatl'],
     capabilities: CONTAINER_ONLY,
     annualThroughputTeu: 550_000,
     reviewNote: 'Throughput from the port authority. Agency representative not yet appointed.',

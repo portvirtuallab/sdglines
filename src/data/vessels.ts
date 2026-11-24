@@ -572,6 +572,74 @@ export const vessels: Vessel[] = [
         'Hull registered for the American network. Name, IMO, call sign and particulars await the operator.',
     },
   },
+
+  /* ---------------------------------------------------------------- *
+   * The transatlantic hulls. Three, because the 20.81 day round trip
+   * rounded up to whole weeks is what a weekly departure costs.
+   * ---------------------------------------------------------------- */
+  {
+    id: 'tatl-01',
+    slug: 'tatl-01',
+    name: 'TATL 01 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'tatl',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the transatlantic service. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
+  {
+    id: 'tatl-02',
+    slug: 'tatl-02',
+    name: 'TATL 02 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'tatl',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the transatlantic service. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
+  {
+    id: 'tatl-03',
+    slug: 'tatl-03',
+    name: 'TATL 03 — name pending',
+    className: 'Pending',
+    vesselType: 'Container ship',
+    imo: 'Pending',
+    mmsi: 'Pending',
+    callSign: 'Pending',
+    yearLaunched: 2026,
+    serviceId: 'tatl',
+    namesake: null,
+    particulars: {},
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Hull registered for the transatlantic service. Name, IMO, call sign and particulars await the operator.',
+    },
+  },
 ];
 
 /** Look up a vessel by its stable id. */

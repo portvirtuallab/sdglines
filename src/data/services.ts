@@ -333,6 +333,46 @@ export const services: Service[] = [
         'Rotation proposed in the November 2026 brief and confirmed at five vessels by the cycle calculation. The rotation above lists the first call at each port; Los Angeles and Cartagena are called again homebound. Service name and animal identity await approval.',
     },
   },
+  /* ---------------------------------------------------------------- *
+   * The transatlantic, November 2026.
+   *
+   * This is the service that joins the two halves of the network. Until
+   * it existed, Barcelona to New York had no answer at all: both ports
+   * were published, and no water connected them.
+   * ---------------------------------------------------------------- */
+  {
+    id: 'tatl',
+    slug: 'tatl',
+    name: 'Transatlantic',
+    code: 'TATL',
+    coverage: 'Western Mediterranean to the North American Atlantic coast',
+    summary:
+      'The crossing. Barcelona and Valencia to New York and Halifax by way of Tanger Med, joining the Mediterranean network to the American one.',
+    description: [
+      'Transatlantic is the service that makes the rest of the network one network. The Mediterranean services and the American services each worked on their own, and nothing crossed between them, so a shipment from Barcelona to New York could not be quoted at any price.',
+      'The rotation calls Barcelona, Valencia and Tanger Med outbound, works New York and Halifax on the American coast, and returns by Tanger Med. The round trip is 7,693 nautical miles and takes 20.81 days including port time, which three vessels hold as a weekly departure.',
+      'Barcelona to New York is 9.84 days. Cargo for Cartagena de Indias, Los Angeles or Vancouver changes to an American service at New York, which the quotation states rather than hiding.',
+      'It is also the first route on the network where the EU emissions allowance is charged at half rate. Barcelona is inside the scheme and New York is outside it, so half the voyage is covered; the quotation says so on the line itself.',
+    ],
+    rotation: [
+      { portId: 'barcelona', order: 1, transitDaysFromOrigin: 0 },
+      { portId: 'valencia', order: 2, transitDaysFromOrigin: 0.47 },
+      { portId: 'tanger-med', order: 3, transitDaysFromOrigin: 1.8 },
+      { portId: 'new-york-new-jersey', order: 4, transitDaysFromOrigin: 9.84 },
+      { portId: 'halifax', order: 5, transitDaysFromOrigin: 11.73 },
+    ],
+    frequency: 'Weekly',
+    vesselIds: ['tatl-01', 'tatl-02', 'tatl-03'],
+    capabilities: ['containers', 'reefer', 'dangerous-goods'],
+    mapColor: '#1f6f8b',
+    meta: {
+      source: 'simulation-design',
+      status: 'needs-review',
+      lastReviewed: AUDIT_DATE,
+      reviewNote:
+        'Rotation and distances computed in November 2026 from the network leg data, with three of the six legs reused at the lengths the network already states. The crossing distances were checked against published sea distances: twelve reference pairs, worst case 7.2 per cent out. Service name and animal identity await approval.',
+    },
+  },
 ];
 
 export function getServiceById(id: string): Service | undefined {
