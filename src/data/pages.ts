@@ -112,7 +112,7 @@ export const prosePages: ProsePage[] = [
           {
             type: 'links',
             items: [
-              { label: 'Access PVL.ONE', href: 'https://pvl.one', external: true },
+              { label: 'Access PVL.ONE', href: 'https://www.pvl.one', external: true },
               { label: 'Escola Europea courses', href: 'https://escolaeuropea.eu', external: true },
               { label: 'About SDG Lines', href: '/about' },
             ],
@@ -717,7 +717,7 @@ export const prosePages: ProsePage[] = [
           {
             type: 'links',
             items: [
-              { label: 'Access PVL.ONE', href: 'https://pvl.one', external: true },
+              { label: 'Access PVL.ONE', href: 'https://www.pvl.one', external: true },
               { label: 'Escola Europea', href: 'https://escolaeuropea.eu', external: true },
             ],
           },
@@ -857,7 +857,7 @@ export const prosePages: ProsePage[] = [
             items: [
               { label: 'Arrival charges', href: '/resources/arrival-charges' },
               { label: 'Request a quotation', href: '/request-a-quote' },
-              { label: 'Access PVL.ONE', href: 'https://pvl.one', external: true },
+              { label: 'Access PVL.ONE', href: 'https://www.pvl.one', external: true },
             ],
           },
         ],

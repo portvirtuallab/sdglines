@@ -443,3 +443,41 @@ describe('godmothers', () => {
     }
   });
 });
+
+/**
+ * Where we send people for Port Virtual Lab.
+ *
+ * The apex pvl.one does not serve the site: it has no certificate, so HTTPS
+ * fails at the handshake, and over plain HTTP it answers 404. Only
+ * www.pvl.one responds. Every link here pointed at the apex, which meant the
+ * header, the hero, the footer and three prose pages all led to a dead end,
+ * and nothing in the build complained.
+ *
+ * Pinning the host is the cheapest guard available. A link that silently
+ * stops working is not something a type checker or an accessibility run can
+ * see.
+ */
+describe('the Port Virtual Lab link points at the host that actually serves it', () => {
+  const PVL_HOST = 'https://www.pvl.one';
+
+  it('the site-wide URL uses the www host', () => {
+    expect(SITE.pvlUrl.startsWith(PVL_HOST)).toBe(true);
+  });
+
+  it('no prose page links to the apex, which does not resolve over HTTPS', () => {
+    for (const page of prosePages) {
+      for (const section of page.sections) {
+        for (const block of section.blocks) {
+          if (block.type !== 'links') continue;
+          for (const link of block.items) {
+            if (!/\bpvl\.one/.test(link.href)) continue;
+            expect(
+              link.href.startsWith(PVL_HOST),
+              `${page.slug}: "${link.label}" points at ${link.href}, which does not serve`,
+            ).toBe(true);
+          }
+        }
+      }
+    }
+  });
+});

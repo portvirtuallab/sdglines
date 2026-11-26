@@ -4,7 +4,6 @@ import {
   parseLifespan,
   yearToX,
   axisTicks,
-  formatYear,
   AXIS_SEGMENTS,
   AXIS_BREAK,
 } from '@/lib/namesakeTimeline';
@@ -80,7 +79,7 @@ const breakWidth = (AXIS_BREAK.x1 - AXIS_BREAK.x0) / 10;
               <span class="absolute top-0" style={`left:${tick.left}%`}>
                 <span class="block h-1.5 w-px bg-navy-300" />
                 <span class="mt-0.5 block -translate-x-1/2 whitespace-nowrap font-mono text-[0.6875rem] leading-none text-navy-500">
-                  {formatYear(tick.year)}
+                  {Math.abs(tick.year)}
                 </span>
               </span>
             ))
@@ -159,9 +158,10 @@ const breakWidth = (AXIS_BREAK.x1 - AXIS_BREAK.x0) / 10;
 
   <figcaption class="mt-4 max-w-3xl space-y-3 text-sm leading-relaxed text-navy-600">
     <p>
-      The axis is cut between the common era and 1740, and the two halves are drawn at different
-      scales: a year of antiquity is narrower here than a year of the twentieth century. Without
-      the cut, ten of the fourteen would sit on top of one another at the right-hand edge.
+      Years to the left of the cut are BCE and count downwards. The axis is cut between the common era
+      and 1740, and the two halves are drawn at different scales: a year of antiquity is narrower
+      here than a year of the twentieth century. Without the cut, ten of the fourteen would sit on
+      top of one another at the right-hand edge.
     </p>
     <p>
       <strong class="font-semibold text-navy-800">The gap is in this list, not in history.</strong>

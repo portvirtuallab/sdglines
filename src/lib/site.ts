@@ -19,7 +19,7 @@ export const SITE = {
     'SDG Lines is the simulated shipping company of Port Virtual Lab, created by Escola Europea - Intermodal Transport for education and professional training. Explore routes, vessels, ports and cargo services in a safe digital learning environment.',
   operator: 'Escola Europea - Intermodal Transport',
   operatorUrl: 'https://escolaeuropea.eu',
-  pvlUrl: 'https://pvl.one',
+  pvlUrl: 'https://www.pvl.one',
   /**
    * The Quotation Desk, which is where quotations are actually produced.
    *

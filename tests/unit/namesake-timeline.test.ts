@@ -3,7 +3,6 @@ import {
   parseLifespan,
   yearToX,
   byLifespan,
-  formatYear,
   AXIS_SEGMENTS,
   AXIS_BREAK,
   AXIS_WIDTH,
@@ -158,9 +157,3 @@ describe('chronological order', () => {
   });
 });
 
-describe('year labels', () => {
-  it('spells out BCE and leaves CE years bare', () => {
-    expect(formatYear(-600)).toBe('600 BCE');
-    expect(formatYear(1900)).toBe('1900');
-  });
-});

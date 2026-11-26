@@ -179,13 +179,6 @@ export function axisTicks(segment: AxisSegment): number[] {
   return [1800, 1900, 2000];
 }
 
-/** How a tick year reads to someone who is not a historian. */
-export function formatYear(year: number): string {
-  if (year < 0) return `${Math.abs(year)} BCE`;
-  if (year === 0) return '1 CE';
-  return String(year);
-}
-
 /**
  * Chronological order, earliest first.
  *
