@@ -1,0 +1,208 @@
+---
+import type { Equipment } from '@/types/content';
+import { planPallets, breakEvenDensity, PALLET_KINDS } from '@/lib/palletPlan';
+import { formatMetres, formatNumber } from '@/lib/labels';
+
+/**
+ * A unit, drawn.
+ *
+ * The specification table answers "what are its dimensions". This answers the
+ * question a learner is actually asking, which is "will my cargo go in it, and
+ * which of these should I pick".
+ *
+ * Three things, in the order they get decided:
+ *
+ *   1. A side elevation at true scale, with a person for reference. Every unit
+ *      on the page is drawn against the same scale, so the step from a 40 foot
+ *      to a 45 foot is a thing you see rather than a number you subtract.
+ *   2. Whether weight or volume runs out first. This is the choice between a
+ *      20 and a 40 for the same cargo, and the one most often got backwards.
+ *   3. A floor plan with pallets laid out, so the orientation problem and the
+ *      strip of wasted floor are visible.
+ */
+interface Props {
+  item: Equipment;
+  /** Longest unit on the page, in metres, so every drawing shares a scale. */
+  scaleTo: number;
+}
+
+const { item, scaleTo } = Astro.props;
+const d = item.dimensions;
+
+const euro = PALLET_KINDS[0];
+const plan =
+  d.internalLengthM && d.internalWidthM
+    ? planPallets(d.internalLengthM, d.internalWidthM, euro)
+    : null;
+
+const density = breakEvenDensity(d.maxPayloadKg, d.capacityM3);
+
+/* Side elevation. One metre is 26 units, and the canvas is the longest unit on
+   the page plus room for the figure, so the drawings line up across cards. */
+const U = 26;
+const PERSON_W = 0.5;
+const ELEV_W = (scaleTo + PERSON_W + 0.8) * U;
+const ELEV_H = 3.4 * U;
+const boxW = (d.externalLengthM ?? 0) * U;
+const boxH = (d.externalHeightM ?? 0) * U;
+const baseline = ELEV_H - 10;
+
+/* Floor plan, drawn to its own width so small units stay readable. */
+const PU = 44;
+const planW = (d.internalLengthM ?? 0) * PU;
+const planH = (d.internalWidthM ?? 0) * PU;
+
+const id = `vis-${item.slug}`;
+---
+
+<div class="grid gap-6 lg:grid-cols-2">
+  <!-- Elevation -->
+  <figure class="rounded-xl border border-navy-100 bg-navy-50/40 p-4">
+    <figcaption
+      class="mb-3 font-display text-xs font-semibold uppercase tracking-wide text-navy-500"
+    >
+      Side view, to scale
+    </figcaption>
+
+    {
+      boxW > 0 && boxH > 0 ? (
+        <svg
+          viewBox={`0 0 ${ELEV_W} ${ELEV_H}`}
+          class="h-auto w-full"
+          role="img"
+          aria-labelledby={`${id}-elev`}
+        >
+          <title id={`${id}-elev`}>
+            {item.name} seen from the side, {formatMetres(d.externalLengthM)} long and{' '}
+            {formatMetres(d.externalHeightM)} high, drawn beside a figure of average height for
+            scale. The same measurements are in the table on this page.
+          </title>
+
+          <line
+            x1="0"
+            y1={baseline}
+            x2={ELEV_W}
+            y2={baseline}
+            stroke="currentColor"
+            stroke-width="1.5"
+            class="text-navy-300"
+          />
+
+          {/* A person, 1.7 m, so the height means something. */}
+          <g class="text-navy-400" fill="currentColor" aria-hidden="true">
+            <circle cx={PERSON_W * U * 0.5} cy={baseline - 1.55 * U} r={0.14 * U} />
+            <rect
+              x={PERSON_W * U * 0.5 - 0.11 * U}
+              y={baseline - 1.38 * U}
+              width={0.22 * U}
+              height={1.38 * U}
+              rx={0.08 * U}
+            />
+          </g>
+
+          {/* The unit itself. */}
+          <g transform={`translate(${(PERSON_W + 0.6) * U}, 0)`}>
+            <rect
+              x="0"
+              y={baseline - boxH}
+              width={boxW}
+              height={boxH}
+              rx="3"
+              class="fill-sea-600/15 stroke-sea-700"
+              stroke-width="2"
+            />
+            {/* Corrugation, the detail that makes it read as a container. */}
+            <g class="stroke-sea-700/35" stroke-width="1.5" aria-hidden="true">
+              {Array.from({ length: Math.max(0, Math.floor(boxW / 14)) }, (_, i) => (
+                <line x1={8 + i * 14} y1={baseline - boxH + 6} x2={8 + i * 14} y2={baseline - 6} />
+              ))}
+            </g>
+          </g>
+        </svg>
+      ) : (
+        <p class="py-8 text-center text-sm text-navy-600">
+          No external dimensions are published for this unit, so it cannot be drawn to scale.
+        </p>
+      )
+    }
+  </figure>
+
+  <!-- Which limit bites first, and the floor -->
+  <div class="space-y-4">
+    {
+      density !== undefined && (
+        <div class="rounded-xl border border-navy-100 p-4">
+          <h4 class="font-display text-sm font-semibold text-navy-900">
+            Weight or volume, which runs out first
+          </h4>
+          <p class="mt-2 text-sm leading-relaxed text-navy-700">
+            This unit fills on <strong>weight</strong> above about{' '}
+            <span class="font-mono">{formatNumber(Math.round(density))} kg/m&sup3;</span> and on{' '}
+            <strong>volume</strong> below it. Steel and tiled goods sit well above; packaging,
+            textiles and most consumer goods well below.
+          </p>
+          <dl class="mt-3 flex flex-wrap gap-x-6 gap-y-1 border-t border-navy-100 pt-3 text-xs">
+            <div class="flex gap-1.5">
+              <dt class="text-navy-500">Payload</dt>
+              <dd class="font-mono text-navy-900">{formatNumber(d.maxPayloadKg, 'kg')}</dd>
+            </div>
+            <div class="flex gap-1.5">
+              <dt class="text-navy-500">Capacity</dt>
+              <dd class="font-mono text-navy-900">{d.capacityM3} m&sup3;</dd>
+            </div>
+          </dl>
+        </div>
+      )
+    }
+
+    {
+      plan && plan.count > 0 && (
+        <figure class="rounded-xl border border-navy-100 p-4">
+          <figcaption class="font-display text-sm font-semibold text-navy-900">
+            Floor plan, {plan.count} euro pallets
+          </figcaption>
+
+          <svg
+            viewBox={`0 0 ${planW} ${planH}`}
+            class="mt-3 h-auto w-full"
+            role="img"
+            aria-labelledby={`${id}-plan`}
+          >
+            <title id={`${id}-plan`}>
+              Floor of the {item.name} seen from above, with {plan.count} euro pallets of 1.2 by 0.8
+              metres laid in a single layer. They cover {Math.round(plan.floorUsed * 100)} per cent
+              of the floor, leaving {formatMetres(plan.lengthLeftOver)} of length unused.
+            </title>
+
+            <rect
+              x="1"
+              y="1"
+              width={planW - 2}
+              height={planH - 2}
+              rx="2"
+              class="fill-navy-50 stroke-navy-300"
+              stroke-width="2"
+            />
+            {plan.pallets.map((p) => (
+              <rect
+                x={p.x * PU + 1.5}
+                y={p.y * PU + 1.5}
+                width={p.w * PU - 3}
+                height={p.h * PU - 3}
+                rx="1.5"
+                class="fill-eco-500/35 stroke-eco-700"
+                stroke-width="1.5"
+              />
+            ))}
+          </svg>
+
+          <p class="mt-3 text-xs leading-relaxed text-navy-600">
+            One layer, pallets square to the walls, nothing overhanging. A loader mixing
+            orientations within a row will get more in — stowage tables quote 11 in a 20 foot — so
+            treat this as the figure you can count on rather than the most that will fit.
+          </p>
+        </figure>
+      )
+    }
+  </div>
+</div>
