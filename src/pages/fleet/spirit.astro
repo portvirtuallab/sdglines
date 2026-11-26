@@ -1,8 +1,10 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import PageHeader from '@/components/ui/PageHeader.astro';
+import NamesakeTimeline from '@/components/ui/NamesakeTimeline.astro';
 import { vessels } from '@/data/vessels';
 import { url } from '@/lib/site';
+import { byLifespan, parseLifespan } from '@/lib/namesakeTimeline';
 
 /**
  * The spirit of the vessels.
@@ -14,24 +16,38 @@ import { url } from '@/lib/site';
  *
  * The biographies are of real people and are written from public biographical
  * record. They are ordered by the period the person worked in rather than
- * alphabetically, because read in that order the fleet becomes a timeline.
+ * alphabetically, because read in that order the fleet becomes a timeline -
+ * and since the page makes that claim, the timeline is drawn rather than left
+ * for the reader to assemble from fourteen sets of dates.
  */
 const named = vessels.filter(
   (vessel): vessel is typeof vessel & { namesake: NonNullable<typeof vessel.namesake> } =>
     vessel.namesake !== null,
 );
 
-const ordered = [...named].sort((a, b) => {
-  /** Pull the first year out of a lifespan string, treating BCE as negative. */
-  const yearOf = (lifespan: string): number => {
-    const match = lifespan.match(/(\d+)/);
-    const value = match ? Number(match[1]) : 0;
-    return /BCE/.test(lifespan) ? -value : value;
-  };
-  return yearOf(a.namesake.lifespan) - yearOf(b.namesake.lifespan);
-});
+const ordered = [...named].sort((a, b) => byLifespan(a.namesake.lifespan, b.namesake.lifespan));
 
 const fields = [...new Set(named.map((vessel) => vessel.namesake.field))].sort();
+
+/* The figures in the opening paragraphs are computed rather than written out,
+   so that adding a namesake cannot leave the prose quietly claiming fourteen.
+   The previous copy named Theano as the earliest; Sappho is roughly a century
+   before her, and nobody noticed because the sentence was typed by hand. */
+const spans = named.map((vessel) => parseLifespan(vessel.namesake.lifespan));
+const earliestYear = Math.min(...spans.map((span) => span.start));
+const latestYear = Math.max(...spans.map((span) => span.end));
+const centuriesCovered = Math.round((latestYear - earliestYear) / 100);
+const beforeCommonEra = spans.filter((span) => span.end < 0).length;
+
+const first = ordered[0];
+const last = ordered[ordered.length - 1];
+
+const stats = [
+  { value: String(named.length), label: 'ships named after women' },
+  { value: String(fields.length), label: 'fields of work' },
+  { value: String(beforeCommonEra), label: 'lived before the common era' },
+  { value: `${centuriesCovered}`, label: 'centuries from first to last' },
+];
 ---
 
 <BaseLayout
@@ -41,7 +57,7 @@ const fields = [...new Set(named.map((vessel) => vessel.namesake.field))].sort()
   <PageHeader
     eyebrow="The fleet"
     title="The spirit of the vessels"
-    intro="A fleet list that is also a reading list. Fourteen ships, fourteen women, and roughly two and a half thousand years."
+    intro={`A fleet list that is also a reading list. ${named.length} ships, ${named.length} women, and some ${centuriesCovered} centuries.`}
     breadcrumbs={[{ label: 'Fleet', href: '/fleet' }, { label: 'The spirit of the vessels' }]}
     tone="dark"
   />
@@ -59,61 +75,110 @@ const fields = [...new Set(named.map((vessel) => vessel.namesake.field))].sort()
           The choice does a small amount of teaching on its own. A participant who spends a week
           working with the Rita Levi-Montalcini has read her name a hundred times by the end of it,
           and will usually have looked her up somewhere around the twentieth. That is a low cost way
-          of putting fourteen people in front of learners who would otherwise not have met them.
+          of putting {named.length} people in front of learners who would otherwise not have met them.
         </p>
         <p>
-          The span runs from Theano of Crotone in the sixth century BCE to Frances Allen, who
-          received the Turing Award in 2006. Between them they cover {fields.length} fields:{' '}
-          {fields.join(', ').toLowerCase()}.
+          The span runs from {first.namesake.fullName} to {last.namesake.fullName}. Between them they
+          cover {fields.length} fields: {fields.join(', ').toLowerCase()}.
         </p>
       </div>
     </section>
 
+    <!-- The numbers, before the figure, so the figure has something to confirm. -->
+    <dl class="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-navy-100 bg-navy-100 sm:grid-cols-4">
+      {
+        stats.map((stat) => (
+          <div class="bg-white px-5 py-4">
+            <dt class="text-xs uppercase tracking-wide text-navy-500">{stat.label}</dt>
+            <dd class="mt-1 font-display text-3xl font-semibold text-navy-900">{stat.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
     <section aria-labelledby="timeline-heading" class="mt-14">
-      <h2 id="timeline-heading" class="text-2xl">The fourteen</h2>
+      <h2 id="timeline-heading" class="text-2xl">The fleet on a time axis</h2>
+      <p class="mt-2 max-w-3xl text-navy-600">
+        Each bar is one life. Select a name to jump to her entry below.
+      </p>
+      <div class="mt-6">
+        <NamesakeTimeline vessels={ordered} />
+      </div>
+    </section>
+
+    <section aria-labelledby="entries-heading" class="mt-16">
+      <h2 id="entries-heading" class="text-2xl">The {named.length}</h2>
       <p class="mt-2 text-navy-600">In the order they lived and worked.</p>
 
-      <ol class="mt-8 space-y-4">
+      <ol class="mt-8 divide-y divide-navy-100 border-t border-navy-100">
         {
-          ordered.map((vessel) => (
-            <li>
-              <article class="rounded-2xl border border-navy-100 bg-white p-6 sm:p-7">
-                <div class="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                  <h3 class="font-display text-xl font-semibold text-navy-900">
-                    {vessel.namesake.fullName}
-                  </h3>
-                  <p class="font-mono text-sm text-navy-500">{vessel.namesake.lifespan}</p>
-                </div>
-
-                <p class="mt-1 text-sm font-medium text-sea-700">{vessel.namesake.field}</p>
-
-                <p class="mt-4 leading-relaxed text-navy-700">{vessel.namesake.biography}</p>
-
-                {vessel.godmother?.status === 'confirmed' && (
-                  <p class="mt-4 rounded-lg border border-eco-200 bg-eco-50/50 px-4 py-3 text-sm leading-relaxed text-navy-800">
-                    <span class="font-semibold">Godmother:</span> {vessel.godmother.name}
-                    <span class="mt-0.5 block text-xs text-navy-600">
-                      The madrina stood as sponsor when the ship was named. Where the namesake is
-                      the woman the vessel is called after, the godmother is the woman who gave it
-                      its name.
-                    </span>
-                  </p>
-                )}
-
-                <div class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-navy-100 pt-4">
-                  <p class="text-sm text-navy-600">
-                    Carried by{' '}
-                    <a
-                      href={url(`/fleet/${vessel.slug}`)}
-                      class="font-semibold text-navy-900 underline decoration-navy-200 underline-offset-4 hover:text-sea-700 hover:decoration-sea-600"
+          ordered.map((vessel, index) => (
+            <li id={vessel.slug} class="scroll-mt-28 py-8 first:pt-9 sm:py-10">
+              <article>
+                {/* Who she was. Full width and first in the source, so that on a
+                    phone the name leads rather than arriving after a stack of
+                    metadata. */}
+                <header>
+                  <div class="flex items-baseline gap-3">
+                    <span
+                      class="font-display text-3xl font-semibold tabular-nums leading-none text-navy-400 sm:text-4xl"
+                      aria-hidden="true"
                     >
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <h3 class="font-display text-2xl font-semibold leading-tight text-navy-900">
+                      {vessel.namesake.fullName}
+                    </h3>
+                  </div>
+                  <div class="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-2">
+                    <span class="font-mono text-sm text-navy-600">{vessel.namesake.lifespan}</span>
+                    <span class="inline-flex rounded-full bg-sea-50 px-3 py-1 text-xs font-semibold text-sea-800">
+                      {vessel.namesake.field}
+                    </span>
+                  </div>
+                </header>
+
+                {/* The prose comes first in the source and is placed into the
+                    right-hand column on wide screens; the ship card is placed
+                    into the left one. On a phone they simply stack in reading
+                    order, biography then ship. */}
+                <div class="mt-6 grid gap-6 lg:grid-cols-[14rem_1fr] lg:gap-10">
+                  <div class="min-w-0 lg:col-start-2 lg:row-start-1">
+                    <p class="max-w-2xl text-[1.0625rem] leading-relaxed text-navy-700">
+                      {vessel.namesake.biography}
+                    </p>
+
+                    {vessel.godmother?.status === 'confirmed' && (
+                      <div class="mt-6 max-w-2xl rounded-xl border-l-4 border-eco-500 bg-eco-50/60 px-5 py-4">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-eco-800">
+                          Godmother
+                        </p>
+                        <p class="mt-1 font-display text-lg font-semibold text-navy-900">
+                          {vessel.godmother.name}
+                        </p>
+                        <p class="mt-1.5 text-sm leading-relaxed text-navy-700">
+                          The madrina stood as sponsor when the ship was named. Where the namesake
+                          is the woman the vessel is called after, the godmother is the woman who
+                          gave it its name.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <a
+                    href={url(`/fleet/${vessel.slug}`)}
+                    class="block rounded-xl border border-navy-100 p-4 transition-colors hover:border-sea-300 hover:bg-sea-50/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sea-600 lg:col-start-1 lg:row-start-1 lg:self-start"
+                  >
+                    <span class="block text-xs uppercase tracking-wide text-navy-500">
+                      Carried by
+                    </span>
+                    <span class="mt-1 block font-display text-base font-semibold text-navy-900">
                       {vessel.name}
-                    </a>
-                  </p>
-                  <p class="font-mono text-xs text-navy-500">
-                    {vessel.vesselType} &middot; IMO {vessel.imo} &middot; launched{' '}
-                    {vessel.yearLaunched}
-                  </p>
+                    </span>
+                    <span class="mt-1.5 block font-mono text-[0.6875rem] leading-relaxed text-navy-500">
+                      IMO {vessel.imo} &middot; launched {vessel.yearLaunched}
+                    </span>
+                  </a>
                 </div>
               </article>
             </li>
@@ -122,7 +187,7 @@ const fields = [...new Set(named.map((vessel) => vessel.namesake.field))].sort()
       </ol>
     </section>
 
-    <section class="mt-14 rounded-2xl border border-navy-100 bg-navy-50/60 p-7">
+    <section class="mt-16 rounded-2xl border border-navy-100 bg-navy-50/60 p-7">
       <h2 class="text-xl">The technical side</h2>
       <p class="mt-2 max-w-2xl text-navy-600">
         Type, class, identifiers and service deployment for every vessel are in the fleet register.

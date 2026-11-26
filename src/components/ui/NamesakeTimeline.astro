@@ -1,0 +1,187 @@
+---
+import type { Vessel } from '@/types/content';
+import {
+  parseLifespan,
+  yearToX,
+  axisTicks,
+  formatYear,
+  AXIS_SEGMENTS,
+  AXIS_BREAK,
+} from '@/lib/namesakeTimeline';
+
+/**
+ * The fleet as a time axis.
+ *
+ * Every row is one namesake, drawn against the years she lived. Three things
+ * are visible here that fourteen stacked cards cannot show:
+ *
+ *   - The shape of the list. Four names in antiquity, one in the eighteenth
+ *     century, nine born within sixty years of each other.
+ *   - How firmly each date is held. A recorded span is a solid bar; a century
+ *     placement fades at both ends, because that is the honest width of the
+ *     claim.
+ *   - The gap, which is the most interesting thing on the page and was
+ *     previously invisible.
+ *
+ * Bars are positioned as percentages rather than drawn in SVG, so they scale
+ * with the container at any width and stay real elements that can be hovered,
+ * focused and read out.
+ */
+interface Props {
+  vessels: (Vessel & { namesake: NonNullable<Vessel['namesake']> })[];
+}
+
+const { vessels } = Astro.props;
+
+const rows = vessels.map((vessel) => {
+  const span = parseLifespan(vessel.namesake.lifespan);
+  const x0 = yearToX(span.start);
+  const x1 = yearToX(span.end);
+  return {
+    vessel,
+    span,
+    /* The axis is 1000 units wide, so a unit is a tenth of a per cent. */
+    left: x0 / 10,
+    width: Math.max((x1 - x0) / 10, 0),
+  };
+});
+
+/** Gridlines, drawn in every track so the rows read across. */
+const gridlines = AXIS_SEGMENTS.flatMap((segment) =>
+  axisTicks(segment).map((year) => ({ year, left: yearToX(year) / 10 })),
+);
+
+const breakLeft = AXIS_BREAK.x0 / 10;
+const breakWidth = (AXIS_BREAK.x1 - AXIS_BREAK.x0) / 10;
+---
+
+<figure class="not-prose">
+  <div class="rounded-2xl border border-navy-100 bg-white p-5 sm:p-7">
+    <!-- Axis header -->
+    <div class="grid gap-x-5 sm:grid-cols-[13rem_1fr] lg:grid-cols-[15rem_1fr]">
+      <p class="hidden text-xs font-semibold uppercase tracking-wide text-navy-500 sm:block">
+        Namesake
+      </p>
+      <div>
+        <div class="flex gap-0 text-xs font-semibold uppercase tracking-wide text-navy-500">
+          {
+            AXIS_SEGMENTS.map((segment, index) => (
+              <Fragment>
+                {index > 0 && <span style={`width:${breakWidth}%`} aria-hidden="true" />}
+                <span style={`width:${(segment.x1 - segment.x0) / 10}%`}>{segment.label}</span>
+              </Fragment>
+            ))
+          }
+        </div>
+        <div class="relative mt-1.5 h-4" aria-hidden="true">
+          <div class="absolute inset-x-0 top-0 h-px bg-navy-200"></div>
+          {
+            gridlines.map((tick) => (
+              <span class="absolute top-0" style={`left:${tick.left}%`}>
+                <span class="block h-1.5 w-px bg-navy-300" />
+                <span class="mt-0.5 block -translate-x-1/2 whitespace-nowrap font-mono text-[0.6875rem] leading-none text-navy-500">
+                  {formatYear(tick.year)}
+                </span>
+              </span>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Rows -->
+    <ol class="mt-4 space-y-px">
+      {
+        rows.map(({ vessel, span, left, width }) => (
+          <li class="group grid items-center gap-x-5 rounded-lg px-2 py-1.5 transition-colors duration-150 hover:bg-navy-50/70 focus-within:bg-navy-50/70 sm:grid-cols-[13rem_1fr] lg:grid-cols-[15rem_1fr]">
+            <div class="min-w-0">
+              <a
+                href={`#${vessel.slug}`}
+                class="rounded text-sm font-medium text-navy-900 underline decoration-transparent underline-offset-4 transition-colors group-hover:decoration-sea-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sea-600"
+              >
+                {vessel.namesake.fullName}
+              </a>
+              <p class="font-mono text-[0.6875rem] leading-tight text-navy-500">
+                {vessel.namesake.lifespan}
+              </p>
+            </div>
+
+            <div class="relative mt-1.5 h-5 sm:mt-0" aria-hidden="true">
+              {/* Rail */}
+              <div class="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-navy-100" />
+              {/* Gridlines */}
+              {gridlines.map((tick) => (
+                <span
+                  class="absolute inset-y-0 w-px bg-navy-100"
+                  style={`left:${tick.left}%`}
+                />
+              ))}
+              {/* The cut in the axis */}
+              <span
+                class="axis-break absolute inset-y-0"
+                style={`left:${breakLeft}%;width:${breakWidth}%`}
+              />
+              {/* The life */}
+              <span
+                class={`absolute top-1/2 h-2.5 min-w-2.5 -translate-y-1/2 rounded-full transition-[filter] duration-150 group-hover:brightness-110 ${
+                  span.precision === 'century'
+                    ? 'bg-gradient-to-r from-sea-200 via-sea-500 to-sea-200'
+                    : 'bg-sea-600'
+                }`}
+                style={`left:${left}%;width:${width}%`}
+              />
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <!-- Legend -->
+    <div
+      class="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-navy-100 pt-4 text-xs text-navy-600"
+    >
+      <span class="inline-flex items-center gap-2">
+        <span class="h-2.5 w-8 rounded-full bg-sea-600" aria-hidden="true"></span>
+        Dates on record
+      </span>
+      <span class="inline-flex items-center gap-2">
+        <span
+          class="h-2.5 w-8 rounded-full bg-gradient-to-r from-sea-200 via-sea-500 to-sea-200"
+          aria-hidden="true"></span>
+        Placed within a century
+      </span>
+      <span class="inline-flex items-center gap-2">
+        <span class="axis-break h-4 w-8 rounded-sm" aria-hidden="true"></span>
+        Axis cut
+      </span>
+    </div>
+  </div>
+
+  <figcaption class="mt-4 max-w-3xl space-y-3 text-sm leading-relaxed text-navy-600">
+    <p>
+      The axis is cut between the common era and 1740, and the two halves are drawn at different
+      scales: a year of antiquity is narrower here than a year of the twentieth century. Without
+      the cut, ten of the fourteen would sit on top of one another at the right-hand edge.
+    </p>
+    <p>
+      <strong class="font-semibold text-navy-800">The gap is in this list, not in history.</strong>
+      Hypatia, Trotula of Salerno, Hildegard of Bingen and &Eacute;milie du Ch&acirc;telet all lived
+      inside it. Fourteen names is a choice about a fleet, and it leaves most of the story out.
+    </p>
+  </figcaption>
+</figure>
+
+<style>
+  /* The cut in the axis. Hatching rather than a blank space, so it reads as
+     "something has been removed here" instead of "nothing happened here" -
+     which is the whole point of the caption underneath. */
+  .axis-break {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--color-navy-100) 0,
+      var(--color-navy-100) 2px,
+      transparent 2px,
+      transparent 6px
+    );
+  }
+</style>
