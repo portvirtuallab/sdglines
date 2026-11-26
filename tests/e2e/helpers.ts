@@ -8,10 +8,11 @@
  *
  * Rather than dropping the leading slash everywhere and relying on everyone
  * remembering why, every navigation goes through `path()`. It also means the
- * tests exercise the same base path the deployed site uses, so a base path
- * regression fails the suite instead of reaching production.
+ * tests exercise whatever base path the deployed site uses, so a base path
+ * regression fails the suite instead of reaching production. It is empty today,
+ * because the site moved to its own domain.
  */
-export const BASE_PATH = '/sdglines';
+export const BASE_PATH = '';
 
 /** Turn a site-relative path into one that includes the deployment base path. */
 export function path(sitePath: string): string {

@@ -35,8 +35,8 @@ const {
 } = Astro.props;
 
 const pageTitle = fullTitle ?? `${title} | ${SITE.name}`;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://portvirtuallab.github.io');
-const ogImageUrl = new URL(url(ogImage), Astro.site ?? 'https://portvirtuallab.github.io');
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://sdglines.com');
+const ogImageUrl = new URL(url(ogImage), Astro.site ?? 'https://sdglines.com');
 
 /**
  * Organisation data.

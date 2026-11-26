@@ -54,11 +54,13 @@ jobs:
       - name: Build
         run: npm run build:pages
         env:
-          # The project site lives under /sdglines. To move to the custom
-          # domain, change these two values and add a CNAME file. Nothing else
-          # in the codebase has to change.
-          SITE_URL: https://portvirtuallab.github.io
-          BASE_PATH: /sdglines
+          # The site is served from its own domain, so there is no base path.
+          # public/CNAME has to stay in the build: GitHub Pages reads it from
+          # the deployed artifact, and a deploy without it unsets the custom
+          # domain. To go back to the project site, set these to
+          # https://portvirtuallab.github.io and /sdglines and drop the CNAME.
+          SITE_URL: https://sdglines.com
+          BASE_PATH: /
 
       - name: Disable Jekyll processing
         # Without this, GitHub Pages ignores files and directories beginning

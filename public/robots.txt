@@ -7,4 +7,4 @@ Allow: /
 # The search page produces no content of its own.
 Disallow: /search
 
-Sitemap: https://portvirtuallab.github.io/sdglines/sitemap-index.xml
+Sitemap: https://sdglines.com/sitemap-index.xml

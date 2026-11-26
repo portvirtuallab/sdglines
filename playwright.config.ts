@@ -8,18 +8,23 @@ import { defineConfig, devices } from '@playwright/test';
  * and does not apply the base path the way the built site does, so a test
  * passing against it would not prove the deployed site works.
  *
- * The base path is set to /sdglines to match the GitHub Pages project site, so
- * the tests also cover the base path handling itself.
+ * The base path is empty, matching the custom domain the site is served from.
+ * It is kept as a constant rather than inlined so that the suite follows the
+ * deployment if it ever moves back under a path.
  */
 const PORT = 4322;
-const BASE_PATH = '/sdglines';
+const BASE_PATH = '';
 
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  // Two everywhere, not just in CI. The axe sweeps run a full rule set inside
+  // the page and are CPU bound; left to Playwright's default worker count they
+  // starve each other on a busy machine and time out, and a different page
+  // fails on each run. A suite that cries wolf locally stops being read.
+  workers: 2,
   reporter: process.env.CI ? [['html', { open: 'never' }], ['list']] : 'list',
   timeout: 30_000,
 
@@ -48,7 +53,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
     env: {
-      SITE_URL: 'https://portvirtuallab.github.io',
+      SITE_URL: 'https://sdglines.com',
       BASE_PATH,
     },
   },
