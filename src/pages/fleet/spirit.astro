@@ -89,6 +89,17 @@ const fields = [...new Set(named.map((vessel) => vessel.namesake.field))].sort()
 
                 <p class="mt-4 leading-relaxed text-navy-700">{vessel.namesake.biography}</p>
 
+                {vessel.godmother?.status === 'confirmed' && (
+                  <p class="mt-4 rounded-lg border border-eco-200 bg-eco-50/50 px-4 py-3 text-sm leading-relaxed text-navy-800">
+                    <span class="font-semibold">Godmother:</span> {vessel.godmother.name}
+                    <span class="mt-0.5 block text-xs text-navy-600">
+                      The madrina stood as sponsor when the ship was named. Where the namesake is
+                      the woman the vessel is called after, the godmother is the woman who gave it
+                      its name.
+                    </span>
+                  </p>
+                )}
+
                 <div class="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-navy-100 pt-4">
                   <p class="text-sm text-navy-600">
                     Carried by{' '}

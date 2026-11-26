@@ -404,3 +404,42 @@ describe('what the site says about the Quotation Desk', () => {
     expect(SITE.quotationDeskUrl).toMatch(/^https:\/\//);
   });
 });
+
+describe('godmothers', () => {
+  /**
+   * These are living people, named on a public site. Everything else on this
+   * site is either a verifiable fact or declared simulation; a godmother is
+   * neither, and the only source is the product owner's own record.
+   *
+   * Two of the ten exist in that record as an invitation with no reply. Naming
+   * someone as the godmother of a ship on the strength of an invitation she may
+   * have declined is a claim about a real person that nobody has checked, so
+   * those two are held and not published.
+   */
+  it('records a date and a status for every godmother', () => {
+    for (const vessel of vessels) {
+      if (!vessel.godmother) continue;
+      expect(
+        vessel.godmother.name.trim().length,
+        `${vessel.name} has an empty godmother`,
+      ).toBeGreaterThan(1);
+      expect(vessel.godmother.recorded, `${vessel.name} godmother has no date`).toMatch(
+        /^\d{4}-\d{2}-\d{2}$/,
+      );
+      expect(['confirmed', 'invited']).toContain(vessel.godmother.status);
+    }
+  });
+
+  it('never gives two ships the same godmother', () => {
+    const names = vessels.filter((v) => v.godmother).map((v) => v.godmother!.name);
+    expect(new Set(names).size, 'a godmother appears on more than one vessel').toBe(names.length);
+  });
+
+  it('only attaches a godmother to a ship that has a name', () => {
+    // A hull awaiting its name cannot have been christened.
+    for (const vessel of vessels) {
+      if (!vessel.godmother) continue;
+      expect(vessel.namesake, `${vessel.name} has a godmother but no namesake`).not.toBeNull();
+    }
+  });
+});

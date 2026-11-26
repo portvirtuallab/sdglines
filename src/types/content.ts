@@ -160,6 +160,37 @@ export interface Namesake {
   biography: string;
 }
 
+/**
+ * The godmother of a vessel: the woman who sponsored it at its naming.
+ *
+ * Unlike almost everything else on this site, this is not simulation design.
+ * These are living people who agreed to stand as madrina for a ship, recorded
+ * by the product owner. Two consequences follow:
+ *
+ *   - Nothing here is ever inferred, completed or tidied up. A vessel without a
+ *     recorded godmother has none on the page, and a name is printed exactly as
+ *     the owner supplied it.
+ *   - The record carries the date it was set, because a person can ask to be
+ *     removed and whoever handles that needs to know what they are looking at.
+ */
+export interface Godmother {
+  /** As supplied by the product owner. Never reformatted or abbreviated. */
+  name: string;
+  /** ISO 8601 date on which the sponsorship was recorded. */
+  recorded: string;
+  /**
+   * How far the sponsorship got.
+   *
+   * `invited` means the owner's record holds an invitation and no reply. That
+   * is NOT published: naming a real person on a public site as the godmother of
+   * a ship, on the strength of an invitation she may have declined, is the kind
+   * of claim this project does not make. The record is kept so the information
+   * is not lost and so the owner can confirm it, and the page shows nothing
+   * until they do.
+   */
+  status: 'confirmed' | 'invited';
+}
+
 /** Technical particulars. Every field is optional: unconfirmed stays absent. */
 export interface VesselParticulars {
   lengthOverallM?: number;
@@ -195,6 +226,13 @@ export interface Vessel extends ContentRecord {
    * and the pages say so instead of printing an invented biography.
    */
   namesake: Namesake | null;
+  /**
+   * The woman who sponsored this vessel at its naming, where one is recorded.
+   *
+   * Absent means no record, not "none": eight of the fourteen Mediterranean
+   * ships have a godmother on file and the rest are simply not documented.
+   */
+  godmother?: Godmother;
   particulars: VesselParticulars;
 }
 

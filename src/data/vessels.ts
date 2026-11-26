@@ -112,6 +112,7 @@ export const vessels: Vessel[] = [
     callSign: 'MEXH',
     yearLaunched: 2024,
     serviceId: 'westmed',
+    godmother: { name: 'Catalina Grimalt', recorded: '2023-11-22', status: 'confirmed' },
     namesake: {
       fullName: 'Frances Elizabeth Allen',
       lifespan: '1932–2020',
@@ -165,6 +166,7 @@ export const vessels: Vessel[] = [
     callSign: 'MEWO',
     yearLaunched: 2020,
     serviceId: 'optimed',
+    godmother: { name: 'Marta Miquel', recorded: '2023-11-22', status: 'confirmed' },
     namesake: {
       fullName: 'Hagnodice of Athens',
       lifespan: 'c. 4th century BCE',
@@ -191,6 +193,7 @@ export const vessels: Vessel[] = [
     callSign: 'MEXJ',
     yearLaunched: 2024,
     serviceId: 'eurasia',
+    godmother: { name: 'Roser Ribó', recorded: '2023-11-28', status: 'confirmed' },
     namesake: {
       fullName: 'Halide Edib Adıvar',
       lifespan: '1884–1964',
@@ -218,6 +221,7 @@ export const vessels: Vessel[] = [
     callSign: 'MEXD',
     yearLaunched: 2023,
     serviceId: 'eurasia',
+    godmother: { name: 'Montse Suay López', recorded: '2023-11-22', status: 'confirmed' },
     namesake: {
       fullName: 'Maria Goeppert-Mayer',
       lifespan: '1906–1972',
@@ -244,6 +248,7 @@ export const vessels: Vessel[] = [
     callSign: 'MEXF',
     yearLaunched: 2024,
     serviceId: 'eastmed',
+    godmother: { name: 'Marisa Clavero Manrique', recorded: '2023-11-22', status: 'confirmed' },
     namesake: {
       fullName: 'Mercè Rodoreda',
       lifespan: '1908–1983',
@@ -271,6 +276,7 @@ export const vessels: Vessel[] = [
     callSign: 'MEXI',
     yearLaunched: 2024,
     serviceId: 'westmed',
+    godmother: { name: 'Hana Nehme', recorded: '2023-11-20', status: 'invited' },
     namesake: {
       fullName: 'Nawal El Saadawi',
       lifespan: '1931–2021',
@@ -297,6 +303,7 @@ export const vessels: Vessel[] = [
     callSign: 'MEXE',
     yearLaunched: 2023,
     serviceId: 'eurasia',
+    godmother: { name: 'Encarnación Ruiz Hernández', recorded: '2023-11-22', status: 'confirmed' },
     namesake: {
       fullName: 'Rita Levi-Montalcini',
       lifespan: '1909–2012',
@@ -323,6 +330,7 @@ export const vessels: Vessel[] = [
     callSign: 'MEXK',
     yearLaunched: 2024,
     serviceId: null,
+    godmother: { name: 'Àngels Calafell', recorded: '2023-11-27', status: 'confirmed' },
     namesake: {
       fullName: 'Rosa Sensat i Vilà',
       lifespan: '1873–1961',
@@ -350,6 +358,7 @@ export const vessels: Vessel[] = [
     callSign: 'MEXG',
     yearLaunched: 2024,
     serviceId: 'eastmed',
+    godmother: { name: 'Mèrida Iglesias Lucía', recorded: '2023-11-20', status: 'invited' },
     namesake: {
       fullName: 'Sappho of Lesbos',
       lifespan: 'c. 630–570 BCE',
@@ -376,6 +385,7 @@ export const vessels: Vessel[] = [
     callSign: 'MEWP',
     yearLaunched: 2020,
     serviceId: 'optimed',
+    godmother: { name: 'Jessica Cervini', recorded: '2023-11-22', status: 'confirmed' },
     namesake: {
       fullName: 'Theano of Crotone',
       lifespan: 'c. 6th century BCE',

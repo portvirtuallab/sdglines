@@ -300,6 +300,33 @@ figures the column was meant to hold.
 
 ---
 
+## 20. Two godmothers invited, never confirmed
+
+**Status:** held in the data, not published.
+
+Eight of the fourteen Mediterranean vessels have a confirmed godmother, taken
+from the product owner's own record and now shown on the fleet pages. Two more
+exist in that record only as an invitation with no reply:
+
+| Vessel           | Invited               | Recorded   |
+| ---------------- | --------------------- | ---------- |
+| Nawal El Saadawi | Hana Nehme            | 2023-11-20 |
+| Sappho           | Mèrida Iglesias Lucía | 2023-11-20 |
+
+These are living people. Naming someone publicly as the godmother of a ship on
+the strength of an invitation she may have declined is a claim about a real
+person that nobody has checked, so the pages show nothing for these two.
+
+**Needed:** confirmation that each accepted, or instruction to remove the
+record. Set `status` to `'confirmed'` in `src/data/vessels.ts` and the fleet
+pages pick it up with no other change.
+
+**Also worth knowing:** four vessels have no godmother on record at all -
+Aglaonike, Caroline Herschel, Dorothy Hodgkin and Gerty Cori - and the eight
+American hulls have neither a name nor a godmother.
+
+---
+
 ## Answered items
 
 ### 11. Four arithmetic defects in the live quotation spreadsheet
